@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,7 @@ public class SubscriptionsControllerTest {
 		closeable = MockitoAnnotations.openMocks(this);
 		orderRepository = mock(OrderRepository.class);
 		subscriptionsController = new SubscriptionsController(orderView, orderRepository);
+
 	}
 
 	@After
@@ -43,14 +46,13 @@ public class SubscriptionsControllerTest {
 
 	@Test
 	public void testFetchOrdersWhenNoOrderIsPresent() {
+		when(orderRepository.findAll()).thenReturn(emptyList());
 		assertThat(subscriptionsController.fetchOrders()).size().isEqualTo(0);
 	}
 
 	@Test
 	public void testFetchOrdersWhenOneOrderIsPresent() {
-		List<Order> orders = new ArrayList<>();
-		orders.add(new Order());
-		when(orderRepository.findAll()).thenReturn(orders);
+		when(orderRepository.findAll()).thenReturn(asList(new Order()));
 		assertThat(subscriptionsController.fetchOrders()).size().isEqualTo(1);
 	}
 
