@@ -56,4 +56,10 @@ public class SubscriptionsControllerTest {
 		assertThat(subscriptionsController.fetchOrders()).size().isEqualTo(1);
 	}
 
+	@Test
+	public void testFetchOrdersWhenMoreThanOneOrderIsPresent() {
+		when(orderRepository.findAll()).thenReturn(asList(new Order(), new Order()));
+		assertThat(subscriptionsController.fetchOrders()).size().isEqualTo(2);
+	}
+
 }
