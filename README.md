@@ -1,0 +1,2 @@
+[![Java CI with Maven in Linux](https://github.com/mfflnz/apt-subscriptions/actions/workflows/maven.yml/badge.svg)](https://github.com/mfflnz/apt-subscriptions/actions/workflows/maven.yml)
+[![Coverage Status](https://coveralls.io/repos/github/mfflnz/apt-subscriptions/badge.svg?branch=main)](https://coveralls.io/github/mfflnz/apt-subscriptions?branch=main)
