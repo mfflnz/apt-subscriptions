@@ -23,6 +23,7 @@
 		<mongodb-driver-sync.version>5.1.1</mongodb-driver-sync.version>
 		<logback-classic.version>1.5.6</logback-classic.version>
 		<jacoco.version>0.8.11</jacoco.version>
+		<coveralls.version>4.3.0</coveralls.version>
 	</properties>
 
 	<dependencies>
@@ -63,6 +64,11 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback-classic.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eluder.coveralls</groupId>
+			<artifactId>coveralls-maven-plugin</artifactId>
+			<version>${coveralls.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -114,8 +120,27 @@
 						</execution>
 					</executions>
 				</plugin>
+				<plugin>
+					<groupId>org.eluder.coveralls</groupId>
+					<artifactId>coveralls-maven-plugin</artifactId>
+					<version>${coveralls.version}</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>jacoco</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
