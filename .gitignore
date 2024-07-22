@@ -2,3 +2,6 @@ target/
 
 # Backup files
 *~
+
+# Notes
+/notes.txt

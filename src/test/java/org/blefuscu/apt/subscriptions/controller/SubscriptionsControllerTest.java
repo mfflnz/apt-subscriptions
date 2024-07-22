@@ -61,5 +61,36 @@ public class SubscriptionsControllerTest {
 		when(orderRepository.findAll()).thenReturn(asList(new Order(), new Order()));
 		assertThat(subscriptionsController.fetchOrders()).size().isEqualTo(2);
 	}
+	
+	@Test
+	public void testFetchOrdersWhenCorrectDateRangeIsProvided() {
+		when(orderRepository.findByDateRange("2024-06-01", "2024-07-01")).thenReturn(asList(new Order()));
+		assertThat(subscriptionsController.fetchOrders("2024-06-01", "2024-07-01")).size().isEqualTo(1);
+	}
+	
+	@Test
+	public void testFetchOrdersWhenStartDateIsMissingShouldThrow() {
+		when(orderRepository.findByDateRange("", "2024-07-01")).thenThrow(new IllegalArgumentException());
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> subscriptionsController.fetchOrders("", "2024-07-01"));
+		assertEquals("Please provide start date", e.getMessage());
+		assertThat(subscriptionsController.fetchOrders()).size().isEqualTo(0);
+	}
+	
+	@Test
+	public void testFetchOrdersWhenEndDateIsMissingShouldThrow() {
+		when(orderRepository.findByDateRange("2024-06-01", "")).thenThrow(new IllegalArgumentException());
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> subscriptionsController.fetchOrders("2024-06-01", ""));
+		assertEquals("Please provide end date", e.getMessage());
+		assertThat(subscriptionsController.fetchOrders()).size().isEqualTo(0);
+	}
+	
+	@Test
+	public void testFetchOrdersWhenIncorrectDateRangeIsProvidedShouldThrow() {
+		when(orderRepository.findByDateRange("2024-07-01", "2024-06-01")).thenThrow(new IllegalArgumentException());
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> subscriptionsController.fetchOrders("2024-07-01", "2024-06-01"));
+		assertEquals("Start date should be earlier than end date", e.getMessage());
+		assertThat(subscriptionsController.fetchOrders()).size().isEqualTo(0);
+	}
+	
 
 }
