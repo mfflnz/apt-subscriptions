@@ -70,6 +70,11 @@
 			<artifactId>coveralls-maven-plugin</artifactId>
 			<version>${coveralls.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>one.gfw</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+			<version>4.0.0.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>
