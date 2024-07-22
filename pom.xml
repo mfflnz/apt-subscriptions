@@ -127,9 +127,9 @@
 					<version>${coveralls.version}</version>
 					<dependencies>
 						<dependency>
-							<groupId>one.gfw</groupId>
-							<artifactId>jakarta.xml.bind-api</artifactId>
-							<version>4.0.0.1</version>
+                            <groupId>javax.xml.bind</groupId>
+                            <artifactId>jaxb-api</artifactId>
+                            <version>2.3.1</version>
 						</dependency>
 					</dependencies>
 				</plugin>
