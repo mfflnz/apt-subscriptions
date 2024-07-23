@@ -7,9 +7,6 @@ import static org.mockito.Mockito.when;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.blefuscu.apt.subscriptions.view.OrderView;
@@ -87,10 +84,15 @@ public class SubscriptionsControllerTest {
 	@Test
 	public void testFetchOrdersWhenIncorrectDateRangeIsProvidedShouldThrow() {
 		when(orderRepository.findByDateRange("2024-07-01", "2024-06-01")).thenThrow(new IllegalArgumentException());
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> subscriptionsController.fetchOrders("2024-07-01", "2024-06-01"));
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> subscriptionsController.fetchOrders("2024-0X-01", "2024-06-01"));
 		assertEquals("Start date should be earlier than end date", e.getMessage());
 		assertThat(subscriptionsController.fetchOrders()).size().isEqualTo(0);
 	}
-	
 
+	@Test
+	public void testFetchOrdersWhenStartDateAndEndDateAreTheSame() {
+		when(orderRepository.findByDateRange("2024-06-01", "2024-06-01")).thenReturn(asList(new Order()));
+		assertThat(subscriptionsController.fetchOrders("2024-06-01", "2024-06-01")).size().isEqualTo(1);
+	}
+	
 }

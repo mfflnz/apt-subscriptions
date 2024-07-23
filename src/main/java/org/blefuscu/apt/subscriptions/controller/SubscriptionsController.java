@@ -1,8 +1,6 @@
 package org.blefuscu.apt.subscriptions.controller;
 
 import java.util.List;
-import java.util.function.IntPredicate;
-
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.blefuscu.apt.subscriptions.view.OrderView;
@@ -28,8 +26,9 @@ public class SubscriptionsController {
 			throw new IllegalArgumentException("Please provide end date");
 		} else if (fromDate.compareTo(toDate) > 0) {
 			throw new IllegalArgumentException("Start date should be earlier than end date");
-		} 
+		}
 		return orderRepository.findByDateRange(fromDate, toDate);
 	}
+
 
 }
