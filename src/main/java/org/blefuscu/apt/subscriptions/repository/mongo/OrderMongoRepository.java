@@ -1,5 +1,7 @@
 package org.blefuscu.apt.subscriptions.repository.mongo;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.blefuscu.apt.subscriptions.model.Order;
@@ -21,8 +23,7 @@ public class OrderMongoRepository implements OrderRepository {
 
 	@Override
 	public List<Order> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
