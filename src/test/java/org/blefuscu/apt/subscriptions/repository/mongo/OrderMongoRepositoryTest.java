@@ -5,7 +5,11 @@ import static org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoReposito
 import static org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoRepository.ORDER_COLLECTION_NAME;
 
 import java.net.InetSocketAddress;
+//import java.util.List;
+//import java.util.stream.Collectors;
+//import java.util.stream.StreamSupport;
 
+import org.blefuscu.apt.subscriptions.model.Order;
 import org.bson.Document;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -58,6 +62,23 @@ public class OrderMongoRepositoryTest {
 	@Test
 	public void testFindAllWhenDatabaseIsEmpty() {
 		assertThat(orderRepository.findAll()).isEmpty();
+	}
+
+	@Test
+	public void testFindAllWhenDatabaseIsNotEmpty() {
+		addTestOrderToDatabase("1", "2024-08-01 00:00:00");
+		addTestOrderToDatabase("2", "2024-08-02 00:00:00");
+		assertThat(orderRepository.findAll()).containsExactly(
+				new Order("1", "2024-08-01 00:00:00"),
+				new Order("2", "2024-08-02 00:00:00"));
+	}
+
+	private void addTestOrderToDatabase(String orderId, String orderDate) {
+		orderCollection.insertOne(
+				new Document()
+				.append("orderId", orderId)
+				.append("orderDate", orderDate));
+
 	}
 
 }

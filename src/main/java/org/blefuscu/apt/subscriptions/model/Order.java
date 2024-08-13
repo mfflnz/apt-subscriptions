@@ -1,12 +1,16 @@
 package org.blefuscu.apt.subscriptions.model;
 
+import java.util.Objects;
+
 public class Order {
 
-	private int orderId;
+	// TODO: orderId as int
+
+	private String orderId;
 	private String orderDate; // formatted as "yyyy-MM-dd HH:mm:ss"
 	private double orderTotal;
 	private String paymentMethodTitle; // e.g. "PayPal", "Credit Card", ...
-	
+
 	private String billingFirstName;
 	private String billingLastName;
 	private String billingCompany;
@@ -18,7 +22,7 @@ public class Order {
 	private String billingCity;
 	private String billingState;
 	private String billingCountry;
-	
+
 	private String shippingFirstName;
 	private String shippingLastName;
 	private String shippingCompany;
@@ -30,23 +34,29 @@ public class Order {
 	private String shippingCity;
 	private String shippingState;
 	private String shippingCountry;
-	
+
 	private String orderAttributionReferrer; // contains human-readable product name
-	
+
 	private String depositDate;
 	private double netOrderTotal;
 	private int firstIssue;
 	private int lastIssue;
 	private String notes;
-	
+
 	public Order() {
 	}
 
-	public int getOrderId() {
+	public Order(String orderId, String orderDate) {
+		this.orderId = orderId;
+		this.orderDate = orderDate;
+
+	}
+
+	public String getOrderId() {
 		return orderId;
 	}
 
-	public void setOrderId(int orderId) {
+	public void setOrderId(String orderId) {
 		this.orderId = orderId;
 	}
 
@@ -297,9 +307,72 @@ public class Order {
 	public void setNotes(String notes) {
 		this.notes = notes;
 	}
-	
-	
-	
-	// equals, hashCode, toString...
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(billingAddress1, billingAddress2, billingCity, billingCompany, billingCountry, billingEmail,
+				billingFirstName, billingLastName, billingPhone, billingPostcode, billingState, depositDate, firstIssue,
+				lastIssue, netOrderTotal, notes, orderAttributionReferrer, orderDate, orderId, orderTotal,
+				paymentMethodTitle, shippingAddress1, shippingAddress2, shippingCity, shippingCompany, shippingCountry,
+				shippingEmail, shippingFirstName, shippingLastName, shippingPhone, shippingPostcode, shippingState);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Order other = (Order) obj;
+		return Objects.equals(billingAddress1, other.billingAddress1)
+				&& Objects.equals(billingAddress2, other.billingAddress2)
+				&& Objects.equals(billingCity, other.billingCity)
+				&& Objects.equals(billingCompany, other.billingCompany)
+				&& Objects.equals(billingCountry, other.billingCountry)
+				&& Objects.equals(billingEmail, other.billingEmail)
+				&& Objects.equals(billingFirstName, other.billingFirstName)
+				&& Objects.equals(billingLastName, other.billingLastName)
+				&& Objects.equals(billingPhone, other.billingPhone)
+				&& Objects.equals(billingPostcode, other.billingPostcode)
+				&& Objects.equals(billingState, other.billingState) && Objects.equals(depositDate, other.depositDate)
+				&& firstIssue == other.firstIssue && lastIssue == other.lastIssue
+				&& Double.doubleToLongBits(netOrderTotal) == Double.doubleToLongBits(other.netOrderTotal)
+				&& Objects.equals(notes, other.notes)
+				&& Objects.equals(orderAttributionReferrer, other.orderAttributionReferrer)
+				&& Objects.equals(orderDate, other.orderDate) && Objects.equals(orderId, other.orderId)
+				&& Double.doubleToLongBits(orderTotal) == Double.doubleToLongBits(other.orderTotal)
+				&& Objects.equals(paymentMethodTitle, other.paymentMethodTitle)
+				&& Objects.equals(shippingAddress1, other.shippingAddress1)
+				&& Objects.equals(shippingAddress2, other.shippingAddress2)
+				&& Objects.equals(shippingCity, other.shippingCity)
+				&& Objects.equals(shippingCompany, other.shippingCompany)
+				&& Objects.equals(shippingCountry, other.shippingCountry)
+				&& Objects.equals(shippingEmail, other.shippingEmail)
+				&& Objects.equals(shippingFirstName, other.shippingFirstName)
+				&& Objects.equals(shippingLastName, other.shippingLastName)
+				&& Objects.equals(shippingPhone, other.shippingPhone)
+				&& Objects.equals(shippingPostcode, other.shippingPostcode)
+				&& Objects.equals(shippingState, other.shippingState);
+	}
+
+	@Override
+	public String toString() {
+		return "Order [orderId=" + orderId + ", orderDate=" + orderDate + ", orderTotal=" + orderTotal
+				+ ", paymentMethodTitle=" + paymentMethodTitle + ", billingFirstName=" + billingFirstName
+				+ ", billingLastName=" + billingLastName + ", billingCompany=" + billingCompany + ", billingEmail="
+				+ billingEmail + ", billingPhone=" + billingPhone + ", billingAddress1=" + billingAddress1
+				+ ", billingAddress2=" + billingAddress2 + ", billingPostcode=" + billingPostcode + ", billingCity="
+				+ billingCity + ", billingState=" + billingState + ", billingCountry=" + billingCountry
+				+ ", shippingFirstName=" + shippingFirstName + ", shippingLastName=" + shippingLastName
+				+ ", shippingCompany=" + shippingCompany + ", shippingEmail=" + shippingEmail + ", shippingPhone="
+				+ shippingPhone + ", shippingAddress1=" + shippingAddress1 + ", shippingAddress2=" + shippingAddress2
+				+ ", shippingPostcode=" + shippingPostcode + ", shippingCity=" + shippingCity + ", shippingState="
+				+ shippingState + ", shippingCountry=" + shippingCountry + ", orderAttributionReferrer="
+				+ orderAttributionReferrer + ", depositDate=" + depositDate + ", netOrderTotal=" + netOrderTotal
+				+ ", firstIssue=" + firstIssue + ", lastIssue=" + lastIssue + ", notes=" + notes + "]";
+	}
+	
+	
 }
