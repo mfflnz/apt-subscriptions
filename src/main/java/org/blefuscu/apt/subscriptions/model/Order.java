@@ -4,9 +4,7 @@ import java.util.Objects;
 
 public class Order {
 
-	// TODO: orderId as int
-
-	private String orderId;
+	private int orderId;
 	private String orderDate; // formatted as "yyyy-MM-dd HH:mm:ss"
 	private double orderTotal;
 	private String paymentMethodTitle; // e.g. "PayPal", "Credit Card", ...
@@ -46,17 +44,17 @@ public class Order {
 	public Order() {
 	}
 
-	public Order(String orderId, String orderDate) {
+	public Order(int orderId, String orderDate) {
 		this.orderId = orderId;
 		this.orderDate = orderDate;
 
 	}
 
-	public String getOrderId() {
+	public int getOrderId() {
 		return orderId;
 	}
 
-	public void setOrderId(String orderId) {
+	public void setOrderId(int orderId) {
 		this.orderId = orderId;
 	}
 

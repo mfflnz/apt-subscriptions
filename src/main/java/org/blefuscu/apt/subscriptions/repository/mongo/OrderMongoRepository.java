@@ -38,7 +38,7 @@ public class OrderMongoRepository implements OrderRepository {
 	}
 
 	private Order fromDocumentToOrder(Document d) {
-		return new Order(""+d.get("orderId"), ""+d.get("orderDate"));
+		return new Order(d.getInteger("orderId"), ""+d.get("orderDate"));
 	}
 
 }
