@@ -5,9 +5,6 @@ import static org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoReposito
 import static org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoRepository.ORDER_COLLECTION_NAME;
 
 import java.net.InetSocketAddress;
-//import java.util.List;
-//import java.util.stream.Collectors;
-//import java.util.stream.StreamSupport;
 
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.bson.Document;
@@ -68,16 +65,27 @@ public class OrderMongoRepositoryTest {
 	public void testFindAllWhenDatabaseIsNotEmpty() {
 		addTestOrderToDatabase(1, "2024-08-01 00:00:00");
 		addTestOrderToDatabase(2, "2024-08-02 00:00:00");
-		assertThat(orderRepository.findAll()).containsExactly(
-				new Order(1, "2024-08-01 00:00:00"),
+		assertThat(orderRepository.findAll()).containsExactly(new Order(1, "2024-08-01 00:00:00"),
 				new Order(2, "2024-08-02 00:00:00"));
 	}
 
+	@Test
+	public void testFindByDateRangeWhenNoOrderIsFound() {
+		addTestOrderToDatabase(1, "2024-08-01 00:00:00");
+		addTestOrderToDatabase(2, "2024-08-02 00:00:00");
+		assertThat(orderRepository.findByDateRange("2024-08-15 00:00:00", "2024-08-16 00:00:00")).isEmpty();
+	}
+
+	@Test
+	public void testFindByDateRangeWhenSomeOrderIsFound() {
+		addTestOrderToDatabase(1, "2024-08-01 00:00:00");
+		addTestOrderToDatabase(2, "2024-08-02 00:00:00");
+		addTestOrderToDatabase(3, "2024-08-03 00:00:00");
+		assertThat(orderRepository.findByDateRange("2024-08-01 00:00:00", "2024-08-02 00:00:00")).containsExactly(new Order(1, "2024-08-01 00:00:00"), new Order(2, "2024-08-02 00:00:00"));
+	}
+
 	private void addTestOrderToDatabase(int orderId, String orderDate) {
-		orderCollection.insertOne(
-				new Document()
-				.append("orderId", orderId)
-				.append("orderDate", orderDate));
+		orderCollection.insertOne(new Document().append("orderId", orderId).append("orderDate", orderDate));
 
 	}
 

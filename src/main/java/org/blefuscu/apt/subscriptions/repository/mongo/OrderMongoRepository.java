@@ -7,9 +7,11 @@ import java.util.stream.StreamSupport;
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 
 public class OrderMongoRepository implements OrderRepository {
 
@@ -33,12 +35,15 @@ public class OrderMongoRepository implements OrderRepository {
 
 	@Override
 	public List<Order> findByDateRange(String fromDate, String toDate) {
-		// TODO Auto-generated method stub
-		return null;
+		Bson filter = Filters.and(Filters.gte("orderDate", fromDate), Filters.lte("orderDate", toDate));
+		return StreamSupport
+				.stream(orderCollection.find(filter).spliterator(), false)
+				.map(this::fromDocumentToOrder)
+				.collect(Collectors.toList());
 	}
 
 	private Order fromDocumentToOrder(Document d) {
-		return new Order(d.getInteger("orderId"), ""+d.get("orderDate"));
+		return new Order(d.getInteger("orderId"), d.getString("orderDate"));
 	}
-
+	
 }
