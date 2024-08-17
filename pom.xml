@@ -27,6 +27,7 @@
 		<coveralls.version>4.3.0</coveralls.version>
 		<mongo-java-driver.version>3.12.10</mongo-java-driver.version>
 		<mongo-java-server.version>1.39.0</mongo-java-server.version>
+		<pitest.version>1.16.1</pitest.version>
 	</properties>
 
 	<dependencies>
@@ -153,6 +154,20 @@
 						</dependency>
 					</dependencies>
 				</plugin>
+				<plugin>
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<version>${pitest.version}</version>
+					<configuration>
+						<targetClasses>
+							<param>org.blefuscu.apt.subscriptions.repository.*</param>
+						</targetClasses>
+						<excludedClasses>
+							<param>org.blefuscu.apt.subscriptions.model.*</param>
+						</excludedClasses>
+					</configuration>
+				</plugin>
+
 			</plugins>
 		</pluginManagement>
 	</build>
