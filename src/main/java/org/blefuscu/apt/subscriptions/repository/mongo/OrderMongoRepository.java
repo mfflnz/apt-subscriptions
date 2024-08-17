@@ -1,5 +1,7 @@
 package org.blefuscu.apt.subscriptions.repository.mongo;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -35,6 +37,14 @@ public class OrderMongoRepository implements OrderRepository {
 
 	@Override
 	public List<Order> findByDateRange(String fromDate, String toDate) {
+
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime fromDateLDT = LocalDateTime.parse(fromDate, dateTimeFormatter);
+		LocalDateTime toDateLDT = LocalDateTime.parse(toDate, dateTimeFormatter);
+		if (fromDateLDT.compareTo(toDateLDT) > 0) {
+			throw new IllegalArgumentException("Error: End date must be later than begin date");
+		}
+		
 		Bson filter = Filters.and(Filters.gte("orderDate", fromDate), Filters.lte("orderDate", toDate));
 		return StreamSupport
 				.stream(orderCollection.find(filter).spliterator(), false)
