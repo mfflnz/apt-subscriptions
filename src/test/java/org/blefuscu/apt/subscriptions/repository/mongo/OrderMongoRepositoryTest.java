@@ -89,7 +89,16 @@ public class OrderMongoRepositoryTest {
 	public void testFindByDateRangeWhenDateRangeIsIncorrect() {
 		assertThatThrownBy(() -> orderRepository.findByDateRange("2024-08-02 00:00:00", "2024-08-01 00:00:00"))
 				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessage("Error: End date must be later than begin date");
+				.hasMessage("Error: End date must be later than start date");
+	}
+	
+	@Test
+	public void testFindByDateRangeWhenStartDateIsEqualToEndDate() {
+		addTestOrderToDatabase(1, "2024-08-01 00:00:00");
+		addTestOrderToDatabase(2, "2024-08-01 00:00:00");
+		assertThat(orderRepository.findByDateRange("2024-08-01 00:00:00", "2024-08-01 00:00:00"))
+				.containsExactly(new Order(1, "2024-08-01 00:00:00"), new Order(2, "2024-08-01 00:00:00"));
+
 	}
 
 	private void addTestOrderToDatabase(int orderId, String orderDate) {

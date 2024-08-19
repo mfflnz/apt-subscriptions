@@ -161,6 +161,7 @@
 					<configuration>
 						<targetClasses>
 							<param>org.blefuscu.apt.subscriptions.repository.*</param>
+							<param>org.blefuscu.apt.subscriptions.controller.*</param>
 						</targetClasses>
 						<excludedClasses>
 							<param>org.blefuscu.apt.subscriptions.model.*</param>

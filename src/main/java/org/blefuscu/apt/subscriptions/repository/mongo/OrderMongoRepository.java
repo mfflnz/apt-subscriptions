@@ -35,6 +35,8 @@ public class OrderMongoRepository implements OrderRepository {
 				.collect(Collectors.toList());
 	}
 
+	// TODO: convert all String dates to LocalDateTime?
+	
 	@Override
 	public List<Order> findByDateRange(String fromDate, String toDate) {
 
@@ -42,7 +44,7 @@ public class OrderMongoRepository implements OrderRepository {
 		LocalDateTime fromDateLDT = LocalDateTime.parse(fromDate, dateTimeFormatter);
 		LocalDateTime toDateLDT = LocalDateTime.parse(toDate, dateTimeFormatter);
 		if (fromDateLDT.compareTo(toDateLDT) > 0) {
-			throw new IllegalArgumentException("Error: End date must be later than begin date");
+			throw new IllegalArgumentException("Error: End date must be later than start date");
 		}
 		
 		Bson filter = Filters.and(Filters.gte("orderDate", fromDate), Filters.lte("orderDate", toDate));

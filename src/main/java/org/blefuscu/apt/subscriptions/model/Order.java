@@ -4,6 +4,8 @@ import java.util.Objects;
 
 public class Order {
 
+	// TODO: orderDate to LocalDateTime
+	
 	private int orderId;
 	private String orderDate; // formatted as "yyyy-MM-dd HH:mm:ss"
 	private double orderTotal;
