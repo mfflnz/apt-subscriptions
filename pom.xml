@@ -26,7 +26,7 @@
 		<jacoco.version>0.8.11</jacoco.version>
 		<coveralls.version>4.3.0</coveralls.version>
 		<mongo-java-driver.version>3.12.10</mongo-java-driver.version>
-		<mongo-java-server.version>1.39.0</mongo-java-server.version>
+		<mongo-java-server.version>1.43.0</mongo-java-server.version>
 		<pitest.version>1.16.1</pitest.version>
 	</properties>
 

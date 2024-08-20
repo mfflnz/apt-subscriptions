@@ -1,7 +1,8 @@
 package org.blefuscu.apt.subscriptions.repository.mongo;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -35,19 +36,15 @@ public class OrderMongoRepository implements OrderRepository {
 				.collect(Collectors.toList());
 	}
 
-	// TODO: convert all String dates to LocalDateTime?
-	
 	@Override
-	public List<Order> findByDateRange(String fromDate, String toDate) {
+	public List<Order> findByDateRange(LocalDateTime fromDate, LocalDateTime toDate) {
 
-		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		LocalDateTime fromDateLDT = LocalDateTime.parse(fromDate, dateTimeFormatter);
-		LocalDateTime toDateLDT = LocalDateTime.parse(toDate, dateTimeFormatter);
-		if (fromDateLDT.compareTo(toDateLDT) > 0) {
+		if (fromDate.compareTo(toDate) > 0) {
 			throw new IllegalArgumentException("Error: End date must be later than start date");
 		}
 		
 		Bson filter = Filters.and(Filters.gte("orderDate", fromDate), Filters.lte("orderDate", toDate));
+		
 		return StreamSupport
 				.stream(orderCollection.find(filter).spliterator(), false)
 				.map(this::fromDocumentToOrder)
@@ -55,7 +52,9 @@ public class OrderMongoRepository implements OrderRepository {
 	}
 
 	private Order fromDocumentToOrder(Document d) {
-		return new Order(d.getInteger("orderId"), d.getString("orderDate"));
+		return new Order(d.getInteger("orderId"), d.get("orderDate", Date.class).toInstant()
+		  .atZone(ZoneId.of("UTC"))
+		  .toLocalDateTime());
 	}
-	
+
 }

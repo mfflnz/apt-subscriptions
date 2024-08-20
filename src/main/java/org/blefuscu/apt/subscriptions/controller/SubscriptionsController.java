@@ -1,5 +1,6 @@
 package org.blefuscu.apt.subscriptions.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
@@ -19,11 +20,11 @@ public class SubscriptionsController {
 		return orderRepository.findAll();
 	}
 
-	public List<Order> fetchOrders(String fromDate, String toDate) {
-		if (fromDate.compareTo("") == 0) {
-			throw new IllegalArgumentException("Please provide start date");
-		} else if (toDate.compareTo("") == 0) {
-			throw new IllegalArgumentException("Please provide end date");
+	public List<Order> fetchOrders(LocalDateTime fromDate, LocalDateTime toDate) {
+		if (fromDate == null) {
+			throw new NullPointerException("Please provide start date");
+		} else if (toDate == null) {
+			throw new NullPointerException("Please provide end date");
 		} else if (fromDate.compareTo(toDate) > 0) {
 			throw new IllegalArgumentException("Start date should be earlier than end date");
 		}

@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
@@ -61,38 +64,38 @@ public class SubscriptionsControllerTest {
 	
 	@Test
 	public void testFetchOrdersWhenCorrectDateRangeIsProvided() {
-		when(orderRepository.findByDateRange("2024-06-01", "2024-07-01")).thenReturn(asList(new Order()));
-		assertThat(subscriptionsController.fetchOrders("2024-06-01", "2024-07-01")).size().isEqualTo(1);
+		when(orderRepository.findByDateRange(LocalDateTime.of(2024, 6, 1, 0, 0, 0), LocalDateTime.of(2024, 7, 1, 0, 0, 0))).thenReturn(asList(new Order()));
+		assertThat(subscriptionsController.fetchOrders(LocalDateTime.of(2024, 6, 1, 0, 0, 0), LocalDateTime.of(2024, 7, 1, 0, 0, 0))).size().isEqualTo(1);
 	}
 	
 	@Test
 	public void testFetchOrdersWhenStartDateIsMissingShouldThrow() {
-		when(orderRepository.findByDateRange("", "2024-07-01")).thenThrow(new IllegalArgumentException());
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> subscriptionsController.fetchOrders("", "2024-07-01"));
+		when(orderRepository.findByDateRange(null, LocalDateTime.of(2024, 7, 1, 0, 0, 0))).thenThrow(new IllegalArgumentException());
+		NullPointerException e = assertThrows(NullPointerException.class, () -> subscriptionsController.fetchOrders(null, LocalDateTime.of(2024, 7, 1, 0, 0, 0)));
 		assertEquals("Please provide start date", e.getMessage());
 		assertThat(subscriptionsController.fetchOrders()).size().isEqualTo(0);
 	}
 	
 	@Test
 	public void testFetchOrdersWhenEndDateIsMissingShouldThrow() {
-		when(orderRepository.findByDateRange("2024-06-01", "")).thenThrow(new IllegalArgumentException());
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> subscriptionsController.fetchOrders("2024-06-01", ""));
+		when(orderRepository.findByDateRange(LocalDateTime.of(2024, 6, 1, 0, 0, 0), null)).thenThrow(new IllegalArgumentException());
+		NullPointerException e = assertThrows(NullPointerException.class, () -> subscriptionsController.fetchOrders(LocalDateTime.of(2024, 6, 1, 0, 0, 0), null));
 		assertEquals("Please provide end date", e.getMessage());
 		assertThat(subscriptionsController.fetchOrders()).size().isEqualTo(0);
 	}
 	
 	@Test
 	public void testFetchOrdersWhenIncorrectDateRangeIsProvidedShouldThrow() {
-		when(orderRepository.findByDateRange("2024-07-01", "2024-06-01")).thenThrow(new IllegalArgumentException());
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> subscriptionsController.fetchOrders("2024-0X-01", "2024-06-01"));
+		when(orderRepository.findByDateRange(LocalDateTime.of(2024, 7, 1, 0, 0, 0), LocalDateTime.of(2024, 6, 1, 0, 0, 0))).thenThrow(new IllegalArgumentException());
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> subscriptionsController.fetchOrders(LocalDateTime.of(2024, 7, 1, 0, 0, 0), LocalDateTime.of(2024, 6, 1, 0, 0, 0)));
 		assertEquals("Start date should be earlier than end date", e.getMessage());
 		assertThat(subscriptionsController.fetchOrders()).size().isEqualTo(0);
 	}
 
 	@Test
 	public void testFetchOrdersWhenStartDateAndEndDateAreTheSame() {
-		when(orderRepository.findByDateRange("2024-06-01", "2024-06-01")).thenReturn(asList(new Order()));
-		assertThat(subscriptionsController.fetchOrders("2024-06-01", "2024-06-01")).size().isEqualTo(1);
+		when(orderRepository.findByDateRange(LocalDateTime.of(2024, 6, 1, 0, 0, 0), LocalDateTime.of(2024, 6, 1, 0, 0, 0))).thenReturn(asList(new Order()));
+		assertThat(subscriptionsController.fetchOrders(LocalDateTime.of(2024, 6, 1, 0, 0, 0), LocalDateTime.of(2024, 6, 1, 0, 0, 0))).size().isEqualTo(1);
 	}
 	
 }

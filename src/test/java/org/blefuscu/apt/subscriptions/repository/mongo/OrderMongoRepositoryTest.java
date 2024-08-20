@@ -5,6 +5,7 @@ import static org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoReposito
 import static org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoRepository.ORDER_COLLECTION_NAME;
 
 import java.net.InetSocketAddress;
+import java.time.LocalDateTime;
 
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.bson.Document;
@@ -63,47 +64,51 @@ public class OrderMongoRepositoryTest {
 
 	@Test
 	public void testFindAllWhenDatabaseIsNotEmpty() {
-		addTestOrderToDatabase(1, "2024-08-01 00:00:00");
-		addTestOrderToDatabase(2, "2024-08-02 00:00:00");
-		assertThat(orderRepository.findAll()).containsExactly(new Order(1, "2024-08-01 00:00:00"),
-				new Order(2, "2024-08-02 00:00:00"));
+		addTestOrderToDatabase(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		addTestOrderToDatabase(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0));
+		assertThat(orderRepository.findAll()).containsExactly(new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0)),
+				new Order(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0)));
 	}
-
+	
 	@Test
 	public void testFindByDateRangeWhenNoOrderIsFound() {
-		addTestOrderToDatabase(1, "2024-08-01 00:00:00");
-		addTestOrderToDatabase(2, "2024-08-02 00:00:00");
-		assertThat(orderRepository.findByDateRange("2024-08-15 00:00:00", "2024-08-16 00:00:00")).isEmpty();
+		addTestOrderToDatabase(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		addTestOrderToDatabase(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0));      // Find all documents
+		assertThat(orderRepository.findByDateRange(LocalDateTime.of(2024, 8, 15, 0, 0, 0),
+				LocalDateTime.of(2024, 8, 16, 0, 0, 0))).isEmpty();
 	}
 
 	@Test
 	public void testFindByDateRangeWhenSomeOrderIsFound() {
-		addTestOrderToDatabase(1, "2024-08-01 00:00:00");
-		addTestOrderToDatabase(2, "2024-08-02 00:00:00");
-		addTestOrderToDatabase(3, "2024-08-03 00:00:00");
-		assertThat(orderRepository.findByDateRange("2024-08-01 00:00:00", "2024-08-02 00:00:00"))
-				.containsExactly(new Order(1, "2024-08-01 00:00:00"), new Order(2, "2024-08-02 00:00:00"));
+		addTestOrderToDatabase(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		addTestOrderToDatabase(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0));
+		addTestOrderToDatabase(3, LocalDateTime.of(2024, 8, 3, 0, 0, 0));
+		assertThat(orderRepository.findByDateRange(LocalDateTime.of(2024, 8, 1, 0, 0, 0),
+				LocalDateTime.of(2024, 8, 2, 0, 0, 0)))
+				.containsExactly(new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0)),
+						new Order(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0)));
 	}
 
 	@Test
 	public void testFindByDateRangeWhenDateRangeIsIncorrect() {
-		assertThatThrownBy(() -> orderRepository.findByDateRange("2024-08-02 00:00:00", "2024-08-01 00:00:00"))
-				.isInstanceOf(IllegalArgumentException.class)
+		assertThatThrownBy(() -> orderRepository.findByDateRange(LocalDateTime.of(2024, 8, 2, 0, 0, 0),
+				LocalDateTime.of(2024, 8, 1, 0, 0, 0))).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Error: End date must be later than start date");
 	}
-	
+
 	@Test
 	public void testFindByDateRangeWhenStartDateIsEqualToEndDate() {
-		addTestOrderToDatabase(1, "2024-08-01 00:00:00");
-		addTestOrderToDatabase(2, "2024-08-01 00:00:00");
-		assertThat(orderRepository.findByDateRange("2024-08-01 00:00:00", "2024-08-01 00:00:00"))
-				.containsExactly(new Order(1, "2024-08-01 00:00:00"), new Order(2, "2024-08-01 00:00:00"));
+		addTestOrderToDatabase(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		addTestOrderToDatabase(2, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		assertThat(orderRepository.findByDateRange(LocalDateTime.of(2024, 8, 1, 0, 0, 0),
+				LocalDateTime.of(2024, 8, 1, 0, 0, 0)))
+				.containsExactly(new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0)),
+						new Order(2, LocalDateTime.of(2024, 8, 1, 0, 0, 0)));
 
 	}
 
-	private void addTestOrderToDatabase(int orderId, String orderDate) {
+	private void addTestOrderToDatabase(int orderId, LocalDateTime orderDate) {
 		orderCollection.insertOne(new Document().append("orderId", orderId).append("orderDate", orderDate));
-
 	}
 
 }

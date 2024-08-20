@@ -1,13 +1,12 @@
 package org.blefuscu.apt.subscriptions.model;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Order {
 
-	// TODO: orderDate to LocalDateTime
-	
 	private int orderId;
-	private String orderDate; // formatted as "yyyy-MM-dd HH:mm:ss"
+	private LocalDateTime orderDate; // should be formatted as "yyyy-MM-dd HH:mm:ss"
 	private double orderTotal;
 	private String paymentMethodTitle; // e.g. "PayPal", "Credit Card", ...
 
@@ -46,7 +45,7 @@ public class Order {
 	public Order() {
 	}
 
-	public Order(int orderId, String orderDate) {
+	public Order(int orderId, LocalDateTime orderDate) {
 		this.orderId = orderId;
 		this.orderDate = orderDate;
 
@@ -60,11 +59,11 @@ public class Order {
 		this.orderId = orderId;
 	}
 
-	public String getOrderDate() {
+	public LocalDateTime getOrderDate() {
 		return orderDate;
 	}
 
-	public void setOrderDate(String orderDate) {
+	public void setOrderDate(LocalDateTime orderDate) {
 		this.orderDate = orderDate;
 	}
 
