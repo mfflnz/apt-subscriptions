@@ -28,6 +28,8 @@
 		<mongo-java-driver.version>3.12.10</mongo-java-driver.version>
 		<mongo-java-server.version>1.43.0</mongo-java-server.version>
 		<pitest.version>1.16.1</pitest.version>
+		<build-helper.version>3.0.0</build-helper.version>
+		<testcontainers.version>1.20.1</testcontainers.version>
 	</properties>
 
 	<dependencies>
@@ -91,7 +93,17 @@
 			<artifactId>coveralls-maven-plugin</artifactId>
 			<version>${coveralls.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>build-helper-maven-plugin</artifactId>
+			<version>${build-helper.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers</artifactId>
+			<version>${testcontainers.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -99,6 +111,25 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>${build-helper.version}</version>
+				<executions>
+					<execution>
+						<id>add-test-source</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/it/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<pluginManagement>
@@ -169,7 +200,10 @@
 					</configuration>
 				</plugin>
 
+
 			</plugins>
+
+
 		</pluginManagement>
 	</build>
 
