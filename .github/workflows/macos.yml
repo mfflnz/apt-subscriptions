@@ -4,13 +4,13 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: macos-latest 
     strategy:
       matrix:
         java: [ 8, 11, 17 ]
       fail-fast: false
-        
-    name: Build with Java ${{ matrix.java }} on Windows
+
+    name: Build with Java ${{ matrix.java }} on macOS
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK ${{ matrix.java }}
@@ -21,5 +21,5 @@ jobs:
     - name: Build with Maven
       run: >
         mvn clean verify
-        -Pjacoco -X
-        org.pitest:pitest-maven:mutationCoverage
+        -Pjacoco -X org.pitest:pitest-maven:mutationCoverage
+      

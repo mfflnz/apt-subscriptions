@@ -4,17 +4,13 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest 
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        java: [ 8, 11 ]
-        exclude:
-        - os: macos-latest
-          java: 8
+        java: [ 8, 11, 17 ]
       fail-fast: false
 
-    name: Build with Java ${{ matrix.java }} on ${{ matrix.os }}
+    name: Build with Java ${{ matrix.java }} on Linux
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK ${{ matrix.java }}
