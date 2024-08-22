@@ -7,7 +7,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        java: [ 8, 11 ]
+        java: [ 8 ]
         
     name: Build with Java ${{ matrix.java }} on Windows
     steps:
@@ -18,4 +18,7 @@ jobs:
         java-version: ${{ matrix.java }}
         distribution: temurin
     - name: Build with Maven
-      run: mvn clean verify
+      run: >
+        mvn clean verify
+        -Pjacoco 
+        org.pitest:pitest-maven:mutationCoverage

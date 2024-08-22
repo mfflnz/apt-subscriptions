@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 import org.blefuscu.apt.subscriptions.model.Order;
 
+import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.bson.Document;
 import org.junit.After;
 import org.junit.Before;

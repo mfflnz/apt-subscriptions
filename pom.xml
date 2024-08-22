@@ -30,7 +30,7 @@
 		<pitest.version>1.16.1</pitest.version>
 		<build-helper.version>3.0.0</build-helper.version>
 		<testcontainers.version>1.20.1</testcontainers.version>
-		<failsafe.version>2.22.1</failsafe.version>
+		<failsafe.version>3.4.0</failsafe.version>
 	</properties>
 
 	<dependencies>
