@@ -29,6 +29,5 @@ jobs:
         mvn clean verify
         -Pjacoco -DrepoToken=$COVERALLS_REPO_TOKEN coveralls:report
         -X org.pitest:pitest-maven:mutationCoverage
-      working-directory: /
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
