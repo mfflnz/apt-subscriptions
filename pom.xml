@@ -261,7 +261,7 @@
 						<configuration>
 							<showLogs>true</showLogs>
 							<verbose>build</verbose>
-							<dockerHost>http://localhost:2375</dockerHost>
+							<dockerHost>http://127.0.0.1:2375</dockerHost>
 							<useColor>true</useColor>
 
 							<images>
