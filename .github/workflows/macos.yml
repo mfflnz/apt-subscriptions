@@ -4,7 +4,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest-xlarge
+    runs-on: macos-12
     strategy:
       matrix:
         java: [ 11, 17 ]
@@ -29,5 +29,5 @@ jobs:
     - name: Build with Maven
       run: >
         mvn clean verify
-        -Pdocker,jacoco
+        -Pdocker,jacoco -X
         org.pitest:pitest-maven:mutationCoverage      
