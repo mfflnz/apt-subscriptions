@@ -261,6 +261,9 @@
 						<configuration>
 							<showLogs>true</showLogs>
 							<verbose>build</verbose>
+							<dockerHost>http://localhost:2375</dockerHost>
+							<useColor>true</useColor>
+
 							<images>
 								<image>
 									<name>mongo:4.4.3</name>
