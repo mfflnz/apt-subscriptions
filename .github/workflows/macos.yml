@@ -4,11 +4,13 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest 
+    runs-on: macos-latest
     strategy:
       matrix:
         java: [ 11, 17 ]
       fail-fast: false
+  env:
+    DOCKER_HOST: tcp://localhost:2375
 
     name: Build with Java ${{ matrix.java }} on macOS
     steps:
