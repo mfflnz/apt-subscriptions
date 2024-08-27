@@ -31,6 +31,7 @@
 		<build-helper.version>3.0.0</build-helper.version>
 		<testcontainers.version>1.20.1</testcontainers.version>
 		<failsafe.version>3.4.0</failsafe.version>
+		<docker-maven-plugin.version>0.40.2</docker-maven-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -111,7 +112,7 @@
 			<version>${testcontainers.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>
@@ -216,9 +217,17 @@
 							<param>org.blefuscu.apt.subscriptions.repository.*</param>
 							<param>org.blefuscu.apt.subscriptions.controller.*</param>
 						</targetClasses>
+						<targetTests>
+							<param>org.blefuscu.apt.subscriptions.repository.mongo.*</param>
+							<param>org.blefuscu.apt.subscriptions.controller.*</param>
+						</targetTests>
 						<excludedClasses>
 							<param>org.blefuscu.apt.subscriptions.model.*</param>
 						</excludedClasses>
+						<mutators>
+							<mutator>DEFAULTS</mutator>
+						</mutators>
+						<mutationThreshold>90</mutationThreshold>
 					</configuration>
 				</plugin>
 
@@ -240,7 +249,53 @@
 				</plugins>
 			</build>
 		</profile>
-
+		<profile>
+			<id>docker</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>${docker-maven-plugin.version}</version>
+						<configuration>
+							<showLogs>true</showLogs>
+							<verbose>build</verbose>
+							<images>
+								<image>
+									<name>java-hello-java</name>
+									<build>
+										<contextDir>${project.basedir}</contextDir>
+									</build>
+									<run>
+										<wait>
+											<log>Hello World!</log>
+											<time>10000</time>
+										</wait>
+									</run>
+								</image>
+							</images>
+						</configuration>
+						<executions>
+							<execution>
+								<id>docker-build-image</id>
+								<phase>package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>docker-verify</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>start</goal>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 </project>
