@@ -7,7 +7,7 @@ jobs:
     runs-on: macos-latest 
     strategy:
       matrix:
-        java: [ 8, 11, 17 ]
+        java: [ 11, 17 ]
       fail-fast: false
 
     name: Build with Java ${{ matrix.java }} on macOS
@@ -27,4 +27,7 @@ jobs:
     - name: Install Docker
       uses: docker-practice/actions-setup-docker@master
     - name: Build with Maven
-      run: mvn clean verify -Pdocker,jacoco org.pitest:pitest-maven:mutationCoverage      
+      run: >
+        mvn clean verify
+        -Pdocker,jacoco
+        org.pitest:pitest-maven:mutationCoverage      
