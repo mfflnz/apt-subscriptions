@@ -4,7 +4,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-12
     strategy:
       matrix:
         java: [ 11, 17 ]
@@ -26,8 +26,6 @@ jobs:
         restore-keys: ${{ runner.os }}-m2-
     - name: Install Docker
       uses: docker-practice/actions-setup-docker@master
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
     - name: Build with Maven
       run: >
         mvn clean verify
