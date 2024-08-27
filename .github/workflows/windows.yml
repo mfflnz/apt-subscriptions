@@ -4,7 +4,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2019
+    runs-on: windows-latest
     strategy:
       matrix:
         java: [ 8, 11, 17 ]
@@ -31,7 +31,7 @@ jobs:
         sc config docker
         binpath="dockerd.exe --run-service -H tcp://localhost:2375"
     - name: Docker restart
-      run: restart-service *docker*
+      run: restart-service docker
     - name: Docker info
       run: docker info
     - name: Build with Maven
