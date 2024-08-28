@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-2004, ubuntu-2204, ubuntu-latest ]
+        os: [ ubuntu-latest ]
         java: [ 8, 11, 17 ]
       fail-fast: false
 

@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2019, windows-latest ]
+        os: [ windows-latest ]
         java: [ 8, 11, 17 ]
       fail-fast: false
     env:
@@ -31,7 +31,10 @@ jobs:
       run: >
         sc config docker
         binpath="dockerd.exe --run-service -H tcp://localhost:2375 -H npipe://"
-
+    - name: Docker stop
+      run: net stop docker
+    - name: Docker start
+      run: net start docker
     - name: Docker info
       run: docker info
     - name: Build with Maven
