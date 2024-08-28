@@ -5,7 +5,12 @@ import static org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoReposito
 import static org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoRepository.ORDER_COLLECTION_NAME;
 
 import java.net.InetSocketAddress;
+import java.util.Date;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.bson.Document;
@@ -105,6 +110,37 @@ public class OrderMongoRepositoryTest {
 				.containsExactly(new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0)),
 						new Order(2, LocalDateTime.of(2024, 8, 1, 0, 0, 0)));
 
+	}
+	
+	@Test
+	public void testFindByIdNotFound() {
+		assertThat(orderRepository.findById(1)).isNull();
+	}
+	
+	@Test
+	public void testFindByIdFound() {
+		addTestOrderToDatabase(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		assertThat(orderRepository.findById(1)).isEqualTo(new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0)));
+	}
+	
+	@Test
+	public void testSave() {
+		Order order = new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		orderRepository.save(order);
+		assertThat(readAllOrdersFromDatabase()).containsExactly(order);
+	}
+
+	@Test
+	public void testDelete() {
+		addTestOrderToDatabase(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		orderRepository.delete(1);
+		assertThat(readAllOrdersFromDatabase()).isEmpty();
+	}
+
+	private List<Order> readAllOrdersFromDatabase() {
+		return StreamSupport.stream(orderCollection.find().spliterator(), false)
+				.map(d -> new Order(d.getInteger("orderId"), d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime()))
+				.collect(Collectors.toList());
 	}
 
 	private void addTestOrderToDatabase(int orderId, LocalDateTime orderDate) {

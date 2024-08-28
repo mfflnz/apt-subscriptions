@@ -31,5 +31,14 @@ public class SubscriptionsController {
 		return orderRepository.findByDateRange(fromDate, toDate);
 	}
 
+	public void newOrder(Order order) {
+		Order existingOrder = orderRepository.findById(order.getOrderId());
+		if (existingOrder != null) {
+			orderView.showError("Already existing order with id " + order.getOrderId(), existingOrder);
+			return;
+		}
+		orderRepository.save(order);
+		orderView.orderAdded(order);
+	}
 
 }

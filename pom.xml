@@ -261,7 +261,6 @@
 						<configuration>
 							<showLogs>true</showLogs>
 							<verbose>build</verbose>
-							<dockerHost>unix:///var/run/docker.sock</dockerHost>
 							<useColor>true</useColor>
 
 							<images>

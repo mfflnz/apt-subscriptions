@@ -7,10 +7,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.blefuscu.apt.subscriptions.model.Order;
 
-import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.bson.Document;
 import org.junit.After;
 import org.junit.Before;
@@ -40,21 +44,21 @@ public class OrderMongoRepositoryTestcontainersIT {
 		database.drop();
 		orderCollection = database.getCollection(ORDER_COLLECTION_NAME);
 	}
-	
+
 	@After
 	public void tearDown() {
 		client.close();
 	}
-	
+
 	@Test
 	public void testFindAll() {
 		addTestOrderToDatabase(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
 		addTestOrderToDatabase(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0));
 		assertThat(orderRepository.findAll()).containsExactly(new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0)),
 				new Order(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0)));
-		
+
 	}
-	
+
 	@Test
 	public void testFindByDateRange() {
 		addTestOrderToDatabase(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
@@ -64,16 +68,16 @@ public class OrderMongoRepositoryTestcontainersIT {
 				LocalDateTime.of(2024, 8, 2, 0, 0, 0)))
 				.containsExactly(new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0)),
 						new Order(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0)));
-		
+
 	}
-	
+
 	@Test
 	public void testFindByDateRangeWhenDateRangeIsIncorrect() {
 		assertThatThrownBy(() -> orderRepository.findByDateRange(LocalDateTime.of(2024, 8, 2, 0, 0, 0),
 				LocalDateTime.of(2024, 8, 1, 0, 0, 0))).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Error: End date must be later than start date");
 	}
-	
+
 	@Test
 	public void testFindByDateRangeWhenStartDateIsEqualToEndDate() {
 		addTestOrderToDatabase(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
@@ -85,11 +89,36 @@ public class OrderMongoRepositoryTestcontainersIT {
 
 	}
 
+	@Test
+	public void testFindById() {
+		addTestOrderToDatabase(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		addTestOrderToDatabase(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0));
+		assertThat(orderRepository.findById(2)).isEqualTo(new Order(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0)));
+	}
+
+	@Test
+	public void testSave() {
+		Order order = new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		orderRepository.save(order);
+		assertThat(readAllOrdersFromDatabase()).containsExactly(order);
+	}
+
+	@Test
+	public void testDelete() {
+		addTestOrderToDatabase(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		orderRepository.delete(1);
+		assertThat(readAllOrdersFromDatabase()).isEmpty();
+	}
+
 	private void addTestOrderToDatabase(int orderId, LocalDateTime orderDate) {
 		orderCollection.insertOne(new Document().append("orderId", orderId).append("orderDate", orderDate));
 	}
-	
-	
-	// TODO: pitest fail on macos
+
+	private List<Order> readAllOrdersFromDatabase() {
+		return StreamSupport.stream(orderCollection.find().spliterator(), false)
+				.map(d -> new Order(d.getInteger("orderId"),
+						d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime()))
+				.collect(Collectors.toList());
+	}
 
 }

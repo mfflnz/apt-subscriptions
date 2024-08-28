@@ -23,16 +23,12 @@ public class OrderMongoRepository implements OrderRepository {
 	private MongoCollection<Document> orderCollection;
 
 	public OrderMongoRepository(MongoClient client) {
-		orderCollection = client
-				.getDatabase(SUBSCRIPTIONS_DB_NAME)
-				.getCollection(ORDER_COLLECTION_NAME);
+		orderCollection = client.getDatabase(SUBSCRIPTIONS_DB_NAME).getCollection(ORDER_COLLECTION_NAME);
 	}
 
 	@Override
 	public List<Order> findAll() {
-		return StreamSupport
-				.stream(orderCollection.find().spliterator(), false)
-				.map(this::fromDocumentToOrder)
+		return StreamSupport.stream(orderCollection.find().spliterator(), false).map(this::fromDocumentToOrder)
 				.collect(Collectors.toList());
 	}
 
@@ -42,19 +38,35 @@ public class OrderMongoRepository implements OrderRepository {
 		if (fromDate.compareTo(toDate) > 0) {
 			throw new IllegalArgumentException("Error: End date must be later than start date");
 		}
-		
+
 		Bson filter = Filters.and(Filters.gte("orderDate", fromDate), Filters.lte("orderDate", toDate));
-		
-		return StreamSupport
-				.stream(orderCollection.find(filter).spliterator(), false)
-				.map(this::fromDocumentToOrder)
+
+		return StreamSupport.stream(orderCollection.find(filter).spliterator(), false).map(this::fromDocumentToOrder)
 				.collect(Collectors.toList());
 	}
 
 	private Order fromDocumentToOrder(Document d) {
-		return new Order(d.getInteger("orderId"), d.get("orderDate", Date.class).toInstant()
-		  .atZone(ZoneId.of("UTC"))
-		  .toLocalDateTime());
+		return new Order(d.getInteger("orderId"),
+				d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime());
+	}
+
+	@Override
+	public void save(Order order) {
+		orderCollection.insertOne(
+				new Document().append("orderId", order.getOrderId()).append("orderDate", order.getOrderDate()));
+	}
+
+	@Override
+	public void delete(int id) {
+		orderCollection.deleteOne(Filters.eq("orderId", id));
+	}
+
+	@Override
+	public Order findById(int id) {
+		Document d = orderCollection.find(Filters.eq("orderId", id)).first();
+		if (d != null)
+			return fromDocumentToOrder(d);
+		return null;
 	}
 
 }

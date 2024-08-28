@@ -3,7 +3,12 @@ package org.blefuscu.apt.subscriptions.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.ignoreStubs;
+import static org.mockito.Mockito.inOrder;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +21,9 @@ import org.blefuscu.apt.subscriptions.view.OrderView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public class SubscriptionsControllerTest {
@@ -98,4 +105,23 @@ public class SubscriptionsControllerTest {
 		assertThat(subscriptionsController.fetchOrders(LocalDateTime.of(2024, 6, 1, 0, 0, 0), LocalDateTime.of(2024, 6, 1, 0, 0, 0))).size().isEqualTo(1);
 	}
 	
+	@Test
+	public void testNewOrderWhenOrderDoesNotAlreadyExist() {
+		Order order = new Order(1, LocalDateTime.of(2024, 8, 28, 0, 0, 0));
+		when(orderRepository.findById(1)).thenReturn(null);
+		subscriptionsController.newOrder(order);
+		InOrder inOrder = inOrder(orderRepository, orderView);
+		inOrder.verify(orderRepository).save(order);
+		inOrder.verify(orderView).orderAdded(order);
+	}
+
+	@Test
+	public void testNewOrderWhenOrderAlreadyExists() {
+		Order orderToAdd = new Order(1, LocalDateTime.of(2024, 8, 28, 0, 0, 0));
+		Order existingOrder = new Order(1, LocalDateTime.of(2024, 8, 29, 0, 0, 0));
+		when(orderRepository.findById(1)).thenReturn(existingOrder);
+		subscriptionsController.newOrder(orderToAdd);
+		verify(orderView).showError("Already existing order with id 1", existingOrder);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
 }
