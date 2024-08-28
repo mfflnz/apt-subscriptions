@@ -4,13 +4,14 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest 
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: [ ubuntu-2004, ubuntu-2204, ubuntu-latest ]
         java: [ 8, 11, 17 ]
       fail-fast: false
 
-    name: Build with Java ${{ matrix.java }} on Linux
+    name: Build with Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK ${{ matrix.java }}
@@ -27,7 +28,7 @@ jobs:
     - name: Build with Maven
       run: >
         mvn clean verify
-        -Pjacoco -DrepoToken=$COVERALLS_REPO_TOKEN coveralls:report
+        -Pdocker,jacoco -DrepoToken=$COVERALLS_REPO_TOKEN coveralls:report
         -X org.pitest:pitest-maven:mutationCoverage
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
