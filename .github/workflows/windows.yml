@@ -30,11 +30,13 @@ jobs:
     - name: Docker config
       run: >
         sc config docker
-        binpath="dockerd.exe --run-service -H tcp://localhost:2375"
+        binpath="dockerd.exe --run-service -H tcp://localhost:2375 -H npipe://"
+    - name: Docker stop
+      run: net stop docker
+    - name: Docker start
+      run: net start docker
     - name: Docker info
       run: docker info
-    - name: Docker restart
-      run: restart-service *docker*
     - name: Build with Maven
       run: >
         mvn clean verify
