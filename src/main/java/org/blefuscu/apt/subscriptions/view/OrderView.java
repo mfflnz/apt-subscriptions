@@ -6,4 +6,8 @@ public interface OrderView {
 
 	void orderAdded(Order order);
 
+	void showError(String string, Order existingOrder);
+
+	void orderRemoved(Order orderToDelete);
+
 }

@@ -1,6 +1,7 @@
 package org.blefuscu.apt.subscriptions.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.in;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -122,6 +123,25 @@ public class SubscriptionsControllerTest {
 		when(orderRepository.findById(1)).thenReturn(existingOrder);
 		subscriptionsController.newOrder(orderToAdd);
 		verify(orderView).showError("Already existing order with id 1", existingOrder);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+	
+	@Test
+	public void testDeleteOrderWhenOrderExists() {
+		Order orderToDelete = new Order(1, LocalDateTime.of(2024, 8, 29, 0, 0, 0));
+		when(orderRepository.findById(1)).thenReturn(orderToDelete);
+		subscriptionsController.deleteOrder(orderToDelete);
+		InOrder inOrder = inOrder(orderRepository, orderView);
+		inOrder.verify(orderRepository).delete(1);
+		inOrder.verify(orderView).orderRemoved(orderToDelete);
+	}
+	
+	@Test
+	public void testDeleteOrderWhenOrderDoesNotExist() {
+		Order orderToDelete = new Order(1, LocalDateTime.of(2024, 8, 29, 0, 0, 0));
+		when(orderRepository.findById(1)).thenReturn(null);
+		subscriptionsController.deleteOrder(orderToDelete);
+		verify(orderView).showError("No existing order with id 1", orderToDelete);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 }

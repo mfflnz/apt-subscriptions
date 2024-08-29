@@ -41,4 +41,13 @@ public class SubscriptionsController {
 		orderView.orderAdded(order);
 	}
 
+	public void deleteOrder(Order orderToDelete) {
+		if (orderRepository.findById(orderToDelete.getOrderId()) == null) {
+			orderView.showError("No existing order with id " + orderToDelete.getOrderId(), orderToDelete);
+			return;
+		}
+		orderRepository.delete(orderToDelete.getOrderId());
+		orderView.orderRemoved(orderToDelete);
+	}
+
 }
