@@ -28,10 +28,12 @@ public class SubscriptionsControllerIT {
 	
 	private AutoCloseable closeable;
 	
+	private static int mongoPort = Integer.parseInt(System.getProperty("mongo.port", "27017"));
+
 	@Before
 	public void setUp() throws Exception {
 		closeable = MockitoAnnotations.openMocks(this);
-		orderRepository = new OrderMongoRepository(new MongoClient("localhost"));
+		orderRepository = new OrderMongoRepository(new MongoClient("localhost", mongoPort));
 		for (Order order : orderRepository.findAll()) {
 			orderRepository.delete(order.getOrderId());
 		}

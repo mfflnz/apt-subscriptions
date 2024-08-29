@@ -12,8 +12,6 @@ jobs:
         os: [ ubuntu-latest ]
         java: [ 8, 11, 17 ]
       fail-fast: false
-    env:
-      DOCKER_HOST: unix:///var/run/docker.sock
 
     name: Build with Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:
