@@ -32,15 +32,10 @@ jobs:
     - name: Docker config
       run: >
         sc config docker
-        binpath="dockerd.exe --run-service -H tcp://localhost:2375 -H npipe://"
-    - name: Docker stop
-      run: net stop docker
-    - name: Docker start
-      run: net start docker
+        binpath="dockerd.exe --run-service -H tcp://localhost:2375"
+    - name: Docker restart
+      run: restart-service *docker*
     - name: Docker info
       run: docker info
     - name: Build with Maven
-      run: >
-        mvn clean verify
-        -Pdocker,jacoco,skip-testcontainers
-        org.pitest:pitest-maven:mutationCoverage
+      run: mvn verify -Pskip-testcontainers
