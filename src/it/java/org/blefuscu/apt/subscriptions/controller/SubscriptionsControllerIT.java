@@ -4,6 +4,7 @@ import static org.mockito.Mockito.verify;
 import static java.util.Arrays.asList;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
@@ -44,8 +45,8 @@ public class SubscriptionsControllerIT {
 	public void testFetchOrders() {
 		Order order = new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
 		orderRepository.save(order);
-		subscriptionsController.fetchOrders();
-		verify(orderView).showAllOrders(asList(order));
+		List<Order> orders = subscriptionsController.fetchOrders();
+		verify(orderView).showAllOrders(orders);
 	}
 
 	@After
