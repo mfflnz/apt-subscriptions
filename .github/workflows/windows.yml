@@ -1,3 +1,5 @@
+name: Java CI with Windows
+
 on:
   push:
   pull_request:
