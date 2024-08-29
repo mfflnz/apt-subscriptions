@@ -17,6 +17,7 @@ public class SubscriptionsController {
 	}
 
 	public List<Order> fetchOrders() {
+		orderView.showAllOrders(orderRepository.findAll());
 		return orderRepository.findAll();
 	}
 
