@@ -213,6 +213,7 @@
 						</dependency>
 					</dependencies>
 				</plugin>
+
 				<plugin>
 					<groupId>org.pitest</groupId>
 					<artifactId>pitest-maven</artifactId>
@@ -235,7 +236,9 @@
 						</mutators>
 						<mutationThreshold>90</mutationThreshold>
 					</configuration>
+
 				</plugin>
+
 
 			</plugins>
 
@@ -311,6 +314,26 @@
 								<exclude>**/*Testcontainers*.java</exclude>
 							</excludes>
 						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>mutation-testing</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-maven</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>mutationCoverage</goal>
+								</goals>
+								<phase>verify</phase>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
