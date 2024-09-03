@@ -6,12 +6,12 @@ import org.blefuscu.apt.subscriptions.model.Order;
 
 public interface OrderView {
 
-	void orderAdded(Order order);
+	void showOrders(List<Order> orders);
 
-	void showError(String string, Order existingOrder);
+	void orderAdded(Order order);
 
 	void orderRemoved(Order orderToDelete);
 
-	void showAllOrders(List<Order> orders);
+	void showError(String string, Order existingOrder);
 
 }

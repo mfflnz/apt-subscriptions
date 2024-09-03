@@ -74,11 +74,11 @@ public class OrderMongoRepositoryTest {
 		assertThat(orderRepository.findAll()).containsExactly(new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0)),
 				new Order(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0)));
 	}
-	
+
 	@Test
 	public void testFindByDateRangeWhenNoOrderIsFound() {
 		addTestOrderToDatabase(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
-		addTestOrderToDatabase(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0));      // Find all documents
+		addTestOrderToDatabase(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0));
 		assertThat(orderRepository.findByDateRange(LocalDateTime.of(2024, 8, 15, 0, 0, 0),
 				LocalDateTime.of(2024, 8, 16, 0, 0, 0))).isEmpty();
 	}
@@ -109,20 +109,19 @@ public class OrderMongoRepositoryTest {
 				LocalDateTime.of(2024, 8, 1, 0, 0, 0)))
 				.containsExactly(new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0)),
 						new Order(2, LocalDateTime.of(2024, 8, 1, 0, 0, 0)));
-
 	}
-	
+
 	@Test
 	public void testFindByIdNotFound() {
 		assertThat(orderRepository.findById(1)).isNull();
 	}
-	
+
 	@Test
 	public void testFindByIdFound() {
 		addTestOrderToDatabase(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
 		assertThat(orderRepository.findById(1)).isEqualTo(new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0)));
 	}
-	
+
 	@Test
 	public void testSave() {
 		Order order = new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
@@ -139,7 +138,8 @@ public class OrderMongoRepositoryTest {
 
 	private List<Order> readAllOrdersFromDatabase() {
 		return StreamSupport.stream(orderCollection.find().spliterator(), false)
-				.map(d -> new Order(d.getInteger("orderId"), d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime()))
+				.map(d -> new Order(d.getInteger("orderId"),
+						d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime()))
 				.collect(Collectors.toList());
 	}
 

@@ -27,10 +27,10 @@
 		<coveralls.version>4.3.0</coveralls.version>
 		<mongo-java-driver.version>3.12.10</mongo-java-driver.version>
 		<mongo-java-server.version>1.43.0</mongo-java-server.version>
-		<pitest.version>1.16.1</pitest.version>
+		<pitest.version>1.16.2</pitest.version>
 		<build-helper.version>3.0.0</build-helper.version>
 		<testcontainers.version>1.20.1</testcontainers.version>
-		<failsafe.version>3.4.0</failsafe.version>
+		<failsafe.version>3.5.0</failsafe.version>
 		<docker-maven-plugin.version>0.45.0</docker-maven-plugin.version>
 	</properties>
 
@@ -158,7 +158,43 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>${docker-maven-plugin.version}</version>
+				<configuration>
+					<showLogs>true</showLogs>
+					<verbose>build</verbose>
+					<useColor>true</useColor>
 
+					<images>
+						<image>
+							<name>mongo:4.4.3</name>
+							<run>
+								<ports>
+									<port>mongo.mapped.port:27017</port>
+								</ports>
+							</run>
+						</image>
+					</images>
+				</configuration>
+				<executions>
+					<execution>
+						<id>docker-start</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>docker-stop</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -225,23 +261,24 @@
 						</targetClasses>
 						<targetTests>
 							<param>
-								org.blefuscu.apt.subscriptions.repository.mongo.*</param>
-							<param>org.blefuscu.apt.subscriptions.controller.*</param>
+								org.blefuscu.apt.subscriptions.repository.mongo.*Test*</param>
+							<param>org.blefuscu.apt.subscriptions.controller.*Test*</param>
 						</targetTests>
 						<excludedClasses>
 							<param>org.blefuscu.apt.subscriptions.model.*</param>
 						</excludedClasses>
+						<!-- TODO: fix -->
+						<excludedTestClasses>**/*IT.java</excludedTestClasses>
 						<mutators>
 							<mutator>DEFAULTS</mutator>
 						</mutators>
 						<mutationThreshold>90</mutationThreshold>
+						<verbose>true</verbose>
 					</configuration>
 
 				</plugin>
 
-
 			</plugins>
-
 
 		</pluginManagement>
 	</build>
@@ -254,50 +291,6 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>docker</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>io.fabric8</groupId>
-						<artifactId>docker-maven-plugin</artifactId>
-						<version>${docker-maven-plugin.version}</version>
-						<configuration>
-							<showLogs>true</showLogs>
-							<verbose>build</verbose>
-							<useColor>true</useColor>
-
-							<images>
-								<image>
-									<name>mongo:4.4.3</name>
-									<run>
-										<ports>
-											<port>mongo.mapped.port:27017</port>
-										</ports>
-									</run>
-								</image>
-							</images>
-						</configuration>
-						<executions>
-							<execution>
-								<id>docker-start</id>
-								<phase>pre-integration-test</phase>
-								<goals>
-									<goal>start</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>docker-stop</id>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>stop</goal>
-								</goals>
-							</execution>
-						</executions>
 					</plugin>
 				</plugins>
 			</build>
@@ -319,25 +312,7 @@
 			</build>
 		</profile>
 
-		<profile>
-			<id>mutation-testing</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.pitest</groupId>
-						<artifactId>pitest-maven</artifactId>
-						<executions>
-							<execution>
-								<goals>
-									<goal>mutationCoverage</goal>
-								</goals>
-								<phase>verify</phase>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+		
 	</profiles>
 
 </project>

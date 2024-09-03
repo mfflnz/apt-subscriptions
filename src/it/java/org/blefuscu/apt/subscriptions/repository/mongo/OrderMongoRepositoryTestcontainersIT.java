@@ -56,7 +56,6 @@ public class OrderMongoRepositoryTestcontainersIT {
 		addTestOrderToDatabase(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0));
 		assertThat(orderRepository.findAll()).containsExactly(new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0)),
 				new Order(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0)));
-
 	}
 
 	@Test
