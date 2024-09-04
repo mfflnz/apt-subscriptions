@@ -14,7 +14,6 @@ jobs:
       fail-fast: true
     env:
       DOCKER_HOST: tcp://localhost:2375
-    shell: pwsh
         
     name: Build with Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:
@@ -35,8 +34,10 @@ jobs:
         sc config docker
         binpath="dockerd.exe --run-service -H tcp://localhost:2375"
     - name: Docker restart
+      shell: cmd
       run: restart-service *docker*
     - name: Docker info
+      shell: cmd
       run: docker info
     - name: Build with Maven
       run: >
