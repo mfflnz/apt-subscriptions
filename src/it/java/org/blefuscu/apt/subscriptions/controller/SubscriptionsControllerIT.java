@@ -4,8 +4,6 @@ import static org.mockito.Mockito.verify;
 import static java.util.Arrays.asList;
 
 import java.time.LocalDateTime;
-import java.util.List;
-
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoRepository;
@@ -19,16 +17,16 @@ import org.mockito.MockitoAnnotations;
 import com.mongodb.MongoClient;
 
 public class SubscriptionsControllerIT {
-	
+
 	@Mock
 	private OrderView orderView;
-	
+
 	private OrderRepository orderRepository;
-	
+
 	private SubscriptionsController subscriptionsController;
-	
+
 	private AutoCloseable closeable;
-	
+
 	private static int mongoPort = Integer.parseInt(System.getProperty("mongo.port", "27017"));
 
 	@Before
@@ -40,16 +38,32 @@ public class SubscriptionsControllerIT {
 		}
 		subscriptionsController = new SubscriptionsController(orderView, orderRepository);
 	}
-	
-	/*
-	 * TODO: fix test
-	 * 
-	 * @Test public void testFetchOrders() { Order order = new Order(1,
-	 * LocalDateTime.of(2024, 8, 1, 0, 0, 0)); orderRepository.save(order);
-	 * List<Order> orders = subscriptionsController.fetchOrders();
-	 * verify(orderView).showAllOrders(orders); }
-	 */
-	
+
+	@Test
+	public void testRequestOrders() {
+		Order orderOne = new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		Order orderTwo = new Order(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0));
+		orderRepository.save(orderOne);
+		orderRepository.save(orderTwo);
+		subscriptionsController.requestOrders();
+		verify(orderView).showOrders(asList(orderOne, orderTwo));
+	}
+
+	@Test
+	public void testNewOrder() {
+		Order order = new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		subscriptionsController.newOrder(order);
+		verify(orderView).orderAdded(order);
+	}
+
+	@Test
+	public void testDeleteOrder() {
+		Order orderToDelete = new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		orderRepository.save(orderToDelete);
+		subscriptionsController.deleteOrder(orderToDelete);
+		verify(orderView).orderRemoved(orderToDelete);
+	}
+
 	@After
 	public void releaseMocks() throws Exception {
 		closeable.close();

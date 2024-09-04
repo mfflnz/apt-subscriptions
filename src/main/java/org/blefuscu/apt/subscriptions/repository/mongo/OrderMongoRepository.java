@@ -45,11 +45,6 @@ public class OrderMongoRepository implements OrderRepository {
 				.collect(Collectors.toList());
 	}
 
-	private Order fromDocumentToOrder(Document d) {
-		return new Order(d.getInteger("orderId"),
-				d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime());
-	}
-
 	@Override
 	public void save(Order order) {
 		orderCollection.insertOne(
@@ -69,4 +64,8 @@ public class OrderMongoRepository implements OrderRepository {
 		return null;
 	}
 
+	private Order fromDocumentToOrder(Document d) {
+		return new Order(d.getInteger("orderId"),
+				d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime());
+	}
 }
