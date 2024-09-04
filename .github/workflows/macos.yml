@@ -34,4 +34,5 @@ jobs:
     - name: Build with Maven
       run: >
         mvn clean verify -X
-        -Pjacoco,docker,mutation-testing     
+        -Pjacoco
+        org.pitest:pitest-maven:mutationCoverage
