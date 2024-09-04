@@ -35,7 +35,7 @@ jobs:
         binpath="dockerd.exe --run-service -H tcp://localhost:2375"
     - name: Docker restart
       shell: cmd
-      run: restart-service *docker*
+      run: net stop docker && net start docker
     - name: Docker info
       shell: cmd
       run: docker info
