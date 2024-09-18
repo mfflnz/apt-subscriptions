@@ -3,24 +3,27 @@ package org.blefuscu.apt.subscriptions.controller;
 import java.time.LocalDateTime;
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
+import org.blefuscu.apt.subscriptions.view.ListView;
 import org.blefuscu.apt.subscriptions.view.OrderView;
 
 public class SubscriptionsController {
 
 	private OrderView orderView;
+	private ListView listView;
 	private OrderRepository orderRepository;
 
-	public SubscriptionsController(OrderView orderView, OrderRepository orderRepository) {
+	public SubscriptionsController(OrderView orderView, ListView listView, OrderRepository orderRepository) {
 		this.orderView = orderView;
+		this.listView = listView;
 		this.orderRepository = orderRepository;
 	}
 
 	public void requestOrders() {
-		orderView.showOrders(orderRepository.findAll());
+		listView.showOrders(orderRepository.findAll());
 	}
 	
 	public void requestOrders(LocalDateTime fromDate, LocalDateTime toDate) {
-		orderView.showOrders(orderRepository.findByDateRange(fromDate, toDate));
+		listView.showOrders(orderRepository.findByDateRange(fromDate, toDate));
 	}
 
 	public void newOrder(Order order) {

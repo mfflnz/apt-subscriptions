@@ -11,5 +11,6 @@ public interface OrderRepository {
 	public List<Order> findByDateRange(LocalDateTime fromDate, LocalDateTime toDate);
 	public Order findById(int id);
 	public void save(Order order);
+	public void edit(Order order);
 	public void delete(int id);
 }

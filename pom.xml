@@ -19,7 +19,6 @@
 		<log4j-api.version>2.13.0</log4j-api.version>
 		<log4j-core.version>2.13.0</log4j-core.version>
 		<assertj-swing-junit.version>3.17.1</assertj-swing-junit.version>
-		<assertj-core.version>3.22.0</assertj-core.version>
 		<mockito-core.version>3.12.4</mockito-core.version>
 		<mongodb-driver-sync.version>5.1.1</mongodb-driver-sync.version>
 		<logback-classic.version>1.2.13</logback-classic.version>
@@ -50,12 +49,6 @@
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 			<version>${log4j-core.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<version>${assertj-core.version}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.assertj</groupId>

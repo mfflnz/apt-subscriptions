@@ -13,7 +13,7 @@ jobs:
         java: [ 8, 11, 17 ]
       fail-fast: true
     env:
-      DOCKER_HOST: npipe:////./pipe/docker_engine
+      DOCKER_HOST: tcp://localhost:2375
         
     name: Build with Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:
@@ -34,13 +34,11 @@ jobs:
         sc config docker
         binpath="dockerd.exe --run-service -H tcp://localhost:2375"
     - name: Docker restart
-      shell: cmd
-      run: net stop docker && net start docker
+      run: restart-service *docker*
     - name: Docker info
-      shell: cmd
       run: docker info
     - name: Build with Maven
       run: >
-        mvn clean verify -X
+        mvn verify -X
         -Pjacoco,skip-testcontainers
         org.pitest:pitest-maven:mutationCoverage

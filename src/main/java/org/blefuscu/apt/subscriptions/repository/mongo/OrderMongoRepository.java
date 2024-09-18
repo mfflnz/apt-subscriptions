@@ -68,4 +68,10 @@ public class OrderMongoRepository implements OrderRepository {
 		return new Order(d.getInteger("orderId"),
 				d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime());
 	}
+
+	@Override
+	public void edit(Order order) {
+		// TODO Auto-generated method stub
+		
+	}
 }

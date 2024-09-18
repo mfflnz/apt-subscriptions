@@ -1,12 +1,10 @@
 package org.blefuscu.apt.subscriptions.view;
 
-import java.util.List;
-
 import org.blefuscu.apt.subscriptions.model.Order;
 
 public interface OrderView {
 
-	void showOrders(List<Order> orders);
+	void showOrderDetails(Order order);
 
 	void orderAdded(Order order);
 

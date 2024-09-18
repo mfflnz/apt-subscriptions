@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
+import org.blefuscu.apt.subscriptions.view.ListView;
 import org.blefuscu.apt.subscriptions.view.OrderView;
 import org.junit.After;
 import org.junit.Before;
@@ -28,6 +29,10 @@ public class SubscriptionsControllerTest {
 
 	@Mock
 	private OrderView orderView;
+	
+	@Mock
+	private ListView listView;
+	
 	private AutoCloseable closeable;
 
 	@InjectMocks
@@ -37,7 +42,7 @@ public class SubscriptionsControllerTest {
 	public void setUp() throws Exception {
 		closeable = MockitoAnnotations.openMocks(this);
 		orderRepository = mock(OrderRepository.class);
-		subscriptionsController = new SubscriptionsController(orderView, orderRepository);
+		subscriptionsController = new SubscriptionsController(orderView, listView, orderRepository);
 	}
 
 	@After
@@ -50,7 +55,7 @@ public class SubscriptionsControllerTest {
 		List<Order> orders = asList(new Order());
 		when(orderRepository.findAll()).thenReturn(orders);
 		subscriptionsController.requestOrders();
-		verify(orderView).showOrders(orders);
+		verify(listView).showOrders(orders);
 	}
 	
 	@Test
@@ -60,7 +65,7 @@ public class SubscriptionsControllerTest {
 		LocalDateTime toDate = LocalDateTime.of(2024, 8, 30, 0, 0, 0);
 		when(orderRepository.findByDateRange(fromDate, toDate)).thenReturn(orders);
 		subscriptionsController.requestOrders(fromDate, toDate);
-		verify(orderView).showOrders(orders);
+		verify(listView).showOrders(orders);
 	}
 	@Test
 	public void testRequestOrdersWhenStartDateIsMissingShouldThrow() {

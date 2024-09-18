@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoRepository;
+import org.blefuscu.apt.subscriptions.view.ListView;
 import org.blefuscu.apt.subscriptions.view.OrderView;
 import org.junit.After;
 import org.junit.Before;
@@ -20,6 +21,9 @@ public class SubscriptionsControllerIT {
 
 	@Mock
 	private OrderView orderView;
+	
+	@Mock
+	private ListView listView;
 
 	private OrderRepository orderRepository;
 
@@ -36,7 +40,7 @@ public class SubscriptionsControllerIT {
 		for (Order order : orderRepository.findAll()) {
 			orderRepository.delete(order.getOrderId());
 		}
-		subscriptionsController = new SubscriptionsController(orderView, orderRepository);
+		subscriptionsController = new SubscriptionsController(orderView, listView, orderRepository);
 	}
 
 	@Test
@@ -46,7 +50,7 @@ public class SubscriptionsControllerIT {
 		orderRepository.save(orderOne);
 		orderRepository.save(orderTwo);
 		subscriptionsController.requestOrders();
-		verify(orderView).showOrders(asList(orderOne, orderTwo));
+		verify(listView).showOrders(asList(orderOne, orderTwo));
 	}
 
 	@Test
