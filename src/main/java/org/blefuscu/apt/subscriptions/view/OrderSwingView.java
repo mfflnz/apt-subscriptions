@@ -12,6 +12,8 @@ import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import javax.swing.JTextField;
 import java.awt.Insets;
+import java.util.ArrayList;
+
 import javax.swing.JSeparator;
 import javax.swing.JCheckBox;
 import javax.swing.SwingConstants;
@@ -485,13 +487,13 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_lblNotes.gridy = 15;
 		contentPane.add(lblNotes, gbc_lblNotes);
 
+		ArrayList<Boolean> mandatoryValues = new ArrayList<>(); 
+		
 		chckbxUnlock = new JCheckBox("Unlock");
 		chckbxUnlock.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				if ((chckbxUnlock.isEnabled()) && !idTextBox.getText().isEmpty()
-						&& !orderDateTextBox.getText().isEmpty() && !productTextBox.getText().isEmpty()
-						&& !grossTextBox.getText().isEmpty() && !paymentTextBox.getText().isEmpty()
-						&& !emailTextBox.getText().isEmpty()) {
+							 
+				if (mandatoryValuesCheck(mandatoryValues)) {
 					btnAdd.setEnabled(true);
 					btnDelete.setEnabled(true);
 					btnUpdate.setEnabled(true);
@@ -500,6 +502,19 @@ public class OrderSwingView extends JFrame implements OrderView {
 					btnDelete.setEnabled(false);
 					btnUpdate.setEnabled(false);
 				}
+			}
+
+			private boolean mandatoryValuesCheck(ArrayList<Boolean> mandatoryValues) {
+				mandatoryValues.add(!idTextBox.getText().isEmpty());
+				mandatoryValues.add(!orderDateTextBox.getText().isEmpty());
+				mandatoryValues.add(!productTextBox.getText().isEmpty());
+				mandatoryValues.add(!grossTextBox.getText().isEmpty());
+				mandatoryValues.add(!paymentTextBox.getText().isEmpty());
+				mandatoryValues.add(!emailTextBox.getText().isEmpty());
+				mandatoryValues.add(chckbxUnlock.isEnabled());
+				
+				boolean mandatoryValuesCheck = mandatoryValues.stream().allMatch(t -> t.equals(true));
+				return mandatoryValuesCheck;
 			}
 		});
 		chckbxUnlock.setName("unlockCheckBox");

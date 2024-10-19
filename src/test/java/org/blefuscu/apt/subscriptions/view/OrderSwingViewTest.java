@@ -14,9 +14,9 @@ import org.junit.runner.RunWith;
 public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	private FrameFixture window;
-	
+
 	private OrderSwingView orderSwingView;
-	
+
 	@Override
 	protected void onSetUp() throws Exception {
 		GuiActionRunner.execute(() -> {
@@ -26,8 +26,9 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window = new FrameFixture(robot(), orderSwingView);
 		window.show();
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testControlsInitialStates() {
 		window.label(JLabelMatcher.withText("id"));
 		window.textBox("idTextBox").requireEnabled().requireNotEditable();
@@ -74,21 +75,23 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Delete")).requireDisabled();
 	}
 
-	@Test @GUITest
+	@Test
+	@GUITest
 	public void testButtonsShouldBeEnabledOnlyIfMandatoryFieldsAreNotEmptyAndOrderIsUnlocked() {
-		  window.textBox("idTextBox").setText("1");
-		  window.textBox("orderDateTextBox").setText("2024-10-12");
-		  window.textBox("productTextBox").setText("Abbonamento annuale cartaceo");
-		  window.textBox("grossTextBox").setText("€65,00");
-		  window.textBox("paymentTextBox").setText("Bonifico");
-		  window.textBox("emailTextBox").setText("user@email.com");
-		  window.checkBox("unlockCheckBox").check();
-		  window.button(JButtonMatcher.withText("Add")).requireEnabled();
-		  window.button(JButtonMatcher.withText("Update")).requireEnabled();
-		  window.button(JButtonMatcher.withText("Delete")).requireEnabled();
+		window.textBox("idTextBox").setText("1");
+		window.textBox("orderDateTextBox").setText("2024-10-12");
+		window.textBox("productTextBox").setText("Abbonamento annuale cartaceo");
+		window.textBox("grossTextBox").setText("€65,00");
+		window.textBox("paymentTextBox").setText("Bonifico");
+		window.textBox("emailTextBox").setText("user@email.com");
+		window.checkBox("unlockCheckBox").check();
+		window.button(JButtonMatcher.withText("Add")).requireEnabled();
+		window.button(JButtonMatcher.withText("Update")).requireEnabled();
+		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
 	}
 
-	@Test @GUITest
+	@Test
+	@GUITest
 	public void testButtonsShouldBeisabledIfAMandatoryFieldsIsEmpty() {
 		window.textBox("idTextBox").deleteText();
 		window.checkBox("unlockCheckBox").check();
@@ -96,7 +99,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Update")).requireDisabled();
 		window.button(JButtonMatcher.withText("Delete")).requireDisabled();
 	}
-	
+
 	@Test
 	@GUITest
 	public void testButtonsShouldBeisabledIfOrderIsLocked() {
@@ -111,11 +114,6 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Update")).requireDisabled();
 		window.button(JButtonMatcher.withText("Delete")).requireDisabled();
 	}
-	
-	@Test @GUITest
-	public void testDeleteButtonShouldBeEnabledOnlyIfOrderIsUnlocked() {
-		
-	}
-	
+
 
 }
