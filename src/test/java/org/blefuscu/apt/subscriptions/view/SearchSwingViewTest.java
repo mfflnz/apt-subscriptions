@@ -13,9 +13,11 @@ import org.junit.runner.RunWith;
 @RunWith(GUITestRunner.class)
 public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 
-	private FrameFixture window;
+	private FrameFixture searchWindow;
+	private FrameFixture listWindow;
 	
 	private SearchSwingView searchSwingView;
+	private ListSwingView listSwingView;
 
 	@Override
 	protected void onSetUp() throws Exception {
@@ -24,37 +26,48 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 			return searchSwingView;
 		});
 		
-		window = new FrameFixture(robot(), searchSwingView);
-		window.show();
+		GuiActionRunner.execute(() -> {
+			listSwingView = new ListSwingView();
+			return listSwingView;
+		});
+		
+		searchWindow = new FrameFixture(robot(), searchSwingView);
+		
+		searchWindow.show();
 	}
 	
 	@Test
 	public void testControlsInitialStates() {
-		window.label(JLabelMatcher.withText("From"));
-		window.textBox("fromTextBox").requireText(LocalDate.now().toString());
-		window.label(JLabelMatcher.withText("To"));
-		window.textBox("toTextBox").requireText(LocalDate.now().toString());
-		window.button(JButtonMatcher.withText("Search")).requireEnabled();
+		searchWindow.label(JLabelMatcher.withText("From"));
+		searchWindow.textBox("fromTextBox").requireText(LocalDate.now().toString());
+		searchWindow.label(JLabelMatcher.withText("To"));
+		searchWindow.textBox("toTextBox").requireText(LocalDate.now().toString());
+		searchWindow.button(JButtonMatcher.withText("Search")).requireEnabled();
 	}
 	
 	@Test
 	public void testIfFromTextBoxIsEmptySearchButtonShouldBeDisabled() {
-		window.textBox("fromTextBox").deleteText();
-		window.button(JButtonMatcher.withText("Search")).requireDisabled();
+		searchWindow.textBox("fromTextBox").deleteText();
+		searchWindow.button(JButtonMatcher.withText("Search")).requireDisabled();
+		searchWindow.textBox("fromTextBox").enterText(LocalDate.now().toString());
+		searchWindow.button(JButtonMatcher.withText("Search")).requireEnabled();
 	}
 	
 	@Test
 	public void testIfToTextBoxIsEmptySearchButtonShouldBeDisabled() {
-		window.textBox("toTextBox").deleteText();
-		window.button(JButtonMatcher.withText("Search")).requireDisabled();
+		searchWindow.textBox("toTextBox").deleteText();
+		searchWindow.button(JButtonMatcher.withText("Search")).requireDisabled();
+		searchWindow.textBox("toTextBox").enterText(LocalDate.now().toString());
+		searchWindow.button(JButtonMatcher.withText("Search")).requireEnabled();
 	}
 
-	/*
 	@Test
-	public void testIfToTextBoxIsEmptySearchButtonShouldBeDisabled() {
-		window.textBox("toTextBox").deleteText();
-		window.button(JButtonMatcher.withText("Search")).requireDisabled();
+	public void testIfSearchButtonIsPressedAListViewSouldBeShown() {
+		searchWindow.button(JButtonMatcher.withText("Search")).click();
+		listSwingView.isShowing();
+		
 	}
-	*/
+
+
 
 }

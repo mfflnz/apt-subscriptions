@@ -14,6 +14,8 @@ import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import javax.swing.JTextField;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.LocalDate;
 
 import javax.swing.JButton;
@@ -24,6 +26,8 @@ public class SearchSwingView extends JFrame {
 	private JPanel contentPane;
 	private JTextField fromTextBox;
 	private JTextField toTextBox;
+
+	private ListSwingView listSwingView = new ListSwingView();
 
 	/**
 	 * Launch the application.
@@ -54,12 +58,12 @@ public class SearchSwingView extends JFrame {
 
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{0, 0, 0};
-		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0};
-		gbl_contentPane.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_contentPane.columnWidths = new int[] { 0, 0, 0 };
+		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0 };
+		gbl_contentPane.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
-		
+
 		JLabel lblFrom = new JLabel("From");
 		GridBagConstraints gbc_lblFrom = new GridBagConstraints();
 		gbc_lblFrom.insets = new Insets(0, 0, 5, 5);
@@ -67,7 +71,7 @@ public class SearchSwingView extends JFrame {
 		gbc_lblFrom.gridx = 0;
 		gbc_lblFrom.gridy = 0;
 		contentPane.add(lblFrom, gbc_lblFrom);
-		
+
 		fromTextBox = new JTextField();
 		fromTextBox.setName("fromTextBox");
 		GridBagConstraints gbc_textField = new GridBagConstraints();
@@ -78,7 +82,7 @@ public class SearchSwingView extends JFrame {
 		contentPane.add(fromTextBox, gbc_textField);
 		fromTextBox.setColumns(10);
 		fromTextBox.setText(LocalDate.now().toString());
-		
+
 		JLabel lblTo = new JLabel("To");
 		GridBagConstraints gbc_lblTo = new GridBagConstraints();
 		gbc_lblTo.anchor = GridBagConstraints.EAST;
@@ -86,7 +90,7 @@ public class SearchSwingView extends JFrame {
 		gbc_lblTo.gridx = 0;
 		gbc_lblTo.gridy = 1;
 		contentPane.add(lblTo, gbc_lblTo);
-		
+
 		toTextBox = new JTextField();
 		toTextBox.setName("toTextBox");
 		GridBagConstraints gbc_textField_1 = new GridBagConstraints();
@@ -97,7 +101,7 @@ public class SearchSwingView extends JFrame {
 		contentPane.add(toTextBox, gbc_textField_1);
 		toTextBox.setColumns(10);
 		toTextBox.setText(LocalDate.now().toString());
-		
+
 		JButton btnSearch = new JButton("Search");
 		btnSearch.setName("searchButton");
 		GridBagConstraints gbc_btnSearch = new GridBagConstraints();
@@ -106,35 +110,41 @@ public class SearchSwingView extends JFrame {
 		gbc_btnSearch.gridx = 0;
 		gbc_btnSearch.gridy = 3;
 		contentPane.add(btnSearch, gbc_btnSearch);
-		
+
+		btnSearch.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				listSwingView.setVisible(true);
+
+			}
+		});
+
 		Document fromDocument = fromTextBox.getDocument();
 		Document toDocument = toTextBox.getDocument();
-		
+
 		DocumentListener textListener = new DocumentListener() {
-			
+
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				spotEmptyFromTextField(btnSearch);				
-			}
-			
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				
-			}
-			
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				
+				btnSearch.setEnabled(false);
 			}
 
-			private void spotEmptyFromTextField(JButton btnSearch) {
-				btnSearch.setEnabled(false);
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				btnSearch.setEnabled(true);
+
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+
 			}
 		};
 
 		fromDocument.addDocumentListener(textListener);
 		toDocument.addDocumentListener(textListener);
-		
+
 	}
 
 }

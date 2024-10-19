@@ -16,6 +16,8 @@ import javax.swing.JList;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.JLabel;
 
@@ -31,6 +33,8 @@ public class ListSwingView extends JFrame implements ListView {
 	private JLabel lblErrorMessage;
 	
 	private SubscriptionsController subscriptionsController;
+	
+	private OrderSwingView orderSwingView = new OrderSwingView();
 
 
 	DefaultListModel<Order> getListOrdersModel() {
@@ -107,6 +111,16 @@ public class ListSwingView extends JFrame implements ListView {
 		gbc_btnViewDetails.gridx = 2;
 		gbc_btnViewDetails.gridy = 1;
 		contentPane.add(btnShowDetails, gbc_btnViewDetails);
+		
+		btnShowDetails.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				orderSwingView.setVisible(true);
+
+			}
+		});
+
 
 		lblErrorMessage = new JLabel(" ");
 		lblErrorMessage.setName("errorMessageLabel");
