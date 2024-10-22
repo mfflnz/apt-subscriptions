@@ -28,23 +28,23 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	private ListSwingView listSwingView;
 	private FrameFixture listWindow;
 	private AutoCloseable closeable;
-	
+
 	private OrderSwingView orderSwingView;
 
 	@Mock
 	private SubscriptionsController subscriptionsController;
-	
+
 	@Override
 	protected void onSetUp() throws Exception {
-		
+
 		closeable = MockitoAnnotations.openMocks(this);
-		
+
 		GuiActionRunner.execute(() -> {
 			listSwingView = new ListSwingView();
 			listSwingView.setSubscriptionsController(subscriptionsController);
 			return listSwingView;
 		});
-		
+
 		GuiActionRunner.execute(() -> {
 			orderSwingView = new OrderSwingView();
 			return orderSwingView;
@@ -53,7 +53,7 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 		listWindow = new FrameFixture(robot(), listSwingView);
 		listWindow.show();
 	}
-	
+
 	@Override
 	protected void onTearDown() throws Exception {
 		closeable.close();
@@ -131,25 +131,21 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 		assertThat(listContents).containsExactly(order2.toString());
 		listWindow.label("errorMessageLabel").requireText(" ");
 	}
-	
+
 	@Test
 	public void testIfShowDetailsButtonIsPressedAnOrderViewShouldBeShown() {
-	
+
 		// setup
-		GuiActionRunner.execute(() -> listSwingView.getListOrdersModel()
-				.addElement(new Order(1, LocalDateTime.now())));
+		GuiActionRunner.execute(() -> listSwingView.getListOrdersModel().addElement(new Order(1, LocalDateTime.now())));
 		listWindow.list("ordersList").selectItem(0);
-		
+
 		// exercise + verify
 		listWindow.button(JButtonMatcher.withText("Show Details")).click();
 		orderSwingView.isShowing();
-		
+
 		// teardown
 		listWindow.list("ordersList").clearSelection();
 		listWindow.button(JButtonMatcher.withText("Show Details")).requireDisabled();
 	}
-	
-	
-	
 
 }

@@ -9,6 +9,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 
+import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
+
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
@@ -17,6 +19,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.swing.JButton;
 
@@ -28,6 +31,7 @@ public class SearchSwingView extends JFrame {
 	private JTextField toTextBox;
 
 	private ListSwingView listSwingView = new ListSwingView();
+	private SubscriptionsController subscriptionsController;
 
 	/**
 	 * Launch the application.
@@ -120,6 +124,9 @@ public class SearchSwingView extends JFrame {
 			}
 		});
 
+		btnSearch.addActionListener(e -> subscriptionsController
+				.requestOrders(LocalDateTime.parse(fromTextBox.getText()), LocalDateTime.parse(toTextBox.getText())));
+
 		Document fromDocument = fromTextBox.getDocument();
 		Document toDocument = toTextBox.getDocument();
 
@@ -145,6 +152,10 @@ public class SearchSwingView extends JFrame {
 		fromDocument.addDocumentListener(textListener);
 		toDocument.addDocumentListener(textListener);
 
+	}
+
+	public void setSubscriptionsController(SubscriptionsController subscriptionsController) {
+		this.subscriptionsController = subscriptionsController;
 	}
 
 }

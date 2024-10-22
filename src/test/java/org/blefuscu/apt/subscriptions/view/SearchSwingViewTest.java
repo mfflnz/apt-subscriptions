@@ -1,28 +1,43 @@
 package org.blefuscu.apt.subscriptions.view;
 
+import static org.mockito.Mockito.verify;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.core.matcher.JLabelMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
+import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 @RunWith(GUITestRunner.class)
 public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	private FrameFixture searchWindow;
-	private FrameFixture listWindow;
 	
 	private SearchSwingView searchSwingView;
 	private ListSwingView listSwingView;
+	
+	@Mock
+	private SubscriptionsController subscriptionsController;
+	
+	private AutoCloseable closeable;
 
 	@Override
 	protected void onSetUp() throws Exception {
+		
+		closeable = MockitoAnnotations.openMocks(this);
+		
 		GuiActionRunner.execute(() -> {
 			searchSwingView = new SearchSwingView();
+			searchSwingView.setSubscriptionsController(subscriptionsController);
 			return searchSwingView;
 		});
 		
@@ -34,6 +49,11 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		searchWindow = new FrameFixture(robot(), searchSwingView);
 		
 		searchWindow.show();
+	}
+	
+	@Override
+	public void onTearDown() throws Exception {
+		closeable.close();
 	}
 	
 	@Test
@@ -68,6 +88,16 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		
 	}
 
+	@Test
+	public void testIfSearchButtonIsPressedTheTwoDatesShouldBePassedToTheController() {
+		searchWindow.textBox("fromTextBox").deleteText();
+		searchWindow.textBox("fromTextBox").enterText(LocalDate.now().toString());
+		searchWindow.textBox("toTextBox").deleteText();
+		searchWindow.textBox("toTextBox").enterText(LocalDate.now().toString());
+		searchWindow.button(JButtonMatcher.withText("Search")).click();
+		verify(subscriptionsController).requestOrders(LocalDateTime.now(), LocalDateTime.now());
+
+	}
 
 
 }
