@@ -2,6 +2,7 @@ package org.blefuscu.apt.subscriptions.view;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.Arrays;
@@ -72,7 +73,7 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	@GUITest
 	public void testDeleteButtonShouldBeEnabledOnlyWhenAnOrderIsSelected() {
 		GuiActionRunner.execute(() -> listSwingView.getListOrdersModel()
-				.addElement(new Order(1, LocalDateTime.of(2024, 8, 2, 0, 0, 0))));
+				.addElement(new Order(1, LocalDate.of(2024, 8, 2))));
 		listWindow.list("ordersList").selectItem(0);
 		JButtonFixture deleteButton = listWindow.button(JButtonMatcher.withText("Delete"));
 		deleteButton.requireEnabled();
@@ -84,7 +85,7 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	@GUITest
 	public void testShowDetailsButtonShouldBeEnabledOnlyWhenAnOrderIsSelected() {
 		GuiActionRunner.execute(() -> listSwingView.getListOrdersModel()
-				.addElement(new Order(1, LocalDateTime.of(2024, 8, 2, 0, 0, 0))));
+				.addElement(new Order(1, LocalDate.of(2024, 8, 2))));
 		listWindow.list("ordersList").selectItem(0);
 		JButtonFixture showDetailsButton = listWindow.button(JButtonMatcher.withText("Show Details"));
 		showDetailsButton.requireEnabled();
@@ -94,8 +95,8 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testShowAllOrdersShouldAddOrderDescriptionsToTheList() {
-		Order order1 = new Order(1, LocalDateTime.of(2024, 10, 9, 0, 0, 0));
-		Order order2 = new Order(2, LocalDateTime.of(2024, 10, 9, 0, 0, 0));
+		Order order1 = new Order(1, LocalDate.of(2024, 10, 9));
+		Order order2 = new Order(2, LocalDate.of(2024, 10, 9));
 		GuiActionRunner.execute(() -> listSwingView.showAllOrders(Arrays.asList(order1, order2)));
 		String[] listContents = listWindow.list().contents();
 		assertThat(listContents).containsExactly(order1.toString(), order2.toString());
@@ -103,15 +104,15 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testShowErrorShouldShowTheMessageInTheErrorLabel() {
-		Order order = new Order(1, LocalDateTime.of(2024, 10, 9, 0, 0, 0));
+		Order order = new Order(1, LocalDate.of(2024, 10, 9));
 		GuiActionRunner.execute(() -> listSwingView.showError("error message", order));
 		listWindow.label("errorMessageLabel").requireText("error message: " + order);
 	}
 
 	@Test
 	public void testOrderAddedShouldAddTheOrderToTheListAndResetTheErrorLabel() {
-		Order order = new Order(1, LocalDateTime.of(2024, 10, 9, 0, 0, 0));
-		GuiActionRunner.execute(() -> listSwingView.orderAdded(new Order(1, LocalDateTime.of(2024, 10, 9, 0, 0, 0))));
+		Order order = new Order(1, LocalDate.of(2024, 10, 9));
+		GuiActionRunner.execute(() -> listSwingView.orderAdded(new Order(1, LocalDate.of(2024, 10, 9))));
 		String[] listContents = listWindow.list().contents();
 		assertThat(listContents).containsExactly(order.toString());
 		listWindow.label("errorMessageLabel").requireText(" ");
@@ -119,14 +120,14 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testOrderRemovedShouldRemoveTheOrderFromTheListAndResetTheErrorLabel() {
-		Order order1 = new Order(1, LocalDateTime.of(2024, 10, 8, 0, 0, 0));
-		Order order2 = new Order(2, LocalDateTime.of(2024, 10, 9, 0, 0, 0));
+		Order order1 = new Order(1, LocalDate.of(2024, 10, 8));
+		Order order2 = new Order(2, LocalDate.of(2024, 10, 9));
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Order> listOrdersModel = listSwingView.getListOrdersModel();
 			listOrdersModel.addElement(order1);
 			listOrdersModel.addElement(order2);
 		});
-		GuiActionRunner.execute(() -> listSwingView.orderRemoved(new Order(1, LocalDateTime.of(2024, 10, 8, 0, 0, 0))));
+		GuiActionRunner.execute(() -> listSwingView.orderRemoved(new Order(1, LocalDate.of(2024, 10, 8))));
 		String[] listContents = listWindow.list().contents();
 		assertThat(listContents).containsExactly(order2.toString());
 		listWindow.label("errorMessageLabel").requireText(" ");
@@ -136,7 +137,7 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testIfShowDetailsButtonIsPressedAnOrderViewShouldBeShown() {
 
 		// setup
-		GuiActionRunner.execute(() -> listSwingView.getListOrdersModel().addElement(new Order(1, LocalDateTime.now())));
+		GuiActionRunner.execute(() -> listSwingView.getListOrdersModel().addElement(new Order(1, LocalDate.now())));
 		listWindow.list("ordersList").selectItem(0);
 
 		// exercise + verify

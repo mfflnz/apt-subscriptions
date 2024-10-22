@@ -95,7 +95,7 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		searchWindow.textBox("toTextBox").deleteText();
 		searchWindow.textBox("toTextBox").enterText(LocalDate.now().toString());
 		searchWindow.button(JButtonMatcher.withText("Search")).click();
-		verify(subscriptionsController).requestOrders(LocalDateTime.now(), LocalDateTime.now());
+		verify(subscriptionsController).requestOrders(LocalDate.now(), LocalDate.now());
 
 	}
 

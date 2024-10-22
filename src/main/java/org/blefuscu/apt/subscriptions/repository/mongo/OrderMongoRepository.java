@@ -1,6 +1,6 @@
 package org.blefuscu.apt.subscriptions.repository.mongo;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +33,7 @@ public class OrderMongoRepository implements OrderRepository {
 	}
 
 	@Override
-	public List<Order> findByDateRange(LocalDateTime fromDate, LocalDateTime toDate) {
+	public List<Order> findByDateRange(LocalDate fromDate, LocalDate toDate) {
 
 		if (fromDate.compareTo(toDate) > 0) {
 			throw new IllegalArgumentException("Error: End date must be later than start date");
@@ -66,7 +66,7 @@ public class OrderMongoRepository implements OrderRepository {
 
 	private Order fromDocumentToOrder(Document d) {
 		return new Order(d.getInteger("orderId"),
-				d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime());
+				d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDate());
 	}
 
 	@Override

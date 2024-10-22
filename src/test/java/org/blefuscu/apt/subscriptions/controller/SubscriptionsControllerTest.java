@@ -8,7 +8,7 @@ import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.inOrder;
 import static java.util.Arrays.asList;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
@@ -61,8 +61,8 @@ public class SubscriptionsControllerTest {
 	@Test
 	public void testRequestOrdersWhenDateRangeIsProvided() {
 		List<Order> orders = asList(new Order());
-		LocalDateTime fromDate = LocalDateTime.of(2024, 8, 15, 0, 0, 0);
-		LocalDateTime toDate = LocalDateTime.of(2024, 8, 30, 0, 0, 0);
+		LocalDate fromDate = LocalDate.of(2024, 8, 15);
+		LocalDate toDate = LocalDate.of(2024, 8, 30);
 		when(orderRepository.findByDateRange(fromDate, toDate)).thenReturn(orders);
 		subscriptionsController.requestOrders(fromDate, toDate);
 		verify(listView).showOrders(orders);
@@ -77,7 +77,7 @@ public class SubscriptionsControllerTest {
 	
 	@Test
 	public void testNewOrderWhenOrderDoesNotAlreadyExist() {
-		Order order = new Order(1, LocalDateTime.of(2024, 8, 28, 0, 0, 0));
+		Order order = new Order(1, LocalDate.of(2024, 8, 28));
 		when(orderRepository.findById(1)).thenReturn(null);
 		subscriptionsController.newOrder(order);
 		InOrder inOrder = inOrder(orderRepository, orderView);
@@ -87,8 +87,8 @@ public class SubscriptionsControllerTest {
 
 	@Test
 	public void testNewOrderWhenOrderAlreadyExists() {
-		Order orderToAdd = new Order(1, LocalDateTime.of(2024, 8, 28, 0, 0, 0));
-		Order existingOrder = new Order(1, LocalDateTime.of(2024, 8, 29, 0, 0, 0));
+		Order orderToAdd = new Order(1, LocalDate.of(2024, 8, 28));
+		Order existingOrder = new Order(1, LocalDate.of(2024, 8, 29));
 		when(orderRepository.findById(1)).thenReturn(existingOrder);
 		subscriptionsController.newOrder(orderToAdd);
 		verify(orderView).showError("Already existing order with id 1", existingOrder);
@@ -97,7 +97,7 @@ public class SubscriptionsControllerTest {
 	
 	@Test
 	public void testDeleteOrderWhenOrderExists() {
-		Order orderToDelete = new Order(1, LocalDateTime.of(2024, 8, 29, 0, 0, 0));
+		Order orderToDelete = new Order(1, LocalDate.of(2024, 8, 29));
 		when(orderRepository.findById(1)).thenReturn(orderToDelete);
 		subscriptionsController.deleteOrder(orderToDelete);
 		InOrder inOrder = inOrder(orderRepository, orderView);
@@ -107,7 +107,7 @@ public class SubscriptionsControllerTest {
 	
 	@Test
 	public void testDeleteOrderWhenOrderDoesNotExist() {
-		Order orderToDelete = new Order(1, LocalDateTime.of(2024, 8, 29, 0, 0, 0));
+		Order orderToDelete = new Order(1, LocalDate.of(2024, 8, 29));
 		when(orderRepository.findById(1)).thenReturn(null);
 		subscriptionsController.deleteOrder(orderToDelete);
 		verify(orderView).showError("No existing order with id 1", orderToDelete);

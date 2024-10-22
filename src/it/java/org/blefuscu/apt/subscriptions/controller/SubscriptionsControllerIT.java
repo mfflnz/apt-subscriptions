@@ -3,7 +3,7 @@ package org.blefuscu.apt.subscriptions.controller;
 import static org.mockito.Mockito.verify;
 import static java.util.Arrays.asList;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoRepository;
@@ -45,8 +45,8 @@ public class SubscriptionsControllerIT {
 
 	@Test
 	public void testRequestOrders() {
-		Order orderOne = new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
-		Order orderTwo = new Order(2, LocalDateTime.of(2024, 8, 2, 0, 0, 0));
+		Order orderOne = new Order(1, LocalDate.of(2024, 8, 1));
+		Order orderTwo = new Order(2, LocalDate.of(2024, 8, 2));
 		orderRepository.save(orderOne);
 		orderRepository.save(orderTwo);
 		subscriptionsController.requestOrders();
@@ -55,14 +55,14 @@ public class SubscriptionsControllerIT {
 
 	@Test
 	public void testNewOrder() {
-		Order order = new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		Order order = new Order(1, LocalDate.of(2024, 8, 1));
 		subscriptionsController.newOrder(order);
 		verify(orderView).orderAdded(order);
 	}
 
 	@Test
 	public void testDeleteOrder() {
-		Order orderToDelete = new Order(1, LocalDateTime.of(2024, 8, 1, 0, 0, 0));
+		Order orderToDelete = new Order(1, LocalDate.of(2024, 8, 1));
 		orderRepository.save(orderToDelete);
 		subscriptionsController.deleteOrder(orderToDelete);
 		verify(orderView).orderRemoved(orderToDelete);

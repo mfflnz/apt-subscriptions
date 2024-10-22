@@ -125,7 +125,7 @@ public class SearchSwingView extends JFrame {
 		});
 
 		btnSearch.addActionListener(e -> subscriptionsController
-				.requestOrders(LocalDateTime.parse(fromTextBox.getText()), LocalDateTime.parse(toTextBox.getText())));
+				.requestOrders(LocalDate.parse(fromTextBox.getText()), LocalDate.parse(toTextBox.getText())));
 
 		Document fromDocument = fromTextBox.getDocument();
 		Document toDocument = toTextBox.getDocument();
