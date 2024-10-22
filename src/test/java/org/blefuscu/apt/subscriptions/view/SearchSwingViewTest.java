@@ -3,8 +3,6 @@ package org.blefuscu.apt.subscriptions.view;
 import static org.mockito.Mockito.verify;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.core.matcher.JLabelMatcher;
 import org.assertj.swing.edt.GuiActionRunner;

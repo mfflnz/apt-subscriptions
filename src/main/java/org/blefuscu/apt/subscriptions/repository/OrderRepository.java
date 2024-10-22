@@ -1,7 +1,6 @@
 package org.blefuscu.apt.subscriptions.repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.blefuscu.apt.subscriptions.model.Order;
