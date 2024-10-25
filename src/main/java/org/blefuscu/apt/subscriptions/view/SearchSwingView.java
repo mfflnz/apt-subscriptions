@@ -11,6 +11,10 @@ import javax.swing.text.Document;
 
 import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 
+//import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+//import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+//import net.sourceforge.jdatepicker.impl.UtilDateModel;
+
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
@@ -19,8 +23,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 import javax.swing.JButton;
 
 public class SearchSwingView extends JFrame {
@@ -87,6 +89,7 @@ public class SearchSwingView extends JFrame {
 		fromTextBox.setColumns(10);
 		fromTextBox.setText(LocalDate.now().toString());
 
+
 		JLabel lblTo = new JLabel("To");
 		GridBagConstraints gbc_lblTo = new GridBagConstraints();
 		gbc_lblTo.anchor = GridBagConstraints.EAST;
@@ -106,6 +109,7 @@ public class SearchSwingView extends JFrame {
 		toTextBox.setColumns(10);
 		toTextBox.setText(LocalDate.now().toString());
 
+
 		JButton btnSearch = new JButton("Search");
 		btnSearch.setName("searchButton");
 		GridBagConstraints gbc_btnSearch = new GridBagConstraints();
@@ -114,6 +118,17 @@ public class SearchSwingView extends JFrame {
 		gbc_btnSearch.gridx = 0;
 		gbc_btnSearch.gridy = 3;
 		contentPane.add(btnSearch, gbc_btnSearch);
+		
+		/* TODO: usare JDatePicker invece di campo di testo
+		 * UtilDateModel fromModel = new UtilDateModel(); JDatePanelImpl fromDatePanel =
+		 * new JDatePanelImpl(fromModel); JDatePickerImpl fromDatePicker = new
+		 * JDatePickerImpl(fromDatePanel); contentPane.add(fromDatePicker);
+		 * 
+		 * UtilDateModel toModel = new UtilDateModel(); JDatePanelImpl toDatePanel = new
+		 * JDatePanelImpl(toModel); JDatePickerImpl toDatePicker = new
+		 * JDatePickerImpl(toDatePanel); contentPane.add(toDatePicker);
+		 */
+		
 
 		btnSearch.addActionListener(new ActionListener() {
 
@@ -124,8 +139,8 @@ public class SearchSwingView extends JFrame {
 			}
 		});
 
-		btnSearch.addActionListener(e -> subscriptionsController
-				.requestOrders(LocalDate.parse(fromTextBox.getText()), LocalDate.parse(toTextBox.getText())));
+		btnSearch.addActionListener(e -> subscriptionsController.requestOrders(LocalDate.parse(fromTextBox.getText()),
+				LocalDate.parse(toTextBox.getText())));
 
 		Document fromDocument = fromTextBox.getDocument();
 		Document toDocument = toTextBox.getDocument();

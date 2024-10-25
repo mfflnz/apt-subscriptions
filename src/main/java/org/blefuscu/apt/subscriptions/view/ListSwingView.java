@@ -15,9 +15,12 @@ import java.awt.GridBagConstraints;
 import javax.swing.JList;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.List;
 import javax.swing.JLabel;
 
@@ -31,11 +34,17 @@ public class ListSwingView extends JFrame implements ListView {
 	private JButton btnDelete;
 	private JButton btnShowDetails;
 	private JLabel lblErrorMessage;
-	
-	private SubscriptionsController subscriptionsController;
-	
-	private OrderSwingView orderSwingView = new OrderSwingView();
 
+	private SubscriptionsController subscriptionsController;
+
+	private OrderSwingView orderSwingView = new OrderSwingView();
+	private JButton btnExportCsv;
+
+	final JFileChooser fc = new JFileChooser();
+
+	public JFileChooser getFc() {
+		return fc;
+	}
 
 	DefaultListModel<Order> getListOrdersModel() {
 		return listOrdersModel;
@@ -103,6 +112,14 @@ public class ListSwingView extends JFrame implements ListView {
 		gbc_btnDelete.gridy = 1;
 		contentPane.add(btnDelete, gbc_btnDelete);
 
+		btnExportCsv = new JButton("Export CSV");
+		GridBagConstraints gbc_btnExportCsv = new GridBagConstraints();
+		gbc_btnExportCsv.anchor = GridBagConstraints.EAST;
+		gbc_btnExportCsv.insets = new Insets(0, 0, 5, 5);
+		gbc_btnExportCsv.gridx = 1;
+		gbc_btnExportCsv.gridy = 1;
+		contentPane.add(btnExportCsv, gbc_btnExportCsv);
+
 		btnShowDetails = new JButton("Show Details");
 		btnShowDetails.setEnabled(false);
 		GridBagConstraints gbc_btnViewDetails = new GridBagConstraints();
@@ -111,7 +128,7 @@ public class ListSwingView extends JFrame implements ListView {
 		gbc_btnViewDetails.gridx = 2;
 		gbc_btnViewDetails.gridy = 1;
 		contentPane.add(btnShowDetails, gbc_btnViewDetails);
-		
+
 		btnShowDetails.addActionListener(new ActionListener() {
 
 			@Override
@@ -121,12 +138,20 @@ public class ListSwingView extends JFrame implements ListView {
 			}
 		});
 
+		btnExportCsv.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (fc.showSaveDialog(scrollPane) == JFileChooser.APPROVE_OPTION) {
+					File file = fc.getSelectedFile();
+				}
+			}
+		});
 
 		lblErrorMessage = new JLabel(" ");
 		lblErrorMessage.setName("errorMessageLabel");
 		GridBagConstraints gbc_lblErrorMessage = new GridBagConstraints();
 		gbc_lblErrorMessage.gridwidth = 3;
-		gbc_lblErrorMessage.insets = new Insets(0, 0, 0, 5);
 		gbc_lblErrorMessage.gridx = 0;
 		gbc_lblErrorMessage.gridy = 2;
 		contentPane.add(lblErrorMessage, gbc_lblErrorMessage);
@@ -169,5 +194,5 @@ public class ListSwingView extends JFrame implements ListView {
 	public void setSubscriptionsController(SubscriptionsController subscriptionsController) {
 		this.subscriptionsController = subscriptionsController;
 	}
-	
+
 }

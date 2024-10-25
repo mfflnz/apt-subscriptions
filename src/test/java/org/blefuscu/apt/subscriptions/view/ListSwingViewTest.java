@@ -63,6 +63,7 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testControlsInitialStates() {
 		listWindow.list("ordersList");
 		listWindow.button(JButtonMatcher.withText("Show Details")).requireDisabled();
+		listWindow.button(JButtonMatcher.withText("Export CSV")).requireEnabled();
 		listWindow.button(JButtonMatcher.withText("Delete")).requireDisabled();
 
 	}
@@ -147,4 +148,11 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 		listWindow.button(JButtonMatcher.withText("Show Details")).requireDisabled();
 	}
 
+	@Test
+	public void testIfExportCSVButtonIsPressedASaveAsDialogShouldBeShown() {
+		listWindow.button(JButtonMatcher.withText("Export CSV")).click();
+		listSwingView.getFc().isShowing();
+	}
+
+	
 }

@@ -10,7 +10,7 @@ public class SubscriptionsController {
 
 	private OrderView orderView;
 	private ListView listView;
-	private OrderRepository orderRepository;
+	private OrderRepository orderRepository; 
 
 	public SubscriptionsController(OrderView orderView, ListView listView, OrderRepository orderRepository) {
 		this.orderView = orderView;
