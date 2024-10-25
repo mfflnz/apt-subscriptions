@@ -4,6 +4,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.inOrder;
 import static java.util.Arrays.asList;
@@ -29,10 +30,10 @@ public class SubscriptionsControllerTest {
 
 	@Mock
 	private OrderView orderView;
-	
+
 	@Mock
 	private ListView listView;
-	
+
 	private AutoCloseable closeable;
 
 	@InjectMocks
@@ -57,7 +58,7 @@ public class SubscriptionsControllerTest {
 		subscriptionsController.requestOrders();
 		verify(listView).showOrders(orders);
 	}
-	
+
 	@Test
 	public void testRequestOrdersWhenDateRangeIsProvided() {
 		List<Order> orders = asList(new Order());
@@ -67,14 +68,28 @@ public class SubscriptionsControllerTest {
 		subscriptionsController.requestOrders(fromDate, toDate);
 		verify(listView).showOrders(orders);
 	}
+
 	@Test
-	public void testRequestOrdersWhenStartDateIsMissingShouldThrow() {
+	public void testRequestOrdersWhenStartDateIsNullShouldThrow() {
+		LocalDate fromDate = null;
+		LocalDate toDate = LocalDate.now();
+		assertThatThrownBy(() -> subscriptionsController.requestOrders(fromDate, toDate)).isInstanceOf(IllegalArgumentException.class).hasMessage("Please provide start date");
 	}
-	
+
 	@Test
-	public void testRequestOrdersWhenEndDateIsMissingShouldThrow() {
+	public void testRequestOrdersWhenEndDateIsNullShouldThrow() {
+		LocalDate fromDate = LocalDate.now();
+		LocalDate toDate = null;
+		assertThatThrownBy(() -> subscriptionsController.requestOrders(fromDate, toDate)).isInstanceOf(IllegalArgumentException.class).hasMessage("Please provide end date");
 	}
-	
+
+	@Test
+	public void testRequestOrdersWhenEndDateIsStrictlyEarlierThanStartDateShouldThrow() {
+		LocalDate fromDate = LocalDate.now();
+		LocalDate toDate = LocalDate.of(2024, 1, 1);
+		assertThatThrownBy(() -> subscriptionsController.requestOrders(fromDate, toDate)).isInstanceOf(IllegalArgumentException.class).hasMessage("Start date should be earlier or equal to end date");
+	}
+
 	@Test
 	public void testNewOrderWhenOrderDoesNotAlreadyExist() {
 		Order order = new Order(1, LocalDate.of(2024, 8, 28));
@@ -94,7 +109,7 @@ public class SubscriptionsControllerTest {
 		verify(orderView).showError("Already existing order with id 1", existingOrder);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
-	
+
 	@Test
 	public void testDeleteOrderWhenOrderExists() {
 		Order orderToDelete = new Order(1, LocalDate.of(2024, 8, 29));
@@ -104,7 +119,7 @@ public class SubscriptionsControllerTest {
 		inOrder.verify(orderRepository).delete(1);
 		inOrder.verify(orderView).orderRemoved(orderToDelete);
 	}
-	
+
 	@Test
 	public void testDeleteOrderWhenOrderDoesNotExist() {
 		Order orderToDelete = new Order(1, LocalDate.of(2024, 8, 29));

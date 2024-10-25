@@ -23,6 +23,15 @@ public class SubscriptionsController {
 	}
 	
 	public void requestOrders(LocalDate fromDate, LocalDate toDate) {
+		if (fromDate == null) {
+			throw new IllegalArgumentException("Please provide start date");
+		}
+		if (toDate == null) {
+			throw new IllegalArgumentException("Please provide end date");
+		}
+		if (toDate.isBefore(fromDate)) {
+			throw new IllegalArgumentException("Start date should be earlier or equal to end date");
+		}
 		listView.showOrders(orderRepository.findByDateRange(fromDate, toDate));
 	}
 
