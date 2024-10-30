@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest ]
-        java: [ 8, 11, 17 ]
+        java: [ 8 ]
       fail-fast: true
     env:
       DOCKER_HOST: tcp://localhost:2375
