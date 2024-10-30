@@ -112,6 +112,8 @@ public class ListSwingView extends JFrame implements ListView {
 		gbc_btnDelete.gridy = 1;
 		contentPane.add(btnDelete, gbc_btnDelete);
 
+		btnDelete.addActionListener(e -> subscriptionsController.deleteOrder(listOrders.getSelectedValue()));
+
 		btnExportCsv = new JButton("Export CSV");
 		GridBagConstraints gbc_btnExportCsv = new GridBagConstraints();
 		gbc_btnExportCsv.anchor = GridBagConstraints.EAST;
@@ -119,6 +121,18 @@ public class ListSwingView extends JFrame implements ListView {
 		gbc_btnExportCsv.gridx = 1;
 		gbc_btnExportCsv.gridy = 1;
 		contentPane.add(btnExportCsv, gbc_btnExportCsv);
+
+		btnExportCsv.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (fc.showSaveDialog(scrollPane) == JFileChooser.APPROVE_OPTION) {
+					File file = fc.getSelectedFile();
+				} else {
+					fc.setVisible(false);
+				}
+			}
+		});
 
 		btnShowDetails = new JButton("Show Details");
 		btnShowDetails.setEnabled(false);
@@ -134,17 +148,7 @@ public class ListSwingView extends JFrame implements ListView {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				orderSwingView.setVisible(true);
-
-			}
-		});
-
-		btnExportCsv.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (fc.showSaveDialog(scrollPane) == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
-				}
+				subscriptionsController.orderDetails(listOrders.getSelectedValue().getOrderId());
 			}
 		});
 

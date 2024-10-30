@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.verify;
 
 @RunWith(GUITestRunner.class)
 public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
@@ -71,8 +72,8 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testDeleteButtonShouldBeEnabledOnlyWhenAnOrderIsSelected() {
-		GuiActionRunner.execute(() -> listSwingView.getListOrdersModel()
-				.addElement(new Order(1, LocalDate.of(2024, 8, 2))));
+		GuiActionRunner
+				.execute(() -> listSwingView.getListOrdersModel().addElement(new Order(1, LocalDate.of(2024, 8, 2))));
 		listWindow.list("ordersList").selectItem(0);
 		JButtonFixture deleteButton = listWindow.button(JButtonMatcher.withText("Delete"));
 		deleteButton.requireEnabled();
@@ -83,8 +84,8 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testShowDetailsButtonShouldBeEnabledOnlyWhenAnOrderIsSelected() {
-		GuiActionRunner.execute(() -> listSwingView.getListOrdersModel()
-				.addElement(new Order(1, LocalDate.of(2024, 8, 2))));
+		GuiActionRunner
+				.execute(() -> listSwingView.getListOrdersModel().addElement(new Order(1, LocalDate.of(2024, 8, 2))));
 		listWindow.list("ordersList").selectItem(0);
 		JButtonFixture showDetailsButton = listWindow.button(JButtonMatcher.withText("Show Details"));
 		showDetailsButton.requireEnabled();
@@ -154,5 +155,33 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 		listSwingView.getFc().isShowing();
 	}
 
-	
+	@Test
+	public void testSaveButtonInDialogShouldDelegateToSubscriptionsControllerExportOrders() {
+// TODO
+	}
+
+	@Test
+	public void testDeleteButtonShouldDelegateToSubscriptionsControllerDeleteOrder() {
+		GuiActionRunner
+				.execute(() -> listSwingView.getListOrdersModel().addElement(new Order(1, LocalDate.of(2024, 8, 2))));
+		listWindow.list("ordersList").selectItem(0);
+		listWindow.button(JButtonMatcher.withText("Delete")).click();
+		verify(subscriptionsController).deleteOrder(new Order(1, LocalDate.of(2024, 8, 2)));
+	}
+
+	@Test
+	@GUITest
+	public void testShowDetailsButtonShouldDelegateToSubscriptionsControllerOrderDetails() {
+		GuiActionRunner
+				.execute(() -> listSwingView.getListOrdersModel().addElement(new Order(1, LocalDate.of(2024, 8, 2))));
+		listWindow.list("ordersList").selectItem(0);
+		listWindow.button(JButtonMatcher.withText("Show Details")).requireEnabled().click();
+		verify(subscriptionsController).orderDetails(1);
+		listWindow.list("ordersList").clearSelection();
+		listWindow.button(JButtonMatcher.withText("Show Details")).requireDisabled();
+
+	}
+
+// TODO: altro test in cui se premi "salva" sul dialog chiama il metodo giusto del controller
+
 }

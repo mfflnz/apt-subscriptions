@@ -10,7 +10,7 @@ public class SubscriptionsController {
 
 	private OrderView orderView;
 	private ListView listView;
-	private OrderRepository orderRepository; 
+	private OrderRepository orderRepository;
 
 	public SubscriptionsController(OrderView orderView, ListView listView, OrderRepository orderRepository) {
 		this.orderView = orderView;
@@ -21,7 +21,7 @@ public class SubscriptionsController {
 	public void requestOrders() {
 		listView.showOrders(orderRepository.findAll());
 	}
-	
+
 	public void requestOrders(LocalDate fromDate, LocalDate toDate) {
 		if (fromDate == null) {
 			throw new IllegalArgumentException("Please provide start date");
@@ -52,6 +52,10 @@ public class SubscriptionsController {
 		}
 		orderRepository.delete(orderToDelete.getOrderId());
 		orderView.orderRemoved(orderToDelete);
+	}
+
+	public Order orderDetails(int orderId) {
+		return orderRepository.findById(orderId);
 	}
 
 }
