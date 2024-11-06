@@ -57,7 +57,7 @@ public class SubscriptionsControllerTest {
 		List<Order> orders = asList(new Order());
 		when(orderRepository.findAll()).thenReturn(orders);
 		subscriptionsController.requestOrders();
-		verify(listView).showOrders(orders);
+		verify(listView).showAllOrders(orders);
 	}
 
 	@Test
