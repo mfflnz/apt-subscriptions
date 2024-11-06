@@ -163,7 +163,7 @@ public class ListSwingView extends JFrame implements ListView {
 
 	@Override
 	public void showOrders(List<Order> orders) {
-		// TODO Auto-generated method stub
+		orders.stream().forEach(listOrdersModel::addElement);
 
 	}
 

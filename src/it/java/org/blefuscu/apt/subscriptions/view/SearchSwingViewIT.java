@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.net.InetSocketAddress;
 import java.time.LocalDate;
 
+import org.assertj.swing.annotation.GUITest;
+import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
@@ -91,6 +93,20 @@ public class SearchSwingViewIT extends AssertJSwingJUnitTestCase {
 		});
 		assertThat(listWindow.list().contents()).containsExactly(order1.toString(), order2.toString(),
 				order3.toString());
+	}
+	
+	@Test @GUITest
+	public void testSearchButtonShowsOrdersInDateRange() {
+		Order order1 = new Order(1, LocalDate.of(2024, 10, 01));
+		Order order2 = new Order(2, LocalDate.of(2024, 10, 02));
+		Order order3 = new Order(3, LocalDate.of(2024, 11, 01));
+		orderRepository.save(order1);
+		orderRepository.save(order2);
+		orderRepository.save(order3);
+		searchWindow.textBox("fromTextBox").deleteText().enterText("2024-09-12");
+		searchWindow.textBox("toTextBox").deleteText().enterText("2024-10-20");
+		searchWindow.button(JButtonMatcher.withText("Search")).click();
+		assertThat(listWindow.list().contents()).containsExactly(order1.toString(), order2.toString());
 	}
 
 }
