@@ -19,7 +19,7 @@ public class SubscriptionsController {
 	}
 
 	public void requestOrders() {
-		listView.showOrders(orderRepository.findAll());
+		listView.showAllOrders(orderRepository.findAll());
 	}
 
 	public void requestOrders(LocalDate fromDate, LocalDate toDate) {
