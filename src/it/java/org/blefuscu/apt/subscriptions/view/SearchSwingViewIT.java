@@ -109,4 +109,18 @@ public class SearchSwingViewIT extends AssertJSwingJUnitTestCase {
 		assertThat(listWindow.list().contents()).containsExactly(order1.toString(), order2.toString());
 	}
 
+	@Test @GUITest
+	public void testSearchButton() {
+		Order order1 = new Order(1, LocalDate.of(2024, 10, 01));
+		Order order2 = new Order(2, LocalDate.of(2024, 10, 02));
+		Order order3 = new Order(3, LocalDate.of(2024, 11, 01));
+		orderRepository.save(order1);
+		orderRepository.save(order2);
+		orderRepository.save(order3);
+		searchWindow.textBox("fromTextBox").deleteText().enterText("2024-13-12");
+		searchWindow.textBox("toTextBox").deleteText().enterText("2024-10-20");
+		searchWindow.button(JButtonMatcher.withText("Search")).click();
+		assertThat(listWindow.list().contents()).containsExactly(order1.toString(), order2.toString());
+	}
+	
 }

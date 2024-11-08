@@ -1,6 +1,7 @@
 package org.blefuscu.apt.subscriptions.controller;
 
 import java.time.LocalDate;
+
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.blefuscu.apt.subscriptions.view.ListView;
@@ -32,6 +33,8 @@ public class SubscriptionsController {
 		if (toDate.isBefore(fromDate)) {
 			throw new IllegalArgumentException("Start date should be earlier or equal to end date");
 		}
+
+
 		listView.showOrders(orderRepository.findByDateRange(fromDate, toDate));
 	}
 

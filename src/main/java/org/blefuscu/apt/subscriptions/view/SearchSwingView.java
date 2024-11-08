@@ -1,5 +1,6 @@
 package org.blefuscu.apt.subscriptions.view;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -23,6 +24,9 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 import javax.swing.JButton;
 
 public class SearchSwingView extends JFrame {
@@ -34,6 +38,8 @@ public class SearchSwingView extends JFrame {
 
 	private ListSwingView listSwingView = new ListSwingView();
 	private SubscriptionsController subscriptionsController;
+
+	private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	/**
 	 * Launch the application.
@@ -65,9 +71,9 @@ public class SearchSwingView extends JFrame {
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[] { 0, 0, 0 };
-		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0 };
+		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0 };
 		gbl_contentPane.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
-		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
 
 		JLabel lblFrom = new JLabel("From");
@@ -89,7 +95,6 @@ public class SearchSwingView extends JFrame {
 		fromTextBox.setColumns(10);
 		fromTextBox.setText(LocalDate.now().toString());
 
-
 		JLabel lblTo = new JLabel("To");
 		GridBagConstraints gbc_lblTo = new GridBagConstraints();
 		gbc_lblTo.anchor = GridBagConstraints.EAST;
@@ -109,38 +114,54 @@ public class SearchSwingView extends JFrame {
 		toTextBox.setColumns(10);
 		toTextBox.setText(LocalDate.now().toString());
 
-
 		JButton btnSearch = new JButton("Search");
 		btnSearch.setName("searchButton");
 		GridBagConstraints gbc_btnSearch = new GridBagConstraints();
+		gbc_btnSearch.insets = new Insets(0, 0, 5, 0);
 		gbc_btnSearch.gridwidth = 2;
-		gbc_btnSearch.insets = new Insets(0, 0, 0, 5);
 		gbc_btnSearch.gridx = 0;
 		gbc_btnSearch.gridy = 3;
 		contentPane.add(btnSearch, gbc_btnSearch);
-		
-		/* TODO: usare JDatePicker invece di campo di testo
-		 * UtilDateModel fromModel = new UtilDateModel(); JDatePanelImpl fromDatePanel =
-		 * new JDatePanelImpl(fromModel); JDatePickerImpl fromDatePicker = new
+
+		JLabel lblErrorMessage = new JLabel("");
+		lblErrorMessage.setForeground(Color.RED);
+		lblErrorMessage.setName("errorMessageLabel");
+		GridBagConstraints gbc_lblErrorMessage = new GridBagConstraints();
+		gbc_lblErrorMessage.gridx = 1;
+		gbc_lblErrorMessage.gridy = 5;
+		contentPane.add(lblErrorMessage, gbc_lblErrorMessage);
+
+		/*
+		 * TODO: usare JDatePicker invece di campo di testo UtilDateModel fromModel =
+		 * new UtilDateModel(); JDatePanelImpl fromDatePanel = new
+		 * JDatePanelImpl(fromModel); JDatePickerImpl fromDatePicker = new
 		 * JDatePickerImpl(fromDatePanel); contentPane.add(fromDatePicker);
 		 * 
 		 * UtilDateModel toModel = new UtilDateModel(); JDatePanelImpl toDatePanel = new
 		 * JDatePanelImpl(toModel); JDatePickerImpl toDatePicker = new
 		 * JDatePickerImpl(toDatePanel); contentPane.add(toDatePicker);
 		 */
-		
 
 		btnSearch.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
+				try {
+					LocalDate.parse(fromTextBox.getText(), dateFormat);
+					LocalDate.parse(toTextBox.getText(), dateFormat);
+				} catch (DateTimeParseException exception) {
+					lblErrorMessage.setText("Please provide dates formatted as 'yyyy-MM-dd'");
+				}
+
+				subscriptionsController.requestOrders(LocalDate.parse(fromTextBox.getText()),
+						LocalDate.parse(toTextBox.getText()));
+
 				listSwingView.setVisible(true);
 
 			}
-		});
 
-		btnSearch.addActionListener(e -> subscriptionsController.requestOrders(LocalDate.parse(fromTextBox.getText()),
-				LocalDate.parse(toTextBox.getText())));
+		});
 
 		Document fromDocument = fromTextBox.getDocument();
 		Document toDocument = toTextBox.getDocument();
@@ -149,7 +170,8 @@ public class SearchSwingView extends JFrame {
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				btnSearch.setEnabled(false);
+				if (fromTextBox.getText().length() == 0 || toTextBox.getText().length() == 0)
+					btnSearch.setEnabled(false);
 			}
 
 			@Override
@@ -160,7 +182,7 @@ public class SearchSwingView extends JFrame {
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-
+// TODO: fai check del formato
 			}
 		};
 

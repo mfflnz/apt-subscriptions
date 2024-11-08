@@ -94,7 +94,10 @@ public class SubscriptionsControllerTest {
 				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Start date should be earlier or equal to end date");
 	}
+	
 
+
+	
 	@Test
 	public void testNewOrderWhenOrderDoesNotAlreadyExist() {
 		Order order = new Order(1, LocalDate.of(2024, 8, 28));

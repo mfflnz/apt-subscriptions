@@ -1,6 +1,7 @@
 package org.blefuscu.apt.subscriptions.view;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import java.time.LocalDate;
 import org.assertj.swing.core.matcher.JButtonMatcher;
@@ -47,6 +48,7 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		searchWindow = new FrameFixture(robot(), searchSwingView);
 		
 		searchWindow.show();
+
 	}
 	
 	@Override
@@ -61,7 +63,9 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		searchWindow.label(JLabelMatcher.withText("To"));
 		searchWindow.textBox("toTextBox").requireText(LocalDate.now().toString());
 		searchWindow.button(JButtonMatcher.withText("Search")).requireEnabled();
+		searchWindow.label(JLabelMatcher.withName("errorMessageLabel")).requireText("");
 	}
+
 	
 	@Test
 	public void testIfFromTextBoxIsEmptySearchButtonShouldBeDisabled() {
@@ -96,6 +100,25 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		verify(subscriptionsController).requestOrders(LocalDate.now(), LocalDate.now());
 
 	}
+	
+	@Test
+	public void testIfFromDateIsNotCorrectlyFormattedShouldShowAnErrorMessage() {
+		searchWindow.textBox("fromTextBox").deleteText();
+		searchWindow.textBox("fromTextBox").enterText("12-10-2024");
+		searchWindow.button(JButtonMatcher.withText("Search")).click();
+		searchWindow.label("errorMessageLabel").requireText("Please provide dates formatted as 'yyyy-MM-dd'");
+		verifyNoInteractions(subscriptionsController);
+	}
+	
+	@Test
+	public void testIfToDateIsNotCorrectlyFormattedShouldShowAnErrorMessage() {
+		searchWindow.textBox("toTextBox").deleteText();
+		searchWindow.textBox("toTextBox").enterText("12-10-2024");
+		searchWindow.button(JButtonMatcher.withText("Search")).click();
+		searchWindow.label("errorMessageLabel").requireText("Please provide dates formatted as 'yyyy-MM-dd'");
+		verifyNoInteractions(subscriptionsController);
+	}
+
 
 
 }
