@@ -1,5 +1,6 @@
 target/
 failed-gui-tests/
+export.csv
 
 # Backup files
 *~

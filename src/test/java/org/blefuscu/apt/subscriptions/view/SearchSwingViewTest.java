@@ -20,42 +20,42 @@ import org.mockito.MockitoAnnotations;
 public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	private FrameFixture searchWindow;
-	
+
 	private SearchSwingView searchSwingView;
 	private ListSwingView listSwingView;
-	
+
 	@Mock
 	private SubscriptionsController subscriptionsController;
-	
+
 	private AutoCloseable closeable;
 
 	@Override
 	protected void onSetUp() throws Exception {
-		
+
 		closeable = MockitoAnnotations.openMocks(this);
-		
+
 		GuiActionRunner.execute(() -> {
 			searchSwingView = new SearchSwingView();
 			searchSwingView.setSubscriptionsController(subscriptionsController);
 			return searchSwingView;
 		});
-		
+
 		GuiActionRunner.execute(() -> {
 			listSwingView = new ListSwingView();
 			return listSwingView;
 		});
-		
+
 		searchWindow = new FrameFixture(robot(), searchSwingView);
-		
+
 		searchWindow.show();
 
 	}
-	
+
 	@Override
 	public void onTearDown() throws Exception {
 		closeable.close();
 	}
-	
+
 	@Test
 	public void testControlsInitialStates() {
 		searchWindow.label(JLabelMatcher.withText("From"));
@@ -66,7 +66,6 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		searchWindow.label(JLabelMatcher.withName("errorMessageLabel")).requireText("");
 	}
 
-	
 	@Test
 	public void testIfFromTextBoxIsEmptySearchButtonShouldBeDisabled() {
 		searchWindow.textBox("fromTextBox").deleteText();
@@ -74,7 +73,7 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		searchWindow.textBox("fromTextBox").enterText(LocalDate.now().toString());
 		searchWindow.button(JButtonMatcher.withText("Search")).requireEnabled();
 	}
-	
+
 	@Test
 	public void testIfToTextBoxIsEmptySearchButtonShouldBeDisabled() {
 		searchWindow.textBox("toTextBox").deleteText();
@@ -87,7 +86,6 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testIfSearchButtonIsPressedAListViewSouldBeShown() {
 		searchWindow.button(JButtonMatcher.withText("Search")).click();
 		listSwingView.isShowing();
-		
 	}
 
 	@Test
@@ -100,7 +98,7 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		verify(subscriptionsController).requestOrders(LocalDate.now(), LocalDate.now());
 
 	}
-	
+
 	@Test
 	public void testIfFromDateIsNotCorrectlyFormattedShouldShowAnErrorMessage() {
 		searchWindow.textBox("fromTextBox").deleteText();
@@ -109,7 +107,7 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		searchWindow.label("errorMessageLabel").requireText("Please provide dates formatted as 'yyyy-MM-dd'");
 		verifyNoInteractions(subscriptionsController);
 	}
-	
+
 	@Test
 	public void testIfToDateIsNotCorrectlyFormattedShouldShowAnErrorMessage() {
 		searchWindow.textBox("toTextBox").deleteText();
@@ -118,7 +116,5 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		searchWindow.label("errorMessageLabel").requireText("Please provide dates formatted as 'yyyy-MM-dd'");
 		verifyNoInteractions(subscriptionsController);
 	}
-
-
 
 }

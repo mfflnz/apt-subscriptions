@@ -3,7 +3,9 @@ package org.blefuscu.apt.subscriptions.view;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 
@@ -94,10 +96,10 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	public void testShowAllOrdersShouldAddOrderDescriptionsToTheList() {
+	public void testShowOrdersShouldAddOrderDescriptionsToTheList() {
 		Order order1 = new Order(1, LocalDate.of(2024, 10, 9));
 		Order order2 = new Order(2, LocalDate.of(2024, 10, 9));
-		GuiActionRunner.execute(() -> listSwingView.showAllOrders(Arrays.asList(order1, order2)));
+		GuiActionRunner.execute(() -> listSwingView.showOrders(Arrays.asList(order1, order2)));
 		String[] listContents = listWindow.list().contents();
 		assertThat(listContents).containsExactly(order1.toString(), order2.toString());
 	}
@@ -156,11 +158,6 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	public void testSaveButtonInDialogShouldDelegateToSubscriptionsControllerExportOrders() {
-// TODO
-	}
-
-	@Test
 	public void testDeleteButtonShouldDelegateToSubscriptionsControllerDeleteOrder() {
 		GuiActionRunner
 				.execute(() -> listSwingView.getListOrdersModel().addElement(new Order(1, LocalDate.of(2024, 8, 2))));
@@ -182,6 +179,20 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	}
 
-// TODO: altro test in cui se premi "salva" sul dialog chiama il metodo giusto del controller
+	@Test
+	public void testSaveButtonInDialogShouldDelegateToSubscriptionsControllerExportOrders() {
+		listWindow.button(JButtonMatcher.withText("Export CSV")).click();
+		GuiActionRunner.execute(() -> {
+			String filename = "export.csv";
+			List<Order> ordersListToSave = new ArrayList<Order>();
+			// TODO: passare al controller gli ordini effettivamente elencati
+			listSwingView.getFc().setName(filename);
+			listSwingView.getFc().approveSelection();
+			verify(subscriptionsController).exportOrders(filename, ordersListToSave);
+
+		});
+	}
+
+	// TODO: test showAllOrders()
 
 }

@@ -21,6 +21,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import javax.swing.JLabel;
 
@@ -128,6 +129,12 @@ public class ListSwingView extends JFrame implements ListView {
 			public void actionPerformed(ActionEvent e) {
 				if (fc.showSaveDialog(scrollPane) == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
+					try {
+						subscriptionsController.exportOrders(file.getName(), null);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				} else {
 					fc.setVisible(false);
 				}

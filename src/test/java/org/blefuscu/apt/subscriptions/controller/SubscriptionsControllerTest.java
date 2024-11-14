@@ -10,6 +10,10 @@ import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.inOrder;
 import static java.util.Arrays.asList;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import org.blefuscu.apt.subscriptions.model.Order;
@@ -144,4 +148,27 @@ public class SubscriptionsControllerTest {
 		when(orderRepository.findById(1)).thenReturn(order);
 		assertThat(subscriptionsController.orderDetails(1)).isEqualTo(order);
 	}
+	
+	@Test
+	public void testExportOrdersShouldWriteOrdersListToDisk() {
+		Order order = new Order(1, LocalDate.of(2024, 8, 28));
+		orderRepository.save(order);
+		String filename = "export.csv";
+		when(orderRepository.findAll()).thenReturn(asList(order));
+		List<Order> ordersToSave = orderRepository.findAll();
+			
+		try {
+			Files.deleteIfExists(Paths.get("export.csv"));
+			subscriptionsController.exportOrders(filename, ordersToSave);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assertThat(new File("export.csv")).exists();
+		assertThat(new File("export.csv")).hasContent("[Order [orderId=1, orderDate=2024-08-28, orderTotal=0.0, paymentMethodTitle=null, billingFirstName=null, billingLastName=null, billingCompany=null, billingEmail=null, billingPhone=null, billingAddress1=null, billingAddress2=null, billingPostcode=null, billingCity=null, billingState=null, billingCountry=null, shippingFirstName=null, shippingLastName=null, shippingCompany=null, shippingEmail=null, shippingPhone=null, shippingAddress1=null, shippingAddress2=null, shippingPostcode=null, shippingCity=null, shippingState=null, shippingCountry=null, orderAttributionReferrer=null, depositDate=null, netOrderTotal=0.0, firstIssue=0, lastIssue=0, notes=null]]");
+		// TODO: strip tutto il content a 1,2024-08-28
+
+	}
+
 }

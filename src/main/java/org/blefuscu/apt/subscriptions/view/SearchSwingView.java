@@ -195,4 +195,5 @@ public class SearchSwingView extends JFrame {
 		this.subscriptionsController = subscriptionsController;
 	}
 
+	//TODO: come passare il controller?
 }

@@ -70,7 +70,7 @@ public class SearchSwingViewIT extends AssertJSwingJUnitTestCase {
 
 		listWindow = new FrameFixture(robot(), listSwingView);
 		searchWindow = new FrameFixture(robot(), searchSwingView);
-		
+
 		searchWindow.show();
 		listWindow.show();
 	}
@@ -94,8 +94,9 @@ public class SearchSwingViewIT extends AssertJSwingJUnitTestCase {
 		assertThat(listWindow.list().contents()).containsExactly(order1.toString(), order2.toString(),
 				order3.toString());
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testSearchButtonShowsOrdersInDateRange() {
 		Order order1 = new Order(1, LocalDate.of(2024, 10, 01));
 		Order order2 = new Order(2, LocalDate.of(2024, 10, 02));
@@ -109,7 +110,10 @@ public class SearchSwingViewIT extends AssertJSwingJUnitTestCase {
 		assertThat(listWindow.list().contents()).containsExactly(order1.toString(), order2.toString());
 	}
 
-	@Test @GUITest
+	// TODO: controlla questo test
+
+	@Test
+	@GUITest
 	public void testSearchButton() {
 		Order order1 = new Order(1, LocalDate.of(2024, 10, 01));
 		Order order2 = new Order(2, LocalDate.of(2024, 10, 02));
@@ -117,10 +121,10 @@ public class SearchSwingViewIT extends AssertJSwingJUnitTestCase {
 		orderRepository.save(order1);
 		orderRepository.save(order2);
 		orderRepository.save(order3);
-		searchWindow.textBox("fromTextBox").deleteText().enterText("2024-13-12");
-		searchWindow.textBox("toTextBox").deleteText().enterText("2024-10-20");
+		searchWindow.textBox("fromTextBox").deleteText().enterText("2024-09-12");
+		searchWindow.textBox("toTextBox").deleteText().enterText("2024-09-20");
 		searchWindow.button(JButtonMatcher.withText("Search")).click();
-		assertThat(listWindow.list().contents()).containsExactly(order1.toString(), order2.toString());
+		assertThat(listWindow.list().contents()).isEmpty();
 	}
-	
+
 }

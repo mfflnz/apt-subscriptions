@@ -1,6 +1,12 @@
 package org.blefuscu.apt.subscriptions.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
+import java.util.List;
 
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
@@ -34,7 +40,6 @@ public class SubscriptionsController {
 			throw new IllegalArgumentException("Start date should be earlier or equal to end date");
 		}
 
-
 		listView.showOrders(orderRepository.findByDateRange(fromDate, toDate));
 	}
 
@@ -59,6 +64,12 @@ public class SubscriptionsController {
 
 	public Order orderDetails(int orderId) {
 		return orderRepository.findById(orderId);
+	}
+
+	public void exportOrders(String filename, List<Order> ordersListToSave) throws IOException {	
+		Path filePath = Paths.get(filename);
+		Files.createFile(filePath);
+		Files.write(filePath, ordersListToSave.toString().getBytes(), StandardOpenOption.APPEND);
 	}
 
 }
