@@ -1,9 +1,12 @@
 package org.blefuscu.apt.subscriptions.view;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,7 +25,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import static org.mockito.Mockito.verify;
 
 @RunWith(GUITestRunner.class)
 public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
@@ -180,18 +182,21 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	public void testSaveButtonInDialogShouldDelegateToSubscriptionsControllerExportOrders() {
+	public void testSaveButtonInDialogShouldDelegateToSubscriptionsControllerExportOrders() throws IOException {
 		listWindow.button(JButtonMatcher.withText("Export CSV")).click();
-		GuiActionRunner.execute(() -> {
-			String filename = "export.csv";
-			List<Order> ordersListToSave = new ArrayList<Order>();
-			// TODO: passare al controller gli ordini effettivamente elencati
-			listSwingView.getFc().setName(filename);
-			listSwingView.getFc().approveSelection();
-			verify(subscriptionsController).exportOrders(filename, ordersListToSave);
-
-		});
+		listSwingView.getFc().setName("export.csv");
+		Order order1 = new Order(1, LocalDate.of(2024, 10, 8));
+		Order order2 = new Order(2, LocalDate.of(2024, 10, 9));
+		List<Order> ordersList = asList(order1, order2);
+		listSwingView.setOrdersList(ordersList);
+		listSwingView.getFc().approveSelection();
+		when(subscriptionsController.exportOrders(listSwingView.getFc().getName(), listSwingView.getOrdersList())).thenReturn(1);
+		verify(subscriptionsController).exportOrders("export.csv", Arrays.asList(order1, order2));
 	}
+	
+
+	
+	
 
 	// TODO: test showAllOrders()
 

@@ -20,9 +20,9 @@ import javax.swing.JFileChooser;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
 import javax.swing.JLabel;
 
 public class ListSwingView extends JFrame implements ListView {
@@ -37,6 +37,15 @@ public class ListSwingView extends JFrame implements ListView {
 	private JLabel lblErrorMessage;
 
 	private SubscriptionsController subscriptionsController;
+	private List<Order> ordersList;
+
+	public List<Order> getOrdersList() {
+		return ordersList;
+	}
+
+	public void setOrdersList(List<Order> ordersList) {
+		this.ordersList = ordersList;
+	}
 
 	private OrderSwingView orderSwingView = new OrderSwingView();
 	private JButton btnExportCsv;
@@ -128,13 +137,12 @@ public class ListSwingView extends JFrame implements ListView {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (fc.showSaveDialog(scrollPane) == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
 					try {
-						subscriptionsController.exportOrders(file.getName(), null);
+						subscriptionsController.exportOrders(fc.getName(), ordersList);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
-					}
+					}  
 				} else {
 					fc.setVisible(false);
 				}

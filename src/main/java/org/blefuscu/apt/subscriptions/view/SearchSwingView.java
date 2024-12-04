@@ -170,7 +170,9 @@ public class SearchSwingView extends JFrame {
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				if (fromTextBox.getText().length() == 0 || toTextBox.getText().length() == 0)
+				if (fromTextBox.getText().length() == 0)
+					btnSearch.setEnabled(false);
+				if (toTextBox.getText().length() == 0)
 					btnSearch.setEnabled(false);
 			}
 
@@ -182,8 +184,10 @@ public class SearchSwingView extends JFrame {
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-// TODO: fai check del formato
+				// TODO Auto-generated method stub
+				
 			}
+
 		};
 
 		fromDocument.addDocumentListener(textListener);
@@ -195,5 +199,4 @@ public class SearchSwingView extends JFrame {
 		this.subscriptionsController = subscriptionsController;
 	}
 
-	//TODO: come passare il controller?
 }

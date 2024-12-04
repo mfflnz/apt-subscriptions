@@ -6,21 +6,27 @@ import java.util.Objects;
 public class Order {
 
 	private int orderId;
-	private LocalDate orderDate; // should be formatted as "yyyy-MM-dd HH:mm:ss"
-	private double orderTotal;
-	private String paymentMethodTitle; // e.g. "PayPal", "Credit Card", ...
+	private LocalDate orderDate;
 
+	private LocalDate depositDate;
+	private double orderTotal;
+	private double netOrderTotal;
+	private String paymentMethodTitle; // e.g. "PayPal", "Credit Card", ...
 	private String billingFirstName;
 	private String billingLastName;
 	private String billingCompany;
-	private String billingEmail;
-	private String billingPhone;
 	private String billingAddress1;
 	private String billingAddress2;
 	private String billingPostcode; // five-digit number padded with leading zeros
 	private String billingCity;
 	private String billingState;
 	private String billingCountry;
+	private String billingEmail;
+	private String billingPhone;
+	private String orderAttributionReferrer; // contains human-readable product name
+	private int firstIssue;
+	private int lastIssue;
+	private String notes;
 
 	private String shippingFirstName;
 	private String shippingLastName;
@@ -34,21 +40,12 @@ public class Order {
 	private String shippingState;
 	private String shippingCountry;
 
-	private String orderAttributionReferrer; // contains human-readable product name
-
-	private String depositDate;
-	private double netOrderTotal;
-	private int firstIssue;
-	private int lastIssue;
-	private String notes;
-
 	public Order() {
 	}
 
 	public Order(int orderId, LocalDate orderDate) {
 		this.orderId = orderId;
 		this.orderDate = orderDate;
-
 	}
 
 	public int getOrderId() {
@@ -267,11 +264,11 @@ public class Order {
 		this.orderAttributionReferrer = orderAttributionReferrer;
 	}
 
-	public String getDepositDate() {
+	public LocalDate getDepositDate() {
 		return depositDate;
 	}
 
-	public void setDepositDate(String depositDate) {
+	public void setDepositDate(LocalDate depositDate) {
 		this.depositDate = depositDate;
 	}
 
@@ -358,20 +355,30 @@ public class Order {
 
 	@Override
 	public String toString() {
-		return "Order [orderId=" + orderId + ", orderDate=" + orderDate + ", orderTotal=" + orderTotal
-				+ ", paymentMethodTitle=" + paymentMethodTitle + ", billingFirstName=" + billingFirstName
-				+ ", billingLastName=" + billingLastName + ", billingCompany=" + billingCompany + ", billingEmail="
-				+ billingEmail + ", billingPhone=" + billingPhone + ", billingAddress1=" + billingAddress1
-				+ ", billingAddress2=" + billingAddress2 + ", billingPostcode=" + billingPostcode + ", billingCity="
-				+ billingCity + ", billingState=" + billingState + ", billingCountry=" + billingCountry
-				+ ", shippingFirstName=" + shippingFirstName + ", shippingLastName=" + shippingLastName
-				+ ", shippingCompany=" + shippingCompany + ", shippingEmail=" + shippingEmail + ", shippingPhone="
-				+ shippingPhone + ", shippingAddress1=" + shippingAddress1 + ", shippingAddress2=" + shippingAddress2
-				+ ", shippingPostcode=" + shippingPostcode + ", shippingCity=" + shippingCity + ", shippingState="
-				+ shippingState + ", shippingCountry=" + shippingCountry + ", orderAttributionReferrer="
-				+ orderAttributionReferrer + ", depositDate=" + depositDate + ", netOrderTotal=" + netOrderTotal
-				+ ", firstIssue=" + firstIssue + ", lastIssue=" + lastIssue + ", notes=" + notes + "]";
+		return "" + orderId + "," + orderDate;
 	}
 	
+	// TODO stringare tutti gli altri campi
+	
+	/*
+	 * @Override public String toString() { return "" + orderId + "," + orderDate +
+	 * ", depositDate=" + depositDate + ", orderTotal=" + orderTotal +
+	 * ", netOrderTotal=" + netOrderTotal + ", paymentMethodTitle=" +
+	 * paymentMethodTitle + ", billingFirstName=" + billingFirstName +
+	 * ", billingLastName=" + billingLastName + ", billingCompany=" + billingCompany
+	 * + ", billingAddress1=" + billingAddress1 + ", billingAddress2=" +
+	 * billingAddress2 + ", billingPostcode=" + billingPostcode + ", billingCity=" +
+	 * billingCity + ", billingState=" + billingState + ", billingCountry=" +
+	 * billingCountry + ", billingEmail=" + billingEmail + ", billingPhone=" +
+	 * billingPhone + ", orderAttributionReferrer=" + orderAttributionReferrer +
+	 * ", firstIssue=" + firstIssue + ", lastIssue=" + lastIssue + ", notes=" +
+	 * notes + ", shippingFirstName=" + shippingFirstName + ", shippingLastName=" +
+	 * shippingLastName + ", shippingCompany=" + shippingCompany +
+	 * ", shippingEmail=" + shippingEmail + ", shippingPhone=" + shippingPhone +
+	 * ", shippingAddress1=" + shippingAddress1 + ", shippingAddress2=" +
+	 * shippingAddress2 + ", shippingPostcode=" + shippingPostcode +
+	 * ", shippingCity=" + shippingCity + ", shippingState=" + shippingState +
+	 * ", shippingCountry=" + shippingCountry + "]"; }
+	 */
 	
 }

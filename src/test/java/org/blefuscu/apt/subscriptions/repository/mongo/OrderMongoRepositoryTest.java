@@ -79,8 +79,7 @@ public class OrderMongoRepositoryTest {
 	public void testFindByDateRangeWhenNoOrderIsFound() {
 		addTestOrderToDatabase(1, LocalDate.of(2024, 8, 1));
 		addTestOrderToDatabase(2, LocalDate.of(2024, 8, 2));
-		assertThat(orderRepository.findByDateRange(LocalDate.of(2024, 8, 15),
-				LocalDate.of(2024, 8, 16))).isEmpty();
+		assertThat(orderRepository.findByDateRange(LocalDate.of(2024, 8, 15), LocalDate.of(2024, 8, 16))).isEmpty();
 	}
 
 	@Test
@@ -88,16 +87,14 @@ public class OrderMongoRepositoryTest {
 		addTestOrderToDatabase(1, LocalDate.of(2024, 8, 1));
 		addTestOrderToDatabase(2, LocalDate.of(2024, 8, 2));
 		addTestOrderToDatabase(3, LocalDate.of(2024, 8, 3));
-		assertThat(orderRepository.findByDateRange(LocalDate.of(2024, 8, 1),
-				LocalDate.of(2024, 8, 2)))
-				.containsExactly(new Order(1, LocalDate.of(2024, 8, 1)),
-						new Order(2, LocalDate.of(2024, 8, 2)));
+		assertThat(orderRepository.findByDateRange(LocalDate.of(2024, 8, 1), LocalDate.of(2024, 8, 2)))
+				.containsExactly(new Order(1, LocalDate.of(2024, 8, 1)), new Order(2, LocalDate.of(2024, 8, 2)));
 	}
 
 	@Test
 	public void testFindByDateRangeWhenDateRangeIsIncorrect() {
-		assertThatThrownBy(() -> orderRepository.findByDateRange(LocalDate.of(2024, 8, 2),
-				LocalDate.of(2024, 8, 1))).isInstanceOf(IllegalArgumentException.class)
+		assertThatThrownBy(() -> orderRepository.findByDateRange(LocalDate.of(2024, 8, 2), LocalDate.of(2024, 8, 1)))
+				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Error: End date must be later than start date");
 	}
 
@@ -105,10 +102,8 @@ public class OrderMongoRepositoryTest {
 	public void testFindByDateRangeWhenStartDateIsEqualToEndDate() {
 		addTestOrderToDatabase(1, LocalDate.of(2024, 8, 1));
 		addTestOrderToDatabase(2, LocalDate.of(2024, 8, 1));
-		assertThat(orderRepository.findByDateRange(LocalDate.of(2024, 8, 1),
-				LocalDate.of(2024, 8, 1)))
-				.containsExactly(new Order(1, LocalDate.of(2024, 8, 1)),
-						new Order(2, LocalDate.of(2024, 8, 1)));
+		assertThat(orderRepository.findByDateRange(LocalDate.of(2024, 8, 1), LocalDate.of(2024, 8, 1)))
+				.containsExactly(new Order(1, LocalDate.of(2024, 8, 1)), new Order(2, LocalDate.of(2024, 8, 1)));
 	}
 
 	@Test
@@ -134,6 +129,26 @@ public class OrderMongoRepositoryTest {
 		addTestOrderToDatabase(1, LocalDate.of(2024, 8, 1));
 		orderRepository.delete(1);
 		assertThat(readAllOrdersFromDatabase()).isEmpty();
+	}
+
+	@Test
+	public void testEditWhenOrderToEditIsFound() {
+		Order orderToUpdate = new Order(1, LocalDate.of(2024, 8, 1));
+		Order orderWithNewValues = new Order(0, LocalDate.of(2024, 8, 2));
+		addTestOrderToDatabase(orderToUpdate.getOrderId(), orderToUpdate.getOrderDate());
+		assertThat(readAllOrdersFromDatabase()).containsExactly(orderToUpdate);
+		orderRepository.edit(1, orderWithNewValues);
+		assertThat(readAllOrdersFromDatabase()).containsExactly(new Order(1, LocalDate.of(2024, 8, 2)));
+	}
+
+	@Test
+	public void testEditWhenOrderToEditIsNotFound() {
+		Order orderToUpdate = new Order(1, LocalDate.of(2024, 8, 1));
+		Order orderWithNewValues = new Order(0, LocalDate.of(2024, 8, 2));
+		addTestOrderToDatabase(orderToUpdate.getOrderId(), orderToUpdate.getOrderDate());
+		assertThat(readAllOrdersFromDatabase()).containsExactly(orderToUpdate);
+		assertThatThrownBy(() -> orderRepository.edit(2, orderWithNewValues)).isInstanceOf(NullPointerException.class)
+				.hasMessage("Error: No order found with given Id");
 	}
 
 	private List<Order> readAllOrdersFromDatabase() {

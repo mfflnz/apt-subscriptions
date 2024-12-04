@@ -41,6 +41,7 @@ public class SubscriptionsController {
 		}
 
 		listView.showOrders(orderRepository.findByDateRange(fromDate, toDate));
+		
 	}
 
 	public void newOrder(Order order) {
@@ -66,10 +67,15 @@ public class SubscriptionsController {
 		return orderRepository.findById(orderId);
 	}
 
-	public void exportOrders(String filename, List<Order> ordersListToSave) throws IOException {	
+	public int exportOrders(String filename, List<Order> ordersListToSave) throws IOException {
+		String ordersListToSaveAsString = ordersListToSave.toString()
+				.replace("[", "")
+				.replace("]", "")
+				.replace(", ", "\n");
 		Path filePath = Paths.get(filename);
 		Files.createFile(filePath);
-		Files.write(filePath, ordersListToSave.toString().getBytes(), StandardOpenOption.APPEND);
+		Files.write(filePath, ordersListToSaveAsString.getBytes(), StandardOpenOption.APPEND);
+		return 1;
 	}
 
 }

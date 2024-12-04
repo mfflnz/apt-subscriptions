@@ -53,7 +53,7 @@ public class OrderMongoRepository implements OrderRepository {
 
 	@Override
 	public void delete(int id) {
-		orderCollection.deleteOne(Filters.eq("orderId", id));
+		deleteOneOrder(id);
 	}
 
 	@Override
@@ -64,14 +64,22 @@ public class OrderMongoRepository implements OrderRepository {
 		return null;
 	}
 
+	@Override
+	public void edit(int id, Order updatedOrder) throws NullPointerException {
+		if (findById(id) == null) {
+			throw new NullPointerException("Error: No order found with given Id");
+		}
+		deleteOneOrder(id);
+		orderCollection.insertOne(
+				new Document().append("orderId", id).append("orderDate", updatedOrder.getOrderDate()));		
+	}
+
+	private void deleteOneOrder(int id) {
+		orderCollection.deleteOne(Filters.eq("orderId", id));
+	}
+
 	private Order fromDocumentToOrder(Document d) {
 		return new Order(d.getInteger("orderId"),
 				d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDate());
-	}
-
-	@Override
-	public void edit(Order order) {
-		// TODO Auto-generated method stub
-		
 	}
 }

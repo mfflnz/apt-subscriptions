@@ -47,6 +47,8 @@ public class SubscriptionsControllerTest {
 	@Before
 	public void setUp() throws Exception {
 		closeable = MockitoAnnotations.openMocks(this);
+		orderView = mock(OrderView.class);
+		listView = mock(ListView.class);
 		orderRepository = mock(OrderRepository.class);
 		subscriptionsController = new SubscriptionsController(orderView, listView, orderRepository);
 	}
@@ -98,10 +100,7 @@ public class SubscriptionsControllerTest {
 				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Start date should be earlier or equal to end date");
 	}
-	
 
-
-	
 	@Test
 	public void testNewOrderWhenOrderDoesNotAlreadyExist() {
 		Order order = new Order(1, LocalDate.of(2024, 8, 28));
@@ -148,27 +147,55 @@ public class SubscriptionsControllerTest {
 		when(orderRepository.findById(1)).thenReturn(order);
 		assertThat(subscriptionsController.orderDetails(1)).isEqualTo(order);
 	}
-	
+
 	@Test
 	public void testExportOrdersShouldWriteOrdersListToDisk() {
-		Order order = new Order(1, LocalDate.of(2024, 8, 28));
-		orderRepository.save(order);
+		Order order1 = new Order(1, LocalDate.of(2024, 8, 28));
+		Order order2 = new Order(2, LocalDate.of(2024, 8, 29));
+		orderRepository.save(order1);
+		orderRepository.save(order2);
 		String filename = "export.csv";
-		when(orderRepository.findAll()).thenReturn(asList(order));
+		when(orderRepository.findAll()).thenReturn(asList(order1, order2));
 		List<Order> ordersToSave = orderRepository.findAll();
-			
+
 		try {
 			Files.deleteIfExists(Paths.get("export.csv"));
-			subscriptionsController.exportOrders(filename, ordersToSave);
-			
+			// subscriptionsController.exportOrders(filename, ordersToSave);
+			assertThat(subscriptionsController.exportOrders(filename, ordersToSave)).isEqualTo(1);
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		assertThat(new File("export.csv")).exists();
-		assertThat(new File("export.csv")).hasContent("[Order [orderId=1, orderDate=2024-08-28, orderTotal=0.0, paymentMethodTitle=null, billingFirstName=null, billingLastName=null, billingCompany=null, billingEmail=null, billingPhone=null, billingAddress1=null, billingAddress2=null, billingPostcode=null, billingCity=null, billingState=null, billingCountry=null, shippingFirstName=null, shippingLastName=null, shippingCompany=null, shippingEmail=null, shippingPhone=null, shippingAddress1=null, shippingAddress2=null, shippingPostcode=null, shippingCity=null, shippingState=null, shippingCountry=null, orderAttributionReferrer=null, depositDate=null, netOrderTotal=0.0, firstIssue=0, lastIssue=0, notes=null]]");
-		// TODO: strip tutto il content a 1,2024-08-28
+		assertThat(new File("export.csv")).hasContent("1,2024-08-28\n2,2024-08-29");
 
+	}
+
+	@Test
+	public void testRequestOrdersShouldPassTheOrdersListToTheListView() {
+		Order order1 = new Order(1, LocalDate.of(2024, 8, 28));
+		Order order2 = new Order(2, LocalDate.of(2024, 8, 29));
+		orderRepository.save(order1);
+		orderRepository.save(order2);
+		when(orderRepository.findByDateRange(LocalDate.of(2024, 8, 28), LocalDate.of(2024, 8, 29)))
+				.thenReturn(asList(order1, order2));
+		subscriptionsController.requestOrders(LocalDate.of(2024, 8, 28), LocalDate.of(2024, 8, 29));
+		verify(listView).showOrders(asList(order1, order2));
+	}
+	
+	@Test
+	public void testRequestOrdersShouldPassAllOrdersListToTheListViewIfNoDatesAreProvided() {
+		Order order1 = new Order(1, LocalDate.of(2024, 8, 28));
+		Order order2 = new Order(2, LocalDate.of(2024, 8, 29));
+		Order order3 = new Order(3, LocalDate.of(2024, 8, 30));
+		orderRepository.save(order1);
+		orderRepository.save(order2);
+		orderRepository.save(order3);
+		when(orderRepository.findAll())
+				.thenReturn(asList(order1, order2, order3));
+		subscriptionsController.requestOrders();
+		verify(listView).showAllOrders(asList(order1, order2, order3));
 	}
 
 }

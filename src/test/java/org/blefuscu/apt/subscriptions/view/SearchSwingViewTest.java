@@ -81,6 +81,7 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		searchWindow.textBox("toTextBox").enterText(LocalDate.now().toString());
 		searchWindow.button(JButtonMatcher.withText("Search")).requireEnabled();
 	}
+	
 
 	@Test
 	public void testIfSearchButtonIsPressedAListViewSouldBeShown() {

@@ -257,19 +257,20 @@
 						<targetClasses>
 							<param>org.blefuscu.apt.subscriptions.repository.*</param>
 							<param>org.blefuscu.apt.subscriptions.controller.*</param>
-<!--							<param>org.blefuscu.apt.subscriptions.view.*</param>-->
+							<param>org.blefuscu.apt.subscriptions.view.*</param>
 						</targetClasses>
 						<targetTests>
 							<param>
 								org.blefuscu.apt.subscriptions.repository.mongo.*Test*</param>
-							<param>org.blefuscu.apt.subscriptions.controller.*Test*</param>
-<!--							<param>org.blefuscu.apt.subscriptions.view.*Test*</param>-->
+							<param>
+								org.blefuscu.apt.subscriptions.controller.*Test*</param>
+							<param>org.blefuscu.apt.subscriptions.view.*Test*</param>
 						</targetTests>
 						<excludedClasses>
 							<param>org.blefuscu.apt.subscriptions.model.*</param>
 						</excludedClasses>
 						<!-- TODO: fix -->
-						<excludedTestClasses>**/*IT.java</excludedTestClasses>
+<!--						<excludedTestClasses>**/*IT.java</excludedTestClasses>-->
 						<mutators>
 							<mutator>DEFAULTS</mutator>
 						</mutators>
@@ -313,7 +314,7 @@
 			</build>
 		</profile>
 
-		
+
 	</profiles>
 
 </project>
