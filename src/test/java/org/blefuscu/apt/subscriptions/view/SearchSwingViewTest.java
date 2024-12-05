@@ -117,5 +117,7 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		searchWindow.label("errorMessageLabel").requireText("Please provide dates formatted as 'yyyy-MM-dd'");
 		verifyNoInteractions(subscriptionsController);
 	}
+	
+	
 
 }

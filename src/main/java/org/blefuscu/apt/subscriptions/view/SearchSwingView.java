@@ -186,6 +186,7 @@ public class SearchSwingView extends JFrame {
 			public void changedUpdate(DocumentEvent e) {
 				// TODO Auto-generated method stub
 				
+				
 			}
 
 		};
