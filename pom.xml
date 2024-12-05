@@ -240,6 +240,14 @@
 					<groupId>org.eluder.coveralls</groupId>
 					<artifactId>coveralls-maven-plugin</artifactId>
 					<version>${coveralls.version}</version>
+					<executions>
+						<execution>
+							<phase>test</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
+						</execution>
+					</executions>
 					<dependencies>
 						<dependency>
 							<groupId>javax.xml.bind</groupId>
@@ -270,7 +278,8 @@
 							<param>org.blefuscu.apt.subscriptions.model.*</param>
 						</excludedClasses>
 						<!-- TODO: fix -->
-<!--						<excludedTestClasses>**/*IT.java</excludedTestClasses>-->
+						<!--
+						<excludedTestClasses>**/*IT.java</excludedTestClasses>-->
 						<mutators>
 							<mutator>DEFAULTS</mutator>
 						</mutators>
