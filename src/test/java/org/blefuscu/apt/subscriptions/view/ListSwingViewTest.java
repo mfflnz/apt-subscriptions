@@ -2,7 +2,9 @@ package org.blefuscu.apt.subscriptions.view;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -26,6 +28,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+
 @RunWith(GUITestRunner.class)
 public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 
@@ -34,6 +37,8 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	private AutoCloseable closeable;
 
 	private OrderSwingView orderSwingView;
+	
+	private static final int TIMEOUT = 5000;
 
 	@Mock
 	private SubscriptionsController subscriptionsController;
@@ -62,7 +67,7 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	protected void onTearDown() throws Exception {
 		closeable.close();
 	}
-
+	
 	@Test
 	@GUITest
 	public void testControlsInitialStates() {
@@ -165,7 +170,7 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 				.execute(() -> listSwingView.getListOrdersModel().addElement(new Order(1, LocalDate.of(2024, 8, 2))));
 		listWindow.list("ordersList").selectItem(0);
 		listWindow.button(JButtonMatcher.withText("Delete")).click();
-		verify(subscriptionsController).deleteOrder(new Order(1, LocalDate.of(2024, 8, 2)));
+		verify(subscriptionsController, timeout(TIMEOUT)).deleteOrder(new Order(1, LocalDate.of(2024, 8, 2)));
 	}
 
 	@Test
@@ -182,6 +187,21 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
+	public void testCancelButtonInDialogShouldYieldToNoInteractionsWithSubscriptionsController() throws IOException {
+		listWindow.button(JButtonMatcher.withText("Export CSV")).click();
+		listSwingView.getFc().setName("export.csv");
+		Order order1 = new Order(1, LocalDate.of(2024, 10, 8));
+		Order order2 = new Order(2, LocalDate.of(2024, 10, 9));
+		List<Order> ordersList = asList(order1, order2);
+		listSwingView.setOrdersList(ordersList);
+		listSwingView.getFc().cancelSelection();
+		//GuiActionRunner.execute(() -> subscriptionsController.exportOrders(listSwingView.getFc().getName(), listSwingView.getOrdersList()));
+		//when(subscriptionsController.exportOrders(listSwingView.getFc().getName(), listSwingView.getOrdersList())).thenReturn(1);
+		//verify(subscriptionsController).exportOrders("export.csv", Arrays.asList(order1, order2));
+		verifyNoInteractions(subscriptionsController);
+	}
+	
+	@Test
 	public void testSaveButtonInDialogShouldDelegateToSubscriptionsControllerExportOrders() throws IOException {
 		listWindow.button(JButtonMatcher.withText("Export CSV")).click();
 		listSwingView.getFc().setName("export.csv");
@@ -191,13 +211,53 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 		listSwingView.setOrdersList(ordersList);
 		listSwingView.getFc().approveSelection();
 		when(subscriptionsController.exportOrders(listSwingView.getFc().getName(), listSwingView.getOrdersList())).thenReturn(1);
-		verify(subscriptionsController).exportOrders("export.csv", Arrays.asList(order1, order2));
+		verify(subscriptionsController, timeout(TIMEOUT)).exportOrders("export.csv", Arrays.asList(order1, order2));
+		
+	}
+	
+	// TODO: test del caso IOException
+	@Test
+	public void testListSwingViewIOException() throws IOException {
+		listWindow.button(JButtonMatcher.withText("Export CSV")).click();
+		listSwingView.getFc().setName("export.csv");
+		Order order1 = new Order(1, LocalDate.of(2024, 10, 8));
+		Order order2 = new Order(2, LocalDate.of(2024, 10, 9));
+		List<Order> ordersList = asList(order1, order2);
+		listSwingView.setOrdersList(ordersList);
+		
+		when(subscriptionsController.exportOrders(listSwingView.getFc().getName(), listSwingView.getOrdersList())).thenThrow(IOException.class);
+		
+	}
+
+	@Test
+	public void testCsvExportedShouldShowAnInfoMessageIfExportWasSuccessful() throws IOException {
+		listWindow.button(JButtonMatcher.withText("Export CSV")).click();
+		listSwingView.getFc().setName("export.csv");
+		Order order1 = new Order(1, LocalDate.of(2024, 10, 8));
+		Order order2 = new Order(2, LocalDate.of(2024, 10, 9));
+		List<Order> ordersList = asList(order1, order2);
+		listSwingView.setOrdersList(ordersList);
+		listSwingView.getFc().approveSelection();
+		when(subscriptionsController.exportOrders(listSwingView.getFc().getName(), listSwingView.getOrdersList())).thenReturn(1);
+		GuiActionRunner.execute(() -> listSwingView.csvExported(ordersList, 1));
+		listWindow.label("errorMessageLabel").requireText("Orders exported as export.csv");
+		
+	}
+
+	@Test
+	public void testCsvExportedShouldShowAnErrorMessageIfExportWasNotSuccessful() throws IOException {
+		listWindow.button(JButtonMatcher.withText("Export CSV")).click();
+		listSwingView.getFc().setName("export.csv");
+		Order order1 = new Order(1, LocalDate.of(2024, 10, 8));
+		Order order2 = new Order(2, LocalDate.of(2024, 10, 9));
+		List<Order> ordersList = asList(order1, order2);
+		listSwingView.setOrdersList(ordersList);
+		listSwingView.getFc().approveSelection();
+		when(subscriptionsController.exportOrders(listSwingView.getFc().getName(), listSwingView.getOrdersList())).thenThrow(IOException.class);
+		GuiActionRunner.execute(() -> listSwingView.csvExported(ordersList, -1));
+		listWindow.label("errorMessageLabel").requireText("Error exporting orders list");
 	}
 	
 
-	
-	
-
-	// TODO: test showAllOrders()
 
 }

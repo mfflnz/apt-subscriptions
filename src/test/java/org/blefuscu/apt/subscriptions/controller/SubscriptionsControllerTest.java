@@ -51,6 +51,7 @@ public class SubscriptionsControllerTest {
 		listView = mock(ListView.class);
 		orderRepository = mock(OrderRepository.class);
 		subscriptionsController = new SubscriptionsController(orderView, listView, orderRepository);
+		Files.deleteIfExists(Paths.get("export.csv"));
 	}
 
 	@After
@@ -63,7 +64,7 @@ public class SubscriptionsControllerTest {
 		List<Order> orders = asList(new Order());
 		when(orderRepository.findAll()).thenReturn(orders);
 		subscriptionsController.requestOrders();
-		verify(listView).showAllOrders(orders);
+		verify(listView).showOrders(orders);
 	}
 
 	@Test
@@ -171,6 +172,24 @@ public class SubscriptionsControllerTest {
 		assertThat(new File("export.csv")).hasContent("1,2024-08-28\n2,2024-08-29");
 
 	}
+	
+	@Test
+	public void testExportOrdersShouldReturnANegativeValueIfAnExceptionIsThrown() throws IOException {
+		Order order1 = new Order(1, LocalDate.of(2024, 8, 28));
+		Order order2 = new Order(2, LocalDate.of(2024, 8, 29));
+		orderRepository.save(order1);
+		orderRepository.save(order2);
+		String filename = "export.csv";
+		when(orderRepository.findAll()).thenReturn(asList(order1, order2));
+		List<Order> ordersToSave = orderRepository.findAll();
+
+		// This throws the exception
+		Files.createFile(Paths.get(filename));
+		
+		// when(subscriptionsController.exportOrders(filename, ordersToSave)).thenThrow(IOException.class);
+		// assertThatThrownBy(() -> subscriptionsController.exportOrders(filename, ordersToSave)).isInstanceOf(IOException.class);
+		assertThat(subscriptionsController.exportOrders(filename, ordersToSave)).isEqualTo(-1);
+	}
 
 	@Test
 	public void testRequestOrdersShouldPassTheOrdersListToTheListView() {
@@ -195,7 +214,7 @@ public class SubscriptionsControllerTest {
 		when(orderRepository.findAll())
 				.thenReturn(asList(order1, order2, order3));
 		subscriptionsController.requestOrders();
-		verify(listView).showAllOrders(asList(order1, order2, order3));
+		verify(listView).showOrders(asList(order1, order2, order3));
 	}
 
 }

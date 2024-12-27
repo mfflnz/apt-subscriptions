@@ -102,7 +102,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	@GUITest
-	public void testButtonsShouldBeisabledIfOrderIsLocked() {
+	public void testButtonsShouldBeDisabledIfOrderIsLocked() {
 		window.textBox("idTextBox").setText("1");
 		window.textBox("orderDateTextBox").setText("2024-10-12");
 		window.textBox("productTextBox").setText("Abbonamento annuale cartaceo");
@@ -114,6 +114,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Update")).requireDisabled();
 		window.button(JButtonMatcher.withText("Delete")).requireDisabled();
 	}
+
 
 
 }

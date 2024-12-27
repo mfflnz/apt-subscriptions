@@ -1,5 +1,6 @@
 package org.blefuscu.apt.subscriptions.view;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -11,6 +12,8 @@ import org.blefuscu.apt.subscriptions.model.Order;
 
 import java.awt.GridBagLayout;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+
 import java.awt.GridBagConstraints;
 import javax.swing.JList;
 import javax.swing.DefaultListModel;
@@ -136,16 +139,20 @@ public class ListSwingView extends JFrame implements ListView {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (fc.showSaveDialog(scrollPane) == JFileChooser.APPROVE_OPTION) {
-					try {
-						subscriptionsController.exportOrders(fc.getName(), ordersList);
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}  
-				} else {
-					fc.setVisible(false);
-				}
+				
+					if (fc.showSaveDialog(scrollPane) == JFileChooser.APPROVE_OPTION) {
+											
+						try {
+							subscriptionsController.exportOrders(fc.getName(), ordersList);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+							
+						}  
+					} else {
+						fc.setVisible(false);
+					}
+					
 			}
 		});
 
@@ -183,22 +190,27 @@ public class ListSwingView extends JFrame implements ListView {
 	}
 
 	@Override
-	public void csvExported(List<Order> orders) {
-		// TODO Auto-generated method stub
-
+	public void csvExported(List<Order> orders, int exportStatus) {
+		if (exportStatus > 0) {
+			lblErrorMessage.setForeground(Color.green);
+			lblErrorMessage.setText("Orders exported as export.csv");
+		} else {
+			lblErrorMessage.setForeground(Color.red);
+			lblErrorMessage.setText("Error exporting orders list");
+			
+		}
 	}
 
-	public void showAllOrders(List<Order> orders) {
-		orders.stream().forEach(listOrdersModel::addElement);
-	}
 
 	public void showError(String message, Order order) {
 		lblErrorMessage.setText(message + ": " + order);
 	}
 
 	public void orderAdded(Order order) {
-		listOrdersModel.addElement(order);
-		resetErrorLabel();
+		SwingUtilities.invokeLater(() -> {
+			listOrdersModel.addElement(order);
+			resetErrorLabel();
+		});
 	}
 
 	public void orderRemoved(Order order) {

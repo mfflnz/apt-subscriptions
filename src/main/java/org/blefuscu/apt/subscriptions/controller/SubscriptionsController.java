@@ -26,7 +26,7 @@ public class SubscriptionsController {
 	}
 
 	public void requestOrders() {
-		listView.showAllOrders(orderRepository.findAll());
+		listView.showOrders(orderRepository.findAll());
 	}
 
 	public void requestOrders(LocalDate fromDate, LocalDate toDate) {
@@ -62,20 +62,29 @@ public class SubscriptionsController {
 		orderRepository.delete(orderToDelete.getOrderId());
 		orderView.orderRemoved(orderToDelete);
 	}
+	
+	public void updateOrder(Order orderToUpdate) {
+		// TODO
+	}
 
 	public Order orderDetails(int orderId) {
 		return orderRepository.findById(orderId);
 	}
 
 	public int exportOrders(String filename, List<Order> ordersListToSave) throws IOException {
-		String ordersListToSaveAsString = ordersListToSave.toString()
-				.replace("[", "")
-				.replace("]", "")
-				.replace(", ", "\n");
-		Path filePath = Paths.get(filename);
-		Files.createFile(filePath);
-		Files.write(filePath, ordersListToSaveAsString.getBytes(), StandardOpenOption.APPEND);
-		return 1;
+		try {
+			String ordersListToSaveAsString = ordersListToSave.toString()
+					.replace("[", "")
+					.replace("]", "")
+					.replace(", ", "\n");
+			Path filePath = Paths.get(filename);
+			Files.createFile(filePath);
+			Files.write(filePath, ordersListToSaveAsString.getBytes(), StandardOpenOption.APPEND);
+			return 1;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return -1;
+		}
 	}
 
 }

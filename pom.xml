@@ -242,7 +242,7 @@
 					<version>${coveralls.version}</version>
 					<executions>
 						<execution>
-							<phase>test</phase>
+							<phase>test</phase> <!-- TODO -->
 							<goals>
 								<goal>report</goal>
 							</goals>

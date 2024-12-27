@@ -50,7 +50,7 @@ public class SubscriptionsControllerIT {
 		orderRepository.save(orderOne);
 		orderRepository.save(orderTwo);
 		subscriptionsController.requestOrders();
-		verify(listView).showAllOrders(asList(orderOne, orderTwo));
+		verify(listView).showOrders(asList(orderOne, orderTwo));
 	}
 
 	@Test
