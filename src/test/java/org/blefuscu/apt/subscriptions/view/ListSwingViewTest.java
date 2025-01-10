@@ -8,6 +8,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -58,6 +60,8 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 			orderSwingView = new OrderSwingView();
 			return orderSwingView;
 		});
+		
+		Files.deleteIfExists(Paths.get("export.csv"));
 
 		listWindow = new FrameFixture(robot(), listSwingView);
 		listWindow.show();

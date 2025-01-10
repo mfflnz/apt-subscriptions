@@ -12,4 +12,6 @@ public interface OrderView {
 
 	void showError(String string, Order existingOrder);
 
+	void showError(String string);
+
 }

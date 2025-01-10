@@ -1,5 +1,6 @@
 package org.blefuscu.apt.subscriptions.view;
 
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
@@ -23,6 +24,8 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	private SearchSwingView searchSwingView;
 	private ListSwingView listSwingView;
+
+	private static final int TIMEOUT = 5000;
 
 	@Mock
 	private SubscriptionsController subscriptionsController;
@@ -81,7 +84,6 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		searchWindow.textBox("toTextBox").enterText(LocalDate.now().toString());
 		searchWindow.button(JButtonMatcher.withText("Search")).requireEnabled();
 	}
-	
 
 	@Test
 	public void testIfSearchButtonIsPressedAListViewSouldBeShown() {
@@ -96,7 +98,7 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		searchWindow.textBox("toTextBox").deleteText();
 		searchWindow.textBox("toTextBox").enterText(LocalDate.now().toString());
 		searchWindow.button(JButtonMatcher.withText("Search")).click();
-		verify(subscriptionsController).requestOrders(LocalDate.now(), LocalDate.now());
+		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.now(), LocalDate.now());
 
 	}
 
@@ -117,7 +119,7 @@ public class SearchSwingViewTest extends AssertJSwingJUnitTestCase {
 		searchWindow.label("errorMessageLabel").requireText("Please provide dates formatted as 'yyyy-MM-dd'");
 		verifyNoInteractions(subscriptionsController);
 	}
-	
-	
+
+// TODO: test changedUpdate in document listener	
 
 }

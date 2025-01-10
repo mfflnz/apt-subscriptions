@@ -3,6 +3,8 @@ package org.blefuscu.apt.subscriptions.model;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import com.groupcdg.pitest.annotations.DoNotMutate;
+
 public class Order {
 
 	private int orderId;
@@ -314,6 +316,7 @@ public class Order {
 	}
 
 	@Override
+	@DoNotMutate
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

@@ -41,7 +41,7 @@ public class SubscriptionsController {
 		}
 
 		listView.showOrders(orderRepository.findByDateRange(fromDate, toDate));
-		
+
 	}
 
 	public void newOrder(Order order) {
@@ -62,9 +62,14 @@ public class SubscriptionsController {
 		orderRepository.delete(orderToDelete.getOrderId());
 		orderView.orderRemoved(orderToDelete);
 	}
-	
-	public void updateOrder(Order orderToUpdate) {
-		// TODO
+
+	public void updateOrder(int orderToUpdateId, Order updatedOrder) {
+		if (orderRepository.findById(orderToUpdateId) == null) {
+			orderView.showError("No existing order with id " + orderToUpdateId);
+			return;
+		}
+		orderRepository.edit(orderToUpdateId, updatedOrder);
+		orderView.showOrderDetails(updatedOrder);
 	}
 
 	public Order orderDetails(int orderId) {
@@ -73,16 +78,13 @@ public class SubscriptionsController {
 
 	public int exportOrders(String filename, List<Order> ordersListToSave) throws IOException {
 		try {
-			String ordersListToSaveAsString = ordersListToSave.toString()
-					.replace("[", "")
-					.replace("]", "")
+			String ordersListToSaveAsString = ordersListToSave.toString().replace("[", "").replace("]", "")
 					.replace(", ", "\n");
 			Path filePath = Paths.get(filename);
 			Files.createFile(filePath);
 			Files.write(filePath, ordersListToSaveAsString.getBytes(), StandardOpenOption.APPEND);
 			return 1;
 		} catch (IOException e) {
-			e.printStackTrace();
 			return -1;
 		}
 	}

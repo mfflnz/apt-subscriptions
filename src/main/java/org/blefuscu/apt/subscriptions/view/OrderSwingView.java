@@ -1,43 +1,54 @@
 package org.blefuscu.apt.subscriptions.view;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
+import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 import org.blefuscu.apt.subscriptions.model.Order;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import javax.swing.JTextField;
 import java.awt.Insets;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.time.LocalDate;
 
 import javax.swing.JSeparator;
 import javax.swing.JCheckBox;
 import javax.swing.SwingConstants;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
-import javax.swing.event.ChangeEvent;
 
 public class OrderSwingView extends JFrame implements OrderView {
 
+	private SubscriptionsController subscriptionsController;
+
 	private static final long serialVersionUID = 1L;
+
 	private JPanel contentPane;
-	private JTextField idTextBox;
+	private JTextField idTextBox; // required
 	private JLabel lblOrderDate;
-	private JTextField orderDateTextBox;
+	private JTextField orderDateTextBox; // required
 	private JLabel lblCreditDate;
 	private JTextField creditDateTextBox;
 	private JLabel lblGross;
 	private JLabel lblNet;
-	private JTextField grossTextBox;
+	private JTextField grossTextBox; // required
 	private JTextField netTextBox;
 	private JLabel lblPayment;
-	private JTextField paymentTextBox;
+	private JTextField paymentTextBox; // required
 	private JLabel lblProduct;
-	private JTextField productTextBox;
+	private JTextField productTextBox; // required
 	private JLabel lblFirstIssue;
 	private JTextField firstIssueTextBox;
 	private JLabel lblLastIssue;
@@ -59,7 +70,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 	private JTextField countryTextBox;
 	private JCheckBox chckbxConfirmed;
 	private JLabel lblEmail;
-	private JTextField emailTextBox;
+	private JTextField emailTextBox; // required
 	private JLabel lblPhone;
 	private JTextField phoneTextBox;
 	private JSeparator separator_1;
@@ -69,6 +80,45 @@ public class OrderSwingView extends JFrame implements OrderView {
 	private JButton btnUpdate;
 	private JButton btnDelete;
 	private JCheckBox chckbxUnlock;
+
+	boolean requiredFieldsAreNotEmpty = false;
+	boolean[] requiredFieldsStatus = new boolean[6];
+	private JSeparator separator_2;
+
+	private JTextField messagesTextBox;
+
+	private void disableButtons() {
+		btnAdd.setEnabled(false);
+		btnDelete.setEnabled(false);
+		btnUpdate.setEnabled(false);
+	}
+
+	private void enableButtons() {
+		btnAdd.setEnabled(true);
+		btnDelete.setEnabled(true);
+		btnUpdate.setEnabled(true);
+	}
+
+	private void manageButtons() {
+		if (requiredFieldsAreNotEmpty) {
+			enableButtons();
+		} else {
+			disableButtons();
+		}
+	}
+
+	private boolean allTrue(boolean[] array) {
+		for (boolean b : array)
+			if (!b)
+				return false;
+		return true;
+	}
+
+	private void listenerCheck(JTextField textBox, int i) {
+		requiredFieldsStatus[i] = (textBox.getText().isEmpty()) ? false : true;
+		requiredFieldsAreNotEmpty = allTrue(requiredFieldsStatus);
+		manageButtons();
+	}
 
 	/**
 	 * Launch the application.
@@ -99,32 +149,61 @@ public class OrderSwingView extends JFrame implements OrderView {
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[] { 0, 0, 0, 0, 0, 0 };
-		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		gbl_contentPane.columnWeights = new double[] { 1.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-				0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
+				0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
+		
+		contentPane.addMouseListener(new MouseAdapter() {
+		     @Override
+		     public void mousePressed(MouseEvent e) {
+		    	 messagesTextBox.setText(" ");
+		     }
+		
+		});
 
-		JLabel lblId = new JLabel("id");
+		JLabel lblId = new JLabel("id *");
 		GridBagConstraints gbc_lblId = new GridBagConstraints();
 		gbc_lblId.insets = new Insets(0, 0, 5, 5);
 		gbc_lblId.anchor = GridBagConstraints.EAST;
 		gbc_lblId.gridx = 0;
 		gbc_lblId.gridy = 0;
 		contentPane.add(lblId, gbc_lblId);
+		
+		
 
 		idTextBox = new JTextField();
 		idTextBox.setEditable(false);
 		idTextBox.setName("idTextBox");
-		GridBagConstraints gbc_textField = new GridBagConstraints();
-		gbc_textField.insets = new Insets(0, 0, 5, 5);
-		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField.gridx = 1;
-		gbc_textField.gridy = 0;
-		contentPane.add(idTextBox, gbc_textField);
+		GridBagConstraints gbc_idTextBox = new GridBagConstraints();
+		gbc_idTextBox.insets = new Insets(0, 0, 5, 5);
+		gbc_idTextBox.fill = GridBagConstraints.HORIZONTAL;
+		gbc_idTextBox.gridx = 1;
+		gbc_idTextBox.gridy = 0;
+		contentPane.add(idTextBox, gbc_idTextBox);
 		idTextBox.setColumns(10);
 
-		lblGross = new JLabel("Gross");
+		idTextBox.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				listenerCheck(idTextBox, 0);
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				listenerCheck(idTextBox, 0);
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		lblGross = new JLabel("Gross *");
 		GridBagConstraints gbc_lblGross = new GridBagConstraints();
 		gbc_lblGross.anchor = GridBagConstraints.EAST;
 		gbc_lblGross.insets = new Insets(0, 0, 5, 5);
@@ -143,7 +222,26 @@ public class OrderSwingView extends JFrame implements OrderView {
 		contentPane.add(grossTextBox, gbc_textField_3);
 		grossTextBox.setColumns(10);
 
-		lblOrderDate = new JLabel("Order Date");
+		grossTextBox.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				listenerCheck(grossTextBox, 1);
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				listenerCheck(grossTextBox, 1);
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		lblOrderDate = new JLabel("Order Date *");
 		GridBagConstraints gbc_lblOrderDate = new GridBagConstraints();
 		gbc_lblOrderDate.anchor = GridBagConstraints.EAST;
 		gbc_lblOrderDate.insets = new Insets(0, 0, 5, 5);
@@ -161,6 +259,25 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_textField_1.gridy = 1;
 		contentPane.add(orderDateTextBox, gbc_textField_1);
 		orderDateTextBox.setColumns(10);
+
+		orderDateTextBox.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				listenerCheck(orderDateTextBox, 2);
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				listenerCheck(orderDateTextBox, 2);
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 
 		lblNet = new JLabel("Net");
 		GridBagConstraints gbc_lblNet = new GridBagConstraints();
@@ -200,7 +317,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 		contentPane.add(creditDateTextBox, gbc_textField_2);
 		creditDateTextBox.setColumns(10);
 
-		lblPayment = new JLabel("Payment");
+		lblPayment = new JLabel("Payment *");
 		GridBagConstraints gbc_lblPayment = new GridBagConstraints();
 		gbc_lblPayment.anchor = GridBagConstraints.EAST;
 		gbc_lblPayment.insets = new Insets(0, 0, 5, 5);
@@ -219,7 +336,26 @@ public class OrderSwingView extends JFrame implements OrderView {
 		contentPane.add(paymentTextBox, gbc_textField_5);
 		paymentTextBox.setColumns(10);
 
-		lblProduct = new JLabel("Product");
+		paymentTextBox.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				listenerCheck(paymentTextBox, 3);
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				listenerCheck(paymentTextBox, 3);
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		lblProduct = new JLabel("Product *");
 		GridBagConstraints gbc_lblProduct = new GridBagConstraints();
 		gbc_lblProduct.anchor = GridBagConstraints.EAST;
 		gbc_lblProduct.insets = new Insets(0, 0, 5, 5);
@@ -238,6 +374,25 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_textField_6.gridy = 3;
 		contentPane.add(productTextBox, gbc_textField_6);
 		productTextBox.setColumns(10);
+
+		productTextBox.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				listenerCheck(productTextBox, 4);
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				listenerCheck(productTextBox, 4);
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 
 		lblFirstIssue = new JLabel("First Issue");
 		GridBagConstraints gbc_lblFirstIssue = new GridBagConstraints();
@@ -431,7 +586,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_chckbxConfirmed.gridy = 11;
 		contentPane.add(chckbxConfirmed, gbc_chckbxConfirmed);
 
-		lblEmail = new JLabel("Email");
+		lblEmail = new JLabel("Email *");
 		GridBagConstraints gbc_lblEmail = new GridBagConstraints();
 		gbc_lblEmail.anchor = GridBagConstraints.EAST;
 		gbc_lblEmail.insets = new Insets(0, 0, 5, 5);
@@ -450,6 +605,25 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_textField_16.gridy = 12;
 		contentPane.add(emailTextBox, gbc_textField_16);
 		emailTextBox.setColumns(10);
+
+		emailTextBox.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				listenerCheck(emailTextBox, 5);
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				listenerCheck(emailTextBox, 5);
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 
 		lblPhone = new JLabel("Phone");
 		GridBagConstraints gbc_lblPhone = new GridBagConstraints();
@@ -487,38 +661,73 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_lblNotes.gridy = 15;
 		contentPane.add(lblNotes, gbc_lblNotes);
 
-		ArrayList<Boolean> mandatoryValues = new ArrayList<>(); 
-		
 		chckbxUnlock = new JCheckBox("Unlock");
-		chckbxUnlock.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-							 
-				if (mandatoryValuesCheck(mandatoryValues)) {
-					btnAdd.setEnabled(true);
-					btnDelete.setEnabled(true);
-					btnUpdate.setEnabled(true);
-				} else {
-					btnAdd.setEnabled(false);
-					btnDelete.setEnabled(false);
-					btnUpdate.setEnabled(false);
-				}
-			}
 
-			private boolean mandatoryValuesCheck(ArrayList<Boolean> mandatoryValues) {
-				mandatoryValues.add(!idTextBox.getText().isEmpty());
-				mandatoryValues.add(!orderDateTextBox.getText().isEmpty());
-				mandatoryValues.add(!productTextBox.getText().isEmpty());
-				mandatoryValues.add(!grossTextBox.getText().isEmpty());
-				mandatoryValues.add(!paymentTextBox.getText().isEmpty());
-				mandatoryValues.add(!emailTextBox.getText().isEmpty());
-				mandatoryValues.add(chckbxUnlock.isEnabled());
-				
-				boolean mandatoryValuesCheck = mandatoryValues.stream().allMatch(t -> t.equals(true));
-				return mandatoryValuesCheck;
+		chckbxUnlock.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+
+					if (requiredFieldsAreNotEmpty) {
+						enableButtons();
+					} else {
+						disableButtons();
+					}
+
+					idTextBox.setEditable(true);
+					orderDateTextBox.setEditable(true);
+					creditDateTextBox.setEditable(true);
+					grossTextBox.setEditable(true);
+					netTextBox.setEditable(true);
+					paymentTextBox.setEditable(true);
+					productTextBox.setEditable(true);
+					firstIssueTextBox.setEditable(true);
+					lastIssueTextBox.setEditable(true);
+					firstNameTextBox.setEditable(true);
+					lastNameTextBox.setEditable(true);
+					addressTextBox.setEditable(true);
+					zipCodeTextBox.setEditable(true);
+					provinceTextBox.setEditable(true);
+					cityTextBox.setEditable(true);
+					countryTextBox.setEditable(true);
+					emailTextBox.setEditable(true);
+					phoneTextBox.setEditable(true);
+					notesTextArea.setEditable(true);
+
+				} else {
+
+					disableButtons();
+
+					idTextBox.setEditable(false);
+					orderDateTextBox.setEditable(false);
+					creditDateTextBox.setEditable(false);
+					grossTextBox.setEditable(false);
+					netTextBox.setEditable(false);
+					paymentTextBox.setEditable(false);
+					productTextBox.setEditable(false);
+					firstIssueTextBox.setEditable(false);
+					lastIssueTextBox.setEditable(false);
+					firstNameTextBox.setEditable(false);
+					lastNameTextBox.setEditable(false);
+					addressTextBox.setEditable(false);
+					zipCodeTextBox.setEditable(false);
+					provinceTextBox.setEditable(false);
+					cityTextBox.setEditable(false);
+					countryTextBox.setEditable(false);
+					emailTextBox.setEditable(false);
+					phoneTextBox.setEditable(false);
+					notesTextArea.setEditable(false);
+
+				}
+
 			}
 		});
+
 		chckbxUnlock.setName("unlockCheckBox");
 		chckbxUnlock.setHorizontalTextPosition(SwingConstants.LEADING);
+
 		GridBagConstraints gbc_chckbxUnlock = new GridBagConstraints();
 		gbc_chckbxUnlock.anchor = GridBagConstraints.EAST;
 		gbc_chckbxUnlock.insets = new Insets(0, 0, 5, 0);
@@ -538,14 +747,43 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_textArea.gridy = 16;
 		contentPane.add(notesTextArea, gbc_textArea);
 
+		separator_2 = new JSeparator();
+		GridBagConstraints gbc_separator_2 = new GridBagConstraints();
+		gbc_separator_2.gridwidth = 5;
+		gbc_separator_2.insets = new Insets(0, 0, 5, 0);
+		gbc_separator_2.gridx = 0;
+		gbc_separator_2.gridy = 17;
+		contentPane.add(separator_2, gbc_separator_2);
+
+		messagesTextBox = new JTextField();
+		messagesTextBox.setName("messagesTextBox");
+		GridBagConstraints gbc_messagesTextBox = new GridBagConstraints();
+		gbc_messagesTextBox.fill = GridBagConstraints.HORIZONTAL;
+		gbc_messagesTextBox.gridwidth = 5;
+		gbc_messagesTextBox.insets = new Insets(0, 0, 5, 5);
+		gbc_messagesTextBox.gridx = 0;
+		gbc_messagesTextBox.gridy = 18;
+		contentPane.add(messagesTextBox, gbc_messagesTextBox);
+		messagesTextBox.setColumns(10);
+
 		btnAdd = new JButton("Add");
 		btnAdd.setEnabled(false);
 		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
 		gbc_btnAdd.anchor = GridBagConstraints.WEST;
 		gbc_btnAdd.insets = new Insets(0, 0, 0, 5);
 		gbc_btnAdd.gridx = 0;
-		gbc_btnAdd.gridy = 17;
+		gbc_btnAdd.gridy = 19;
 		contentPane.add(btnAdd, gbc_btnAdd);
+
+		btnAdd.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				subscriptionsController.newOrder(
+						new Order(Integer.parseInt(idTextBox.getText()), LocalDate.parse(orderDateTextBox.getText())));
+			}
+
+		});
 
 		btnUpdate = new JButton("Update");
 		btnUpdate.setEnabled(false);
@@ -553,7 +791,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_btnUpdate.anchor = GridBagConstraints.WEST;
 		gbc_btnUpdate.insets = new Insets(0, 0, 0, 5);
 		gbc_btnUpdate.gridx = 1;
-		gbc_btnUpdate.gridy = 17;
+		gbc_btnUpdate.gridy = 19;
 		contentPane.add(btnUpdate, gbc_btnUpdate);
 
 		btnDelete = new JButton("Delete");
@@ -561,36 +799,54 @@ public class OrderSwingView extends JFrame implements OrderView {
 		GridBagConstraints gbc_btnDelete = new GridBagConstraints();
 		gbc_btnDelete.anchor = GridBagConstraints.EAST;
 		gbc_btnDelete.gridx = 4;
-		gbc_btnDelete.gridy = 17;
+		gbc_btnDelete.gridy = 19;
 		contentPane.add(btnDelete, gbc_btnDelete);
-
-		// TODO: gestione listener sul pulsante di sblocco
-		// chckbxUnlock.addChangeListener(l);
 
 	}
 
 	@Override
 	public void showOrderDetails(Order order) {
-		// TODO Auto-generated method stub
-
+		idTextBox.setText(Integer.toString(order.getOrderId()));
+		orderDateTextBox.setText(order.getOrderDate().toString());
+		// TODO: other fields
 	}
 
 	@Override
 	public void orderAdded(Order order) {
-		// TODO Auto-generated method stub
+		resetMessagesTextBox();
+		messagesTextBox.setText("Order added to database with id " + order.getOrderId());
+	}
+
+	private void resetMessagesTextBox() {
+		messagesTextBox.setText(" ");
+		messagesTextBox.setForeground(Color.BLACK);
 
 	}
 
 	@Override
 	public void orderRemoved(Order orderToDelete) {
-		// TODO Auto-generated method stub
-
+		resetMessagesTextBox();
+		messagesTextBox.setForeground(Color.RED);
+		messagesTextBox.setText("Order with id " + orderToDelete.getOrderId() + " was removed");
 	}
 
 	@Override
 	public void showError(String string, Order existingOrder) {
-		// TODO Auto-generated method stub
+		resetMessagesTextBox();
+		messagesTextBox.setForeground(Color.RED);
+		messagesTextBox.setText(string + " " + existingOrder.getOrderId());
+	}
 
+	@Override
+	public void showError(String string) {
+		resetMessagesTextBox();
+		messagesTextBox.setForeground(Color.RED);
+		messagesTextBox.setText(string);
+
+	}
+
+	public void setSubscriptionsController(SubscriptionsController subscriptionsController) {
+		this.subscriptionsController = subscriptionsController;
 	}
 
 }

@@ -141,6 +141,27 @@ public class SubscriptionsControllerTest {
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
+	
+	@Test
+	public void testUpdateOrderWhenOrderExists() {
+		Order orderToUpdate = new Order(1, LocalDate.of(2024, 8, 29));
+		Order orderWithUpdatedValues = new Order(1, LocalDate.of(2024, 10, 29));
+		when(orderRepository.findById(1)).thenReturn(orderToUpdate);
+		subscriptionsController.updateOrder(1, orderWithUpdatedValues);
+		InOrder inOrder = inOrder(orderRepository, orderView);
+		inOrder.verify(orderRepository).edit(1, orderWithUpdatedValues);
+		inOrder.verify(orderView).showOrderDetails(orderWithUpdatedValues);
+	}
+	
+	@Test
+	public void testUpdateOrderWhenOrderDoesNotExist() {
+		Order orderWithUpdatedValues = new Order(1, LocalDate.of(2024, 10, 29));
+		when(orderRepository.findById(1)).thenReturn(null);
+		subscriptionsController.updateOrder(1, orderWithUpdatedValues);
+		verify(orderView).showError("No existing order with id 1");
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+	
 	@Test
 	public void testOrderDetailsShouldFetchOrderDetailsFromRepository() {
 		Order order = new Order(1, LocalDate.of(2024, 8, 28));
@@ -182,13 +203,15 @@ public class SubscriptionsControllerTest {
 		String filename = "export.csv";
 		when(orderRepository.findAll()).thenReturn(asList(order1, order2));
 		List<Order> ordersToSave = orderRepository.findAll();
+		Files.createFile(Paths.get(filename));
 
 		// This throws the exception
-		Files.createFile(Paths.get(filename));
+		assertThatThrownBy(() -> Files.createFile(Paths.get("export.csv"))).isInstanceOf(IOException.class).hasStackTraceContaining("export.csv");
 		
 		// when(subscriptionsController.exportOrders(filename, ordersToSave)).thenThrow(IOException.class);
 		// assertThatThrownBy(() -> subscriptionsController.exportOrders(filename, ordersToSave)).isInstanceOf(IOException.class);
 		assertThat(subscriptionsController.exportOrders(filename, ordersToSave)).isEqualTo(-1);
+
 	}
 
 	@Test
