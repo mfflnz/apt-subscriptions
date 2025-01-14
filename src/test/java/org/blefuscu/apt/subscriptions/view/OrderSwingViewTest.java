@@ -305,7 +305,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.panel().click();
 		window.textBox("messagesTextBox").requireText(" ");
 	}
-	
+
 	@Test
 	public void testOrderRemovedShouldShowAMessageInTheMessagesBox() {
 		GuiActionRunner.execute(() -> {
@@ -314,7 +314,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.textBox("messagesTextBox").requireText("Order with id 1 was removed");
 
 	}
-	
+
 	@Test
 	public void testShowErrorShouldShowAMessageInTheMessagesBox() {
 		Order order = new Order(1, LocalDate.of(2024, 12, 28));
@@ -325,7 +325,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 			orderSwingView.showError("Already existing order with id 1");
 		});
 		window.textBox("messagesTextBox").requireText("Already existing order with id 1");
-		
+
 		window.textBox("messagesTextBox").deleteText();
 
 		GuiActionRunner.execute(() -> {
@@ -334,5 +334,6 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.textBox("messagesTextBox").requireText("Already existing order with id 1");
 
 	}
+
 
 }

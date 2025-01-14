@@ -849,4 +849,9 @@ public class OrderSwingView extends JFrame implements OrderView {
 		this.subscriptionsController = subscriptionsController;
 	}
 
+	public void setLabelBackgroundColor(Color color) {
+		// TODO Auto-generated method stub
+		emailTextBox.setBackground(Color.RED);
+	}
+
 }
