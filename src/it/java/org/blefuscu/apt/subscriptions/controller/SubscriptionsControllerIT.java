@@ -45,8 +45,8 @@ public class SubscriptionsControllerIT {
 
 	@Test
 	public void testRequestOrders() {
-		Order orderOne = new Order(1, LocalDate.of(2024, 8, 1));
-		Order orderTwo = new Order(2, LocalDate.of(2024, 8, 2));
+		Order orderOne = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build();
+		Order orderTwo = new Order.OrderBuilder(2, LocalDate.of(2024, 8, 2), 0, null, null, null).build();
 		orderRepository.save(orderOne);
 		orderRepository.save(orderTwo);
 		subscriptionsController.requestOrders();
@@ -55,14 +55,14 @@ public class SubscriptionsControllerIT {
 
 	@Test
 	public void testNewOrder() {
-		Order order = new Order(1, LocalDate.of(2024, 8, 1));
+		Order order = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build();
 		subscriptionsController.newOrder(order);
 		verify(orderView).orderAdded(order);
 	}
 
 	@Test
 	public void testDeleteOrder() {
-		Order orderToDelete = new Order(1, LocalDate.of(2024, 8, 1));
+		Order orderToDelete = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build();
 		orderRepository.save(orderToDelete);
 		subscriptionsController.deleteOrder(orderToDelete);
 		verify(orderView).orderRemoved(orderToDelete);

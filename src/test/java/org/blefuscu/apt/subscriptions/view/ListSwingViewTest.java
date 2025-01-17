@@ -86,7 +86,7 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	@GUITest
 	public void testDeleteButtonShouldBeEnabledOnlyWhenAnOrderIsSelected() {
 		GuiActionRunner
-				.execute(() -> listSwingView.getListOrdersModel().addElement(new Order(1, LocalDate.of(2024, 8, 2))));
+				.execute(() -> listSwingView.getListOrdersModel().addElement(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 2), 0, null, null, null).build()));
 		listWindow.list("ordersList").selectItem(0);
 		JButtonFixture deleteButton = listWindow.button(JButtonMatcher.withText("Delete"));
 		deleteButton.requireEnabled();
@@ -98,7 +98,7 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	@GUITest
 	public void testShowDetailsButtonShouldBeEnabledOnlyWhenAnOrderIsSelected() {
 		GuiActionRunner
-				.execute(() -> listSwingView.getListOrdersModel().addElement(new Order(1, LocalDate.of(2024, 8, 2))));
+				.execute(() -> listSwingView.getListOrdersModel().addElement(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 2), 0, null, null, null).build()));
 		listWindow.list("ordersList").selectItem(0);
 		JButtonFixture showDetailsButton = listWindow.button(JButtonMatcher.withText("Show Details"));
 		showDetailsButton.requireEnabled();
@@ -108,8 +108,8 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testShowOrdersShouldAddOrderDescriptionsToTheList() {
-		Order order1 = new Order(1, LocalDate.of(2024, 10, 9));
-		Order order2 = new Order(2, LocalDate.of(2024, 10, 9));
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 10, 9), 0, null, null, null).build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 10, 9), 0, null, null, null).build();
 		GuiActionRunner.execute(() -> listSwingView.showOrders(Arrays.asList(order1, order2)));
 		String[] listContents = listWindow.list().contents();
 		assertThat(listContents).containsExactly(order1.toString(), order2.toString());
@@ -117,15 +117,15 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testShowErrorShouldShowTheMessageInTheErrorLabel() {
-		Order order = new Order(1, LocalDate.of(2024, 10, 9));
+		Order order = new Order.OrderBuilder(1, LocalDate.of(2024, 10, 9), 0, null, null, null).build();
 		GuiActionRunner.execute(() -> listSwingView.showError("error message", order));
 		listWindow.label("errorMessageLabel").requireText("error message: " + order);
 	}
 
 	@Test
 	public void testOrderAddedShouldAddTheOrderToTheListAndResetTheErrorLabel() {
-		Order order = new Order(1, LocalDate.of(2024, 10, 9));
-		GuiActionRunner.execute(() -> listSwingView.orderAdded(new Order(1, LocalDate.of(2024, 10, 9))));
+		Order order = new Order.OrderBuilder(1, LocalDate.of(2024, 10, 9), 0, null, null, null).build();
+		GuiActionRunner.execute(() -> listSwingView.orderAdded(new Order.OrderBuilder(1, LocalDate.of(2024, 10, 9), 0, null, null, null).build()));
 		String[] listContents = listWindow.list().contents();
 		assertThat(listContents).containsExactly(order.toString());
 		listWindow.label("errorMessageLabel").requireText(" ");
@@ -133,14 +133,14 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testOrderRemovedShouldRemoveTheOrderFromTheListAndResetTheErrorLabel() {
-		Order order1 = new Order(1, LocalDate.of(2024, 10, 8));
-		Order order2 = new Order(2, LocalDate.of(2024, 10, 9));
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 10, 8), 0, null, null, null).build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 10, 9), 0, null, null, null).build();
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Order> listOrdersModel = listSwingView.getListOrdersModel();
 			listOrdersModel.addElement(order1);
 			listOrdersModel.addElement(order2);
 		});
-		GuiActionRunner.execute(() -> listSwingView.orderRemoved(new Order(1, LocalDate.of(2024, 10, 8))));
+		GuiActionRunner.execute(() -> listSwingView.orderRemoved(new Order.OrderBuilder(1, LocalDate.of(2024, 10, 8), 0, null, null, null).build()));
 		String[] listContents = listWindow.list().contents();
 		assertThat(listContents).containsExactly(order2.toString());
 		listWindow.label("errorMessageLabel").requireText(" ");
@@ -150,7 +150,7 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testIfShowDetailsButtonIsPressedAnOrderViewShouldBeShown() {
 
 		// setup
-		GuiActionRunner.execute(() -> listSwingView.getListOrdersModel().addElement(new Order(1, LocalDate.now())));
+		GuiActionRunner.execute(() -> listSwingView.getListOrdersModel().addElement(new Order.OrderBuilder(1, LocalDate.now(), 0, null, null, null).build()));
 		listWindow.list("ordersList").selectItem(0);
 
 		// exercise + verify
@@ -171,17 +171,17 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	public void testDeleteButtonShouldDelegateToSubscriptionsControllerDeleteOrder() {
 		GuiActionRunner
-				.execute(() -> listSwingView.getListOrdersModel().addElement(new Order(1, LocalDate.of(2024, 8, 2))));
+				.execute(() -> listSwingView.getListOrdersModel().addElement(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 2), 0, null, null, null).build()));
 		listWindow.list("ordersList").selectItem(0);
 		listWindow.button(JButtonMatcher.withText("Delete")).click();
-		verify(subscriptionsController, timeout(TIMEOUT)).deleteOrder(new Order(1, LocalDate.of(2024, 8, 2)));
+		verify(subscriptionsController, timeout(TIMEOUT)).deleteOrder(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 2), 0, null, null, null).build());
 	}
 
 	@Test
 	@GUITest
 	public void testShowDetailsButtonShouldDelegateToSubscriptionsControllerOrderDetails() {
 		GuiActionRunner
-				.execute(() -> listSwingView.getListOrdersModel().addElement(new Order(1, LocalDate.of(2024, 8, 2))));
+				.execute(() -> listSwingView.getListOrdersModel().addElement(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 2), 0, null, null, null).build()));
 		listWindow.list("ordersList").selectItem(0);
 		listWindow.button(JButtonMatcher.withText("Show Details")).requireEnabled().click();
 		verify(subscriptionsController).orderDetails(1);
@@ -194,8 +194,8 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testCancelButtonInDialogShouldYieldToNoInteractionsWithSubscriptionsController() throws IOException {
 		listWindow.button(JButtonMatcher.withText("Export CSV")).click();
 		listSwingView.getFc().setName("export.csv");
-		Order order1 = new Order(1, LocalDate.of(2024, 10, 8));
-		Order order2 = new Order(2, LocalDate.of(2024, 10, 9));
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 10, 8), 0, null, null, null).build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 10, 9), 0, null, null, null).build();
 		List<Order> ordersList = asList(order1, order2);
 		listSwingView.setOrdersList(ordersList);
 		listSwingView.getFc().cancelSelection();
@@ -209,8 +209,8 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testSaveButtonInDialogShouldDelegateToSubscriptionsControllerExportOrders() throws IOException {
 		listWindow.button(JButtonMatcher.withText("Export CSV")).click();
 		listSwingView.getFc().setName("export.csv");
-		Order order1 = new Order(1, LocalDate.of(2024, 10, 8));
-		Order order2 = new Order(2, LocalDate.of(2024, 10, 9));
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 10, 8), 0, null, null, null).build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 10, 9), 0, null, null, null).build();
 		List<Order> ordersList = asList(order1, order2);
 		listSwingView.setOrdersList(ordersList);
 		listSwingView.getFc().approveSelection();
@@ -224,8 +224,8 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testListSwingViewIOException() throws IOException {
 		listWindow.button(JButtonMatcher.withText("Export CSV")).click();
 		listSwingView.getFc().setName("export.csv");
-		Order order1 = new Order(1, LocalDate.of(2024, 10, 8));
-		Order order2 = new Order(2, LocalDate.of(2024, 10, 9));
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 10, 8), 0, null, null, null).build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 10, 9), 0, null, null, null).build();
 		List<Order> ordersList = asList(order1, order2);
 		listSwingView.setOrdersList(ordersList);
 		
@@ -237,8 +237,8 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testCsvExportedShouldShowAnInfoMessageIfExportWasSuccessful() throws IOException {
 		listWindow.button(JButtonMatcher.withText("Export CSV")).click();
 		listSwingView.getFc().setName("export.csv");
-		Order order1 = new Order(1, LocalDate.of(2024, 10, 8));
-		Order order2 = new Order(2, LocalDate.of(2024, 10, 9));
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 10, 8), 0, null, null, null).build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 10, 9), 0, null, null, null).build();
 		List<Order> ordersList = asList(order1, order2);
 		listSwingView.setOrdersList(ordersList);
 		listSwingView.getFc().approveSelection();
@@ -252,8 +252,8 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testCsvExportedShouldShowAnErrorMessageIfExportWasNotSuccessful() throws IOException {
 		listWindow.button(JButtonMatcher.withText("Export CSV")).click();
 		listSwingView.getFc().setName("export.csv");
-		Order order1 = new Order(1, LocalDate.of(2024, 10, 8));
-		Order order2 = new Order(2, LocalDate.of(2024, 10, 9));
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 10, 8), 0, null, null, null).build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 10, 9), 0, null, null, null).build();
 		List<Order> ordersList = asList(order1, order2);
 		listSwingView.setOrdersList(ordersList);
 		listSwingView.getFc().approveSelection();

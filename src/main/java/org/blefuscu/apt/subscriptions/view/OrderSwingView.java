@@ -780,7 +780,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				subscriptionsController.newOrder(
-						new Order(Integer.parseInt(idTextBox.getText()), LocalDate.parse(orderDateTextBox.getText())));
+						new Order.OrderBuilder(Integer.parseInt(idTextBox.getText()), LocalDate.parse(orderDateTextBox.getText()), 0, null, null, null).build());
 			}
 
 		});
@@ -849,9 +849,9 @@ public class OrderSwingView extends JFrame implements OrderView {
 		this.subscriptionsController = subscriptionsController;
 	}
 
-	public void setLabelBackgroundColor(Color color) {
-		// TODO Auto-generated method stub
-		emailTextBox.setBackground(Color.RED);
-	}
+	/*
+	 * public void setLabelBackgroundColor(Color color) { // TODO Auto-generated
+	 * method stub emailTextBox.setBackground(Color.RED); }
+	 */
 
 }

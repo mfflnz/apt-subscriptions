@@ -79,7 +79,7 @@ public class OrderMongoRepository implements OrderRepository {
 	}
 
 	private Order fromDocumentToOrder(Document d) {
-		return new Order(d.getInteger("orderId"),
-				d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDate());
+		return new Order.OrderBuilder(d.getInteger("orderId"),
+				d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDate(), 0, null, null, null).build();
 	}
 }

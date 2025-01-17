@@ -260,7 +260,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testShowOrderDetailsShouldShowOrderDetailsInTheView() {
-		Order order = new Order(1, LocalDate.of(2024, 12, 28));
+		Order order = new Order.OrderBuilder(1, LocalDate.of(2024, 12, 28), 0, null, null, null).build();
 		GuiActionRunner.execute(() -> orderSwingView.showOrderDetails(order));
 		window.textBox("idTextBox").requireText("1");
 		window.textBox("orderDateTextBox").requireText("2024-12-28");
@@ -283,7 +283,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
 		window.button(JButtonMatcher.withText("Add")).click();
 
-		verify(subscriptionsController, timeout(TIMEOUT)).newOrder(new Order(1, LocalDate.of(2024, 10, 12)));
+		verify(subscriptionsController, timeout(TIMEOUT)).newOrder(new Order.OrderBuilder(1, LocalDate.of(2024, 10, 12), 0, null, null, null).build());
 		verifyNoMoreInteractions(subscriptionsController);
 
 	}
@@ -291,7 +291,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	public void testOrderAddedShouldShowAMessageInTheMessagesBox() {
 		GuiActionRunner.execute(() -> {
-			orderSwingView.orderAdded(new Order(1, LocalDate.of(2024, 12, 28)));
+			orderSwingView.orderAdded(new Order.OrderBuilder(1, LocalDate.of(2024, 12, 28), 0, null, null, null).build());
 		});
 		window.textBox("messagesTextBox").requireText("Order added to database with id 1");
 
@@ -309,7 +309,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	public void testOrderRemovedShouldShowAMessageInTheMessagesBox() {
 		GuiActionRunner.execute(() -> {
-			orderSwingView.orderRemoved(new Order(1, LocalDate.of(2024, 12, 28)));
+			orderSwingView.orderRemoved(new Order.OrderBuilder(1, LocalDate.of(2024, 12, 28), 0, null, null, null).build());
 		});
 		window.textBox("messagesTextBox").requireText("Order with id 1 was removed");
 
@@ -317,7 +317,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testShowErrorShouldShowAMessageInTheMessagesBox() {
-		Order order = new Order(1, LocalDate.of(2024, 12, 28));
+		Order order = new Order.OrderBuilder(1, LocalDate.of(2024, 12, 28), 0, null, null, null).build();
 
 		window.textBox("messagesTextBox").deleteText();
 

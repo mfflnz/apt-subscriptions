@@ -71,8 +71,8 @@ public class OrderMongoRepositoryTest {
 	public void testFindAllWhenDatabaseIsNotEmpty() {
 		addTestOrderToDatabase(1, LocalDate.of(2024, 8, 1));
 		addTestOrderToDatabase(2, LocalDate.of(2024, 8, 2));
-		assertThat(orderRepository.findAll()).containsExactly(new Order(1, LocalDate.of(2024, 8, 1)),
-				new Order(2, LocalDate.of(2024, 8, 2)));
+		assertThat(orderRepository.findAll()).containsExactly(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build(),
+				new Order.OrderBuilder(2, LocalDate.of(2024, 8, 2), 0, null, null, null).build());
 	}
 
 	@Test
@@ -88,7 +88,8 @@ public class OrderMongoRepositoryTest {
 		addTestOrderToDatabase(2, LocalDate.of(2024, 8, 2));
 		addTestOrderToDatabase(3, LocalDate.of(2024, 8, 3));
 		assertThat(orderRepository.findByDateRange(LocalDate.of(2024, 8, 1), LocalDate.of(2024, 8, 2)))
-				.containsExactly(new Order(1, LocalDate.of(2024, 8, 1)), new Order(2, LocalDate.of(2024, 8, 2)));
+				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build(),
+						new Order.OrderBuilder(2, LocalDate.of(2024, 8, 2), 0, null, null, null).build());
 	}
 
 	@Test
@@ -103,7 +104,8 @@ public class OrderMongoRepositoryTest {
 		addTestOrderToDatabase(1, LocalDate.of(2024, 8, 1));
 		addTestOrderToDatabase(2, LocalDate.of(2024, 8, 1));
 		assertThat(orderRepository.findByDateRange(LocalDate.of(2024, 8, 1), LocalDate.of(2024, 8, 1)))
-				.containsExactly(new Order(1, LocalDate.of(2024, 8, 1)), new Order(2, LocalDate.of(2024, 8, 1)));
+				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build(),
+						new Order.OrderBuilder(2, LocalDate.of(2024, 8, 1), 0, null, null, null).build());
 	}
 
 	@Test
@@ -114,12 +116,12 @@ public class OrderMongoRepositoryTest {
 	@Test
 	public void testFindByIdFound() {
 		addTestOrderToDatabase(1, LocalDate.of(2024, 8, 1));
-		assertThat(orderRepository.findById(1)).isEqualTo(new Order(1, LocalDate.of(2024, 8, 1)));
+		assertThat(orderRepository.findById(1)).isEqualTo(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build());
 	}
 
 	@Test
 	public void testSave() {
-		Order order = new Order(1, LocalDate.of(2024, 8, 1));
+		Order order = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build();
 		orderRepository.save(order);
 		assertThat(readAllOrdersFromDatabase()).containsExactly(order);
 	}
@@ -133,18 +135,18 @@ public class OrderMongoRepositoryTest {
 
 	@Test
 	public void testEditWhenOrderToEditIsFound() {
-		Order orderToUpdate = new Order(1, LocalDate.of(2024, 8, 1));
-		Order orderWithNewValues = new Order(0, LocalDate.of(2024, 8, 2));
+		Order orderToUpdate = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build();
+		Order orderWithNewValues = new Order.OrderBuilder(0, LocalDate.of(2024, 8, 2), 0, null, null, null).build();
 		addTestOrderToDatabase(orderToUpdate.getOrderId(), orderToUpdate.getOrderDate());
 		assertThat(readAllOrdersFromDatabase()).containsExactly(orderToUpdate);
 		orderRepository.edit(1, orderWithNewValues);
-		assertThat(readAllOrdersFromDatabase()).containsExactly(new Order(1, LocalDate.of(2024, 8, 2)));
+		assertThat(readAllOrdersFromDatabase()).containsExactly(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 2), 0, null, null, null).build());
 	}
 
 	@Test
 	public void testEditWhenOrderToEditIsNotFound() {
-		Order orderToUpdate = new Order(1, LocalDate.of(2024, 8, 1));
-		Order orderWithNewValues = new Order(0, LocalDate.of(2024, 8, 2));
+		Order orderToUpdate = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build();
+		Order orderWithNewValues = new Order.OrderBuilder(0, LocalDate.of(2024, 8, 2), 0, null, null, null).build();
 		addTestOrderToDatabase(orderToUpdate.getOrderId(), orderToUpdate.getOrderDate());
 		assertThat(readAllOrdersFromDatabase()).containsExactly(orderToUpdate);
 		assertThatThrownBy(() -> orderRepository.edit(2, orderWithNewValues)).isInstanceOf(NullPointerException.class)
@@ -153,8 +155,8 @@ public class OrderMongoRepositoryTest {
 
 	private List<Order> readAllOrdersFromDatabase() {
 		return StreamSupport.stream(orderCollection.find().spliterator(), false)
-				.map(d -> new Order(d.getInteger("orderId"),
-						d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDate()))
+				.map(d -> new Order.OrderBuilder(d.getInteger("orderId"),
+						d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDate(), 0, null, null, null).build())
 				.collect(Collectors.toList());
 	}
 

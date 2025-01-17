@@ -61,7 +61,7 @@ public class SubscriptionsControllerTest {
 
 	@Test
 	public void testRequestOrders() {
-		List<Order> orders = asList(new Order());
+		List<Order> orders = asList(new Order.OrderBuilder(0, null, 0, null, null, null).build());
 		when(orderRepository.findAll()).thenReturn(orders);
 		subscriptionsController.requestOrders();
 		verify(listView).showOrders(orders);
@@ -69,7 +69,7 @@ public class SubscriptionsControllerTest {
 
 	@Test
 	public void testRequestOrdersWhenDateRangeIsProvided() {
-		List<Order> orders = asList(new Order());
+		List<Order> orders = asList(new Order.OrderBuilder(0, null, 0, null, null, null).build());
 		LocalDate fromDate = LocalDate.of(2024, 8, 15);
 		LocalDate toDate = LocalDate.of(2024, 8, 30);
 		when(orderRepository.findByDateRange(fromDate, toDate)).thenReturn(orders);
@@ -104,7 +104,7 @@ public class SubscriptionsControllerTest {
 
 	@Test
 	public void testNewOrderWhenOrderDoesNotAlreadyExist() {
-		Order order = new Order(1, LocalDate.of(2024, 8, 28));
+		Order order = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 28), 0, null, null, null).build();
 		when(orderRepository.findById(1)).thenReturn(null);
 		subscriptionsController.newOrder(order);
 		InOrder inOrder = inOrder(orderRepository, orderView);
@@ -114,8 +114,8 @@ public class SubscriptionsControllerTest {
 
 	@Test
 	public void testestNewOrderWhenOrderDoesNotAlreadyExisttNewOrderWhenOrderAlreadyExists() {
-		Order orderToAdd = new Order(1, LocalDate.of(2024, 8, 28));
-		Order existingOrder = new Order(1, LocalDate.of(2024, 8, 29));
+		Order orderToAdd = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 28), 0, null, null, null).build();
+		Order existingOrder = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 29), 0, null, null, null).build();
 		when(orderRepository.findById(1)).thenReturn(existingOrder);
 		subscriptionsController.newOrder(orderToAdd);
 		verify(orderView).showError("Already existing order with id 1", existingOrder);
@@ -124,7 +124,7 @@ public class SubscriptionsControllerTest {
 
 	@Test
 	public void testDeleteOrderWhenOrderExists() {
-		Order orderToDelete = new Order(1, LocalDate.of(2024, 8, 29));
+		Order orderToDelete = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 29), 0, null, null, null).build();
 		when(orderRepository.findById(1)).thenReturn(orderToDelete);
 		subscriptionsController.deleteOrder(orderToDelete);
 		InOrder inOrder = inOrder(orderRepository, orderView);
@@ -134,7 +134,7 @@ public class SubscriptionsControllerTest {
 
 	@Test
 	public void testDeleteOrderWhenOrderDoesNotExist() {
-		Order orderToDelete = new Order(1, LocalDate.of(2024, 8, 29));
+		Order orderToDelete = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 29), 0, null, null, null).build();
 		when(orderRepository.findById(1)).thenReturn(null);
 		subscriptionsController.deleteOrder(orderToDelete);
 		verify(orderView).showError("No existing order with id 1", orderToDelete);
@@ -144,8 +144,8 @@ public class SubscriptionsControllerTest {
 	
 	@Test
 	public void testUpdateOrderWhenOrderExists() {
-		Order orderToUpdate = new Order(1, LocalDate.of(2024, 8, 29));
-		Order orderWithUpdatedValues = new Order(1, LocalDate.of(2024, 10, 29));
+		Order orderToUpdate = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 29), 0, null, null, null).build();
+		Order orderWithUpdatedValues = new Order.OrderBuilder(1, LocalDate.of(2024, 10, 29), 0, null, null, null).build();
 		when(orderRepository.findById(1)).thenReturn(orderToUpdate);
 		subscriptionsController.updateOrder(1, orderWithUpdatedValues);
 		InOrder inOrder = inOrder(orderRepository, orderView);
@@ -155,7 +155,7 @@ public class SubscriptionsControllerTest {
 	
 	@Test
 	public void testUpdateOrderWhenOrderDoesNotExist() {
-		Order orderWithUpdatedValues = new Order(1, LocalDate.of(2024, 10, 29));
+		Order orderWithUpdatedValues = new Order.OrderBuilder(1, LocalDate.of(2024, 10, 29), 0, null, null, null).build();
 		when(orderRepository.findById(1)).thenReturn(null);
 		subscriptionsController.updateOrder(1, orderWithUpdatedValues);
 		verify(orderView).showError("No existing order with id 1");
@@ -164,7 +164,7 @@ public class SubscriptionsControllerTest {
 	
 	@Test
 	public void testOrderDetailsShouldFetchOrderDetailsFromRepository() {
-		Order order = new Order(1, LocalDate.of(2024, 8, 28));
+		Order order = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 28), 0, null, null, null).build();
 		orderRepository.save(order);
 		when(orderRepository.findById(1)).thenReturn(order);
 		assertThat(subscriptionsController.orderDetails(1)).isEqualTo(order);
@@ -172,8 +172,8 @@ public class SubscriptionsControllerTest {
 
 	@Test
 	public void testExportOrdersShouldWriteOrdersListToDisk() {
-		Order order1 = new Order(1, LocalDate.of(2024, 8, 28));
-		Order order2 = new Order(2, LocalDate.of(2024, 8, 29));
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 28), 0, null, null, null).build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 8, 29), 0, null, null, null).build();
 		orderRepository.save(order1);
 		orderRepository.save(order2);
 		String filename = "export.csv";
@@ -196,8 +196,8 @@ public class SubscriptionsControllerTest {
 	
 	@Test
 	public void testExportOrdersShouldReturnANegativeValueIfAnExceptionIsThrown() throws IOException {
-		Order order1 = new Order(1, LocalDate.of(2024, 8, 28));
-		Order order2 = new Order(2, LocalDate.of(2024, 8, 29));
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 28), 0, null, null, null).build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 8, 29), 0, null, null, null).build();
 		orderRepository.save(order1);
 		orderRepository.save(order2);
 		String filename = "export.csv";
@@ -216,8 +216,8 @@ public class SubscriptionsControllerTest {
 
 	@Test
 	public void testRequestOrdersShouldPassTheOrdersListToTheListView() {
-		Order order1 = new Order(1, LocalDate.of(2024, 8, 28));
-		Order order2 = new Order(2, LocalDate.of(2024, 8, 29));
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 28), 0, null, null, null).build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 8, 29), 0, null, null, null).build();
 		orderRepository.save(order1);
 		orderRepository.save(order2);
 		when(orderRepository.findByDateRange(LocalDate.of(2024, 8, 28), LocalDate.of(2024, 8, 29)))
@@ -228,9 +228,9 @@ public class SubscriptionsControllerTest {
 	
 	@Test
 	public void testRequestOrdersShouldPassAllOrdersListToTheListViewIfNoDatesAreProvided() {
-		Order order1 = new Order(1, LocalDate.of(2024, 8, 28));
-		Order order2 = new Order(2, LocalDate.of(2024, 8, 29));
-		Order order3 = new Order(3, LocalDate.of(2024, 8, 30));
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 28), 0, null, null, null).build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 8, 29), 0, null, null, null).build();
+		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2024, 8, 30), 0, null, null, null).build();
 		orderRepository.save(order1);
 		orderRepository.save(order2);
 		orderRepository.save(order3);

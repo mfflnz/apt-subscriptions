@@ -82,9 +82,9 @@ public class SearchSwingViewIT extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testRequestOrdersShowsOrdersList() {
-		Order order1 = new Order(1, LocalDate.of(2024, 11, 01));
-		Order order2 = new Order(2, LocalDate.of(2024, 11, 02));
-		Order order3 = new Order(3, LocalDate.of(2024, 11, 03));
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 11, 01), 0, null, null, null).build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 11, 02), 0, null, null, null).build();
+		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2024, 11, 03), 0, null, null, null).build();
 		orderRepository.save(order1);
 		orderRepository.save(order2);
 		orderRepository.save(order3);
@@ -98,9 +98,9 @@ public class SearchSwingViewIT extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testSearchButtonShowsOrdersInDateRange() {
-		Order order1 = new Order(1, LocalDate.of(2024, 10, 01));
-		Order order2 = new Order(2, LocalDate.of(2024, 10, 02));
-		Order order3 = new Order(3, LocalDate.of(2024, 11, 01));
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 10, 01), 0, null, null, null).build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 10, 02), 0, null, null, null).build();
+		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2024, 11, 01), 0, null, null, null).build();
 		orderRepository.save(order1);
 		orderRepository.save(order2);
 		orderRepository.save(order3);
@@ -115,9 +115,9 @@ public class SearchSwingViewIT extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testSearchButton() {
-		Order order1 = new Order(1, LocalDate.of(2024, 10, 01));
-		Order order2 = new Order(2, LocalDate.of(2024, 10, 02));
-		Order order3 = new Order(3, LocalDate.of(2024, 11, 01));
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 10, 01), 0, null, null, null).build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 10, 02), 0, null, null, null).build();
+		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2024, 11, 01), 0, null, null, null).build();
 		orderRepository.save(order1);
 		orderRepository.save(order2);
 		orderRepository.save(order3);
