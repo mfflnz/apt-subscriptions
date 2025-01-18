@@ -121,7 +121,7 @@ public class OrderMongoRepositoryTest {
 
 	@Test
 	public void testSave() {
-		Order order = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build();
+		Order order = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 65.00, "Bonifico", "Abbonamento cartaceo + digitale", "test@address.com").build();
 		orderRepository.save(order);
 		assertThat(readAllOrdersFromDatabase()).containsExactly(order);
 	}
@@ -135,18 +135,18 @@ public class OrderMongoRepositoryTest {
 
 	@Test
 	public void testEditWhenOrderToEditIsFound() {
-		Order orderToUpdate = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build();
-		Order orderWithNewValues = new Order.OrderBuilder(0, LocalDate.of(2024, 8, 2), 0, null, null, null).build();
+		Order orderToUpdate = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 65.00, "Bonifico", "Abbonamento cartaceo + digitale", "test@address.com").build();
+		Order orderWithNewValues = new Order.OrderBuilder(0, LocalDate.of(2024, 8, 2), 65.00, "Bonifico", "Abbonamento cartaceo + digitale", "test@address.com").build();
 		addTestOrderToDatabase(orderToUpdate.getOrderId(), orderToUpdate.getOrderDate());
 		assertThat(readAllOrdersFromDatabase()).containsExactly(orderToUpdate);
 		orderRepository.edit(1, orderWithNewValues);
-		assertThat(readAllOrdersFromDatabase()).containsExactly(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 2), 0, null, null, null).build());
+		assertThat(readAllOrdersFromDatabase()).containsExactly(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 2), 65.00, "Bonifico", "Abbonamento cartaceo + digitale", "test@address.com").build());
 	}
 
 	@Test
 	public void testEditWhenOrderToEditIsNotFound() {
-		Order orderToUpdate = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build();
-		Order orderWithNewValues = new Order.OrderBuilder(0, LocalDate.of(2024, 8, 2), 0, null, null, null).build();
+		Order orderToUpdate = new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 65.00, "Bonifico", "Abbonamento cartaceo + digitale", "test@address.com").build();
+		Order orderWithNewValues = new Order.OrderBuilder(0, LocalDate.of(2024, 8, 2), 65.00, "Bonifico", "Abbonamento cartaceo + digitale", "test@address.com").build();
 		addTestOrderToDatabase(orderToUpdate.getOrderId(), orderToUpdate.getOrderDate());
 		assertThat(readAllOrdersFromDatabase()).containsExactly(orderToUpdate);
 		assertThatThrownBy(() -> orderRepository.edit(2, orderWithNewValues)).isInstanceOf(NullPointerException.class)
@@ -155,13 +155,26 @@ public class OrderMongoRepositoryTest {
 
 	private List<Order> readAllOrdersFromDatabase() {
 		return StreamSupport.stream(orderCollection.find().spliterator(), false)
-				.map(d -> new Order.OrderBuilder(d.getInteger("orderId"),
-						d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDate(), 0, null, null, null).build())
+				.map(d -> new Order.OrderBuilder(
+						d.getInteger("orderId"),
+						d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDate(),
+						d.getDouble("orderTotal"),
+						d.getString("paymentMethodTitle"),
+						d.getString("orderAttributionReferrer"),
+						d.getString("billingEmail"))
+						.build())
 				.collect(Collectors.toList());
 	}
 
 	private void addTestOrderToDatabase(int orderId, LocalDate orderDate) {
-		orderCollection.insertOne(new Document().append("orderId", orderId).append("orderDate", orderDate));
+		orderCollection.insertOne(new Document().
+				append("orderId", orderId).
+				append("orderDate", orderDate).
+				append("orderTotal", 65.00).
+				append("paymentMethodTitle", "Bonifico").
+				append("orderAttributionReferrer", "Abbonamento cartaceo + digitale").
+				append("billingEmail", "test@address.com")
+				);
 	}
 
 }

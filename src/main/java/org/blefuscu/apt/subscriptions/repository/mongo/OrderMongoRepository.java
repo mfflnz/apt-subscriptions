@@ -48,7 +48,13 @@ public class OrderMongoRepository implements OrderRepository {
 	@Override
 	public void save(Order order) {
 		orderCollection.insertOne(
-				new Document().append("orderId", order.getOrderId()).append("orderDate", order.getOrderDate()));
+				new Document().
+				append("orderId", order.getOrderId()).
+				append("orderDate", order.getOrderDate()).
+				append("orderTotal", order.getOrderTotal()).
+				append("paymentMethodTitle", order.getPaymentMethodTitle()).
+				append("orderAttributionReferrer", order.getOrderAttributionReferrer()).
+				append("billingEmail", order.getBillingEmail()));
 	}
 
 	@Override
@@ -71,7 +77,14 @@ public class OrderMongoRepository implements OrderRepository {
 		}
 		deleteOneOrder(id);
 		orderCollection.insertOne(
-				new Document().append("orderId", id).append("orderDate", updatedOrder.getOrderDate()));		
+			new Document().
+			append("orderId", id).
+			append("orderDate", updatedOrder.getOrderDate()).
+			append("orderTotal", updatedOrder.getOrderTotal()).
+			append("paymentMethodTitle", updatedOrder.getPaymentMethodTitle()).
+			append("orderAttributionReferrer", updatedOrder.getOrderAttributionReferrer()).
+			append("billingEmail", updatedOrder.getBillingEmail())
+		);
 	}
 
 	private void deleteOneOrder(int id) {
