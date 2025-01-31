@@ -261,13 +261,13 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	public void testShowOrderDetailsShouldShowOrderDetailsInTheView() {
 		Order order = new Order.OrderBuilder(1, LocalDate.of(2024, 12, 28), 0, null, null, null).build();
-		GuiActionRunner.execute(() -> orderSwingView.showOrderDetails(order));
+		orderSwingView.showOrderDetails(order);
 		window.textBox("idTextBox").requireText("1");
 		window.textBox("orderDateTextBox").requireText("2024-12-28");
 	}
 
 	@Test
-	public void testClickOnAddButtonShouldDelegateToControllerAndShowAMessageInTheMessagesBoxThenClearItAfterTwoSeconds() {
+	public void testClickOnAddButtonShouldDelegateToControllerAndShowAMessageInTheMessagesBox() {
 		window.checkBox("unlockCheckBox").check();
 
 		window.textBox("idTextBox").setText("1");
@@ -285,14 +285,61 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
 		verify(subscriptionsController, timeout(TIMEOUT)).newOrder(new Order.OrderBuilder(1, LocalDate.of(2024, 10, 12), 0, null, null, null).build());
 		verifyNoMoreInteractions(subscriptionsController);
+		
+		window.textBox("messagesTextBox").requireText("Order added to database with id 1");
+
 
 	}
 
 	@Test
+	public void testClickOnUpdateButtonShouldDelegateToControllerAndShowAMessageInTheMessagesBox() {
+		window.checkBox("unlockCheckBox").check();
+		
+		window.textBox("idTextBox").setText("1");
+		window.textBox("orderDateTextBox").setText("2024-10-12");
+		window.textBox("productTextBox").setText("Abbonamento annuale cartaceo");
+		window.textBox("grossTextBox").setText("€65,00");
+		window.textBox("paymentTextBox").setText("Bonifico");
+		window.textBox("emailTextBox").setText("user@email.com");
+		
+		window.button(JButtonMatcher.withText("Add")).requireEnabled();
+		window.button(JButtonMatcher.withText("Update")).requireEnabled();
+		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
+		
+		window.button(JButtonMatcher.withText("Update")).click();
+		
+		verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(1, new Order.OrderBuilder(1, LocalDate.of(2024, 10, 12), 0, null, null, null).build());
+		verifyNoMoreInteractions(subscriptionsController);
+		
+	}
+
+	@Test
+	public void testClickOnDeleteButtonShouldDelegateToControllerAndShowAMessageInTheMessagesBox() {
+		window.checkBox("unlockCheckBox").check();
+		
+		window.textBox("idTextBox").setText("1");
+		window.textBox("orderDateTextBox").setText("2024-10-12");
+		window.textBox("productTextBox").setText("Abbonamento annuale cartaceo");
+		window.textBox("grossTextBox").setText("€65,00");
+		window.textBox("paymentTextBox").setText("Bonifico");
+		window.textBox("emailTextBox").setText("user@email.com");
+		
+		window.button(JButtonMatcher.withText("Add")).requireEnabled();
+		window.button(JButtonMatcher.withText("Update")).requireEnabled();
+		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
+		
+		window.button(JButtonMatcher.withText("Delete")).click();
+		
+		verify(subscriptionsController, timeout(TIMEOUT)).deleteOrder(new Order.OrderBuilder(1, LocalDate.of(2024, 10, 12), 0, null, null, null).build());
+		verifyNoMoreInteractions(subscriptionsController);
+		
+		window.textBox("messagesTextBox").requireText("Order with id 1 was removed");
+		
+	}
+
+	@Test
 	public void testOrderAddedShouldShowAMessageInTheMessagesBox() {
-		GuiActionRunner.execute(() -> {
-			orderSwingView.orderAdded(new Order.OrderBuilder(1, LocalDate.of(2024, 12, 28), 0, null, null, null).build());
-		});
+		orderSwingView.orderAdded(new Order.OrderBuilder(1, LocalDate.of(2024, 12, 28), 0, null, null, null).build());
 		window.textBox("messagesTextBox").requireText("Order added to database with id 1");
 
 	}
@@ -308,9 +355,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testOrderRemovedShouldShowAMessageInTheMessagesBox() {
-		GuiActionRunner.execute(() -> {
-			orderSwingView.orderRemoved(new Order.OrderBuilder(1, LocalDate.of(2024, 12, 28), 0, null, null, null).build());
-		});
+		orderSwingView.orderRemoved(new Order.OrderBuilder(1, LocalDate.of(2024, 12, 28), 0, null, null, null).build());
 		window.textBox("messagesTextBox").requireText("Order with id 1 was removed");
 
 	}
@@ -318,22 +363,12 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	public void testShowErrorShouldShowAMessageInTheMessagesBox() {
 		Order order = new Order.OrderBuilder(1, LocalDate.of(2024, 12, 28), 0, null, null, null).build();
-
 		window.textBox("messagesTextBox").deleteText();
-
-		GuiActionRunner.execute(() -> {
-			orderSwingView.showError("Already existing order with id 1");
-		});
+		orderSwingView.showError("Already existing order with id 1");
 		window.textBox("messagesTextBox").requireText("Already existing order with id 1");
-
 		window.textBox("messagesTextBox").deleteText();
-
-		GuiActionRunner.execute(() -> {
-			orderSwingView.showError("Already existing order with id", order);
-		});
+		orderSwingView.showError("Already existing order with id", order);
 		window.textBox("messagesTextBox").requireText("Already existing order with id 1");
-
 	}
-
 
 }

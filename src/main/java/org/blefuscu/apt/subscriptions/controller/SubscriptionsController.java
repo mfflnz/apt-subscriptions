@@ -61,6 +61,8 @@ public class SubscriptionsController {
 		}
 		orderRepository.delete(orderToDelete.getOrderId());
 		orderView.orderRemoved(orderToDelete);
+		listView.orderRemoved(orderToDelete);
+		
 	}
 
 	public void updateOrder(int orderToUpdateId, Order updatedOrder) {

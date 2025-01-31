@@ -81,7 +81,7 @@ public class SearchSwingViewIT extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	public void testRequestOrdersShowsOrdersList() {
+	public void testRequestOrdersShowsOrdersInListView() {
 		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 11, 01), 0, null, null, null).build();
 		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 11, 02), 0, null, null, null).build();
 		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2024, 11, 03), 0, null, null, null).build();
@@ -97,7 +97,7 @@ public class SearchSwingViewIT extends AssertJSwingJUnitTestCase {
 
 	@Test
 	@GUITest
-	public void testSearchButtonShowsOrdersInDateRange() {
+	public void testSearchButtonByDateRangeShowsOrdersInListView() {
 		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 10, 01), 0, null, null, null).build();
 		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 10, 02), 0, null, null, null).build();
 		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2024, 11, 01), 0, null, null, null).build();
@@ -107,14 +107,16 @@ public class SearchSwingViewIT extends AssertJSwingJUnitTestCase {
 		searchWindow.textBox("fromTextBox").deleteText().enterText("2024-09-12");
 		searchWindow.textBox("toTextBox").deleteText().enterText("2024-10-20");
 		searchWindow.button(JButtonMatcher.withText("Search")).click();
+		GuiActionRunner.execute(() -> {
+			subscriptionsController.requestOrders(LocalDate.of(2024, 9, 12), LocalDate.of(2024, 10, 20));
+		});
 		assertThat(listWindow.list().contents()).containsExactly(order1.toString(), order2.toString());
 	}
 
-	// TODO: controlla questo test
 
 	@Test
 	@GUITest
-	public void testSearchButton() {
+	public void testSearchButtonByDateRangeShowsAnEmptyListInListViewIfNoOrderIsFound() {
 		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 10, 01), 0, null, null, null).build();
 		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 10, 02), 0, null, null, null).build();
 		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2024, 11, 01), 0, null, null, null).build();
@@ -124,6 +126,9 @@ public class SearchSwingViewIT extends AssertJSwingJUnitTestCase {
 		searchWindow.textBox("fromTextBox").deleteText().enterText("2024-09-12");
 		searchWindow.textBox("toTextBox").deleteText().enterText("2024-09-20");
 		searchWindow.button(JButtonMatcher.withText("Search")).click();
+		GuiActionRunner.execute(() -> {
+			subscriptionsController.requestOrders(LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 20));
+		});
 		assertThat(listWindow.list().contents()).isEmpty();
 	}
 

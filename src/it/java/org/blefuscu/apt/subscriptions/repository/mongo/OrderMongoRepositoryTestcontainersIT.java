@@ -110,7 +110,12 @@ public class OrderMongoRepositoryTestcontainersIT {
 	}
 
 	private void addTestOrderToDatabase(int orderId, LocalDate orderDate) {
-		orderCollection.insertOne(new Document().append("orderId", orderId).append("orderDate", orderDate));
+		orderCollection.insertOne(new Document().append("orderId", orderId).append("orderDate", orderDate)
+				.append("orderTotal", 0.0)
+				.append("paymentMethodTitle", null)
+				.append("orderAttributionReferrer", null)
+				.append("billingEmail", null)
+				);
 	}
 
 	private List<Order> readAllOrdersFromDatabase() {

@@ -15,8 +15,6 @@ import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import javax.swing.JTextField;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -26,6 +24,7 @@ import java.time.LocalDate;
 import javax.swing.JSeparator;
 import javax.swing.JCheckBox;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
 
@@ -154,13 +153,13 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 				0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
-		
+
 		contentPane.addMouseListener(new MouseAdapter() {
-		     @Override
-		     public void mousePressed(MouseEvent e) {
-		    	 messagesTextBox.setText(" ");
-		     }
-		
+			@Override
+			public void mousePressed(MouseEvent e) {
+				messagesTextBox.setText(" ");
+			}
+
 		});
 
 		JLabel lblId = new JLabel("id *");
@@ -170,8 +169,6 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_lblId.gridx = 0;
 		gbc_lblId.gridy = 0;
 		contentPane.add(lblId, gbc_lblId);
-		
-		
 
 		idTextBox = new JTextField();
 		idTextBox.setEditable(false);
@@ -775,15 +772,12 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_btnAdd.gridy = 19;
 		contentPane.add(btnAdd, gbc_btnAdd);
 
-		btnAdd.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				subscriptionsController.newOrder(
-						new Order.OrderBuilder(Integer.parseInt(idTextBox.getText()), LocalDate.parse(orderDateTextBox.getText()), 0, null, null, null).build());
-			}
-
-		});
+		btnAdd.addActionListener(e -> new Thread(() -> {
+			Order orderToAdd = new Order.OrderBuilder(Integer.parseInt(idTextBox.getText()),
+					LocalDate.parse(orderDateTextBox.getText()), 0, null, null, null).build();
+			subscriptionsController.newOrder(orderToAdd);
+			this.orderAdded(orderToAdd);
+		}).start());
 
 		btnUpdate = new JButton("Update");
 		btnUpdate.setEnabled(false);
@@ -793,6 +787,13 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_btnUpdate.gridx = 1;
 		gbc_btnUpdate.gridy = 19;
 		contentPane.add(btnUpdate, gbc_btnUpdate);
+		
+		btnUpdate.addActionListener(e -> new Thread(() -> {
+			Order orderToUpdate = new Order.OrderBuilder(Integer.parseInt(idTextBox.getText()),
+					LocalDate.parse(orderDateTextBox.getText()), 0, null, null, null).build();
+			subscriptionsController.updateOrder(Integer.parseInt(idTextBox.getText()), orderToUpdate);
+			this.orderUpdated(orderToUpdate);
+		}).start());
 
 		btnDelete = new JButton("Delete");
 		btnDelete.setEnabled(false);
@@ -801,52 +802,82 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_btnDelete.gridx = 4;
 		gbc_btnDelete.gridy = 19;
 		contentPane.add(btnDelete, gbc_btnDelete);
+		
+		btnDelete.addActionListener(e -> new Thread(() -> {
+			Order orderToDelete = new Order.OrderBuilder(Integer.parseInt(idTextBox.getText()),
+					LocalDate.parse(orderDateTextBox.getText()), 0, null, null, null).build();
+			subscriptionsController.deleteOrder(orderToDelete);
+			this.orderRemoved(orderToDelete);
+		}).start());
 
 	}
 
+
+
 	@Override
 	public void showOrderDetails(Order order) {
-		idTextBox.setText(Integer.toString(order.getOrderId()));
-		orderDateTextBox.setText(order.getOrderDate().toString());
-		// TODO: other fields
+		SwingUtilities.invokeLater(() -> {
+			idTextBox.setText(Integer.toString(order.getOrderId()));
+			orderDateTextBox.setText(order.getOrderDate().toString());
+			grossTextBox.setText("€" + Double.toString(order.getOrderTotal()) + "0");
+			paymentTextBox.setText(order.getPaymentMethodTitle());
+			productTextBox.setText(order.getOrderAttributionReferrer());
+			emailTextBox.setText(order.getBillingEmail());
+			// TODO: other fields
+		});
 	}
 
 	@Override
 	public void orderAdded(Order order) {
-		resetMessagesTextBox();
-		messagesTextBox.setText("Order added to database with id " + order.getOrderId());
+		SwingUtilities.invokeLater(() -> {
+			resetMessagesTextBox();
+			messagesTextBox.setText("Order added to database with id " + order.getOrderId());
+		});
+	}
+
+	@Override
+	public void orderRemoved(Order order) {
+		SwingUtilities.invokeLater(() -> {
+			resetMessagesTextBox();
+			messagesTextBox.setForeground(Color.RED);
+			messagesTextBox.setText("Order with id " + order.getOrderId() + " was removed");
+		});
+	}
+	
+	public void orderUpdated(Order order) {
+		SwingUtilities.invokeLater(() -> {
+			resetMessagesTextBox();
+			messagesTextBox.setText("Order with id " + order.getOrderId() + " was updated");
+		});
+	}
+
+	@Override
+	public void showError(String string, Order existingOrder) {
+		SwingUtilities.invokeLater(() -> {
+			resetMessagesTextBox();
+			messagesTextBox.setForeground(Color.RED);
+			messagesTextBox.setText(string + " " + existingOrder.getOrderId());
+		});
+	}
+
+	@Override
+	public void showError(String string) {
+		SwingUtilities.invokeLater(() -> {
+			resetMessagesTextBox();
+			messagesTextBox.setForeground(Color.RED);
+			messagesTextBox.setText(string);
+		});
+
+	}
+
+	public void setSubscriptionsController(SubscriptionsController subscriptionsController) {
+		this.subscriptionsController = subscriptionsController;
 	}
 
 	private void resetMessagesTextBox() {
 		messagesTextBox.setText(" ");
 		messagesTextBox.setForeground(Color.BLACK);
 
-	}
-
-	@Override
-	public void orderRemoved(Order orderToDelete) {
-		resetMessagesTextBox();
-		messagesTextBox.setForeground(Color.RED);
-		messagesTextBox.setText("Order with id " + orderToDelete.getOrderId() + " was removed");
-	}
-
-	@Override
-	public void showError(String string, Order existingOrder) {
-		resetMessagesTextBox();
-		messagesTextBox.setForeground(Color.RED);
-		messagesTextBox.setText(string + " " + existingOrder.getOrderId());
-	}
-
-	@Override
-	public void showError(String string) {
-		resetMessagesTextBox();
-		messagesTextBox.setForeground(Color.RED);
-		messagesTextBox.setText(string);
-
-	}
-
-	public void setSubscriptionsController(SubscriptionsController subscriptionsController) {
-		this.subscriptionsController = subscriptionsController;
 	}
 
 	/*

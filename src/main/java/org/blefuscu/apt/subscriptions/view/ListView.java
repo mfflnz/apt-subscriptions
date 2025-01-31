@@ -9,5 +9,8 @@ public interface ListView {
 	void showOrders(List<Order> orders);
 	
 	void csvExported(List<Order> orders, int exportStatus);
+	
+	void orderRemoved(Order orderToDelete);
+
 
 }

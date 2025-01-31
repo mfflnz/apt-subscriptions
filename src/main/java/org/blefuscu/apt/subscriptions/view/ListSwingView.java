@@ -125,7 +125,9 @@ public class ListSwingView extends JFrame implements ListView {
 		gbc_btnDelete.gridy = 1;
 		contentPane.add(btnDelete, gbc_btnDelete);
 
-		btnDelete.addActionListener(e -> subscriptionsController.deleteOrder(listOrders.getSelectedValue()));
+		btnDelete.addActionListener(e -> {
+			subscriptionsController.deleteOrder(listOrders.getSelectedValue());
+		});
 
 		btnExportCsv = new JButton("Export CSV");
 		GridBagConstraints gbc_btnExportCsv = new GridBagConstraints();
@@ -139,20 +141,20 @@ public class ListSwingView extends JFrame implements ListView {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-					if (fc.showSaveDialog(scrollPane) == JFileChooser.APPROVE_OPTION) {
-											
-						try {
-							subscriptionsController.exportOrders(fc.getName(), ordersList);
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-							
-						}  
-					} else {
-						fc.setVisible(false);
+
+				if (fc.showSaveDialog(scrollPane) == JFileChooser.APPROVE_OPTION) {
+
+					try {
+						subscriptionsController.exportOrders(fc.getName(), ordersList);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+
 					}
-					
+				} else {
+					fc.setVisible(false);
+				}
+
 			}
 		});
 
@@ -169,8 +171,9 @@ public class ListSwingView extends JFrame implements ListView {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				Order selectedOrder = subscriptionsController.orderDetails(listOrders.getSelectedValue().getOrderId());
+				orderSwingView.showOrderDetails(selectedOrder);
 				orderSwingView.setVisible(true);
-				subscriptionsController.orderDetails(listOrders.getSelectedValue().getOrderId());
 			}
 		});
 
@@ -197,10 +200,9 @@ public class ListSwingView extends JFrame implements ListView {
 		} else {
 			lblErrorMessage.setForeground(Color.red);
 			lblErrorMessage.setText("Error exporting orders list");
-			
+
 		}
 	}
-
 
 	public void showError(String message, Order order) {
 		lblErrorMessage.setText(message + ": " + order);

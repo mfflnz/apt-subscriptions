@@ -71,8 +71,8 @@ public class OrderMongoRepositoryTest {
 	public void testFindAllWhenDatabaseIsNotEmpty() {
 		addTestOrderToDatabase(1, LocalDate.of(2024, 8, 1));
 		addTestOrderToDatabase(2, LocalDate.of(2024, 8, 2));
-		assertThat(orderRepository.findAll()).containsExactly(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build(),
-				new Order.OrderBuilder(2, LocalDate.of(2024, 8, 2), 0, null, null, null).build());
+		assertThat(orderRepository.findAll()).containsExactly(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 65.00, "Bonifico", "Abbonamento cartaceo + digitale", "test@address.com").build(),
+				new Order.OrderBuilder(2, LocalDate.of(2024, 8, 2), 65.00, "Bonifico", "Abbonamento cartaceo + digitale", "test@address.com").build());
 	}
 
 	@Test
@@ -88,8 +88,8 @@ public class OrderMongoRepositoryTest {
 		addTestOrderToDatabase(2, LocalDate.of(2024, 8, 2));
 		addTestOrderToDatabase(3, LocalDate.of(2024, 8, 3));
 		assertThat(orderRepository.findByDateRange(LocalDate.of(2024, 8, 1), LocalDate.of(2024, 8, 2)))
-				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build(),
-						new Order.OrderBuilder(2, LocalDate.of(2024, 8, 2), 0, null, null, null).build());
+				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 65.00, "Bonifico", "Abbonamento cartaceo + digitale", "test@address.com").build(),
+						new Order.OrderBuilder(2, LocalDate.of(2024, 8, 2), 65.00, "Bonifico", "Abbonamento cartaceo + digitale", "test@address.com").build());
 	}
 
 	@Test
@@ -104,8 +104,8 @@ public class OrderMongoRepositoryTest {
 		addTestOrderToDatabase(1, LocalDate.of(2024, 8, 1));
 		addTestOrderToDatabase(2, LocalDate.of(2024, 8, 1));
 		assertThat(orderRepository.findByDateRange(LocalDate.of(2024, 8, 1), LocalDate.of(2024, 8, 1)))
-				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build(),
-						new Order.OrderBuilder(2, LocalDate.of(2024, 8, 1), 0, null, null, null).build());
+				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 65.00, "Bonifico", "Abbonamento cartaceo + digitale", "test@address.com").build(),
+						new Order.OrderBuilder(2, LocalDate.of(2024, 8, 1), 65.00, "Bonifico", "Abbonamento cartaceo + digitale", "test@address.com").build());
 	}
 
 	@Test
@@ -116,7 +116,7 @@ public class OrderMongoRepositoryTest {
 	@Test
 	public void testFindByIdFound() {
 		addTestOrderToDatabase(1, LocalDate.of(2024, 8, 1));
-		assertThat(orderRepository.findById(1)).isEqualTo(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 0, null, null, null).build());
+		assertThat(orderRepository.findById(1)).isEqualTo(new Order.OrderBuilder(1, LocalDate.of(2024, 8, 1), 65.00, "Bonifico", "Abbonamento cartaceo + digitale", "test@address.com").build());
 	}
 
 	@Test

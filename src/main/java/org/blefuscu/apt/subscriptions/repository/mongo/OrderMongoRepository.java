@@ -15,6 +15,8 @@ import org.bson.conversions.Bson;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import static com.mongodb.client.model.Sorts.ascending;
+
 
 public class OrderMongoRepository implements OrderRepository {
 
@@ -28,7 +30,7 @@ public class OrderMongoRepository implements OrderRepository {
 
 	@Override
 	public List<Order> findAll() {
-		return StreamSupport.stream(orderCollection.find().spliterator(), false).map(this::fromDocumentToOrder)
+		return StreamSupport.stream(orderCollection.find().sort(ascending("orderId")).spliterator(), false).map(this::fromDocumentToOrder)
 				.collect(Collectors.toList());
 	}
 
@@ -92,7 +94,13 @@ public class OrderMongoRepository implements OrderRepository {
 	}
 
 	private Order fromDocumentToOrder(Document d) {
-		return new Order.OrderBuilder(d.getInteger("orderId"),
-				d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDate(), 0, null, null, null).build();
+		return new Order.OrderBuilder(
+				d.getInteger("orderId"),
+				d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDate(),
+				d.getDouble("orderTotal"),
+				d.getString("paymentMethodTitle"),
+				d.getString("orderAttributionReferrer"),
+				d.getString("billingEmail")).
+				build();
 	}
 }
