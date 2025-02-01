@@ -774,7 +774,9 @@ public class OrderSwingView extends JFrame implements OrderView {
 
 		btnAdd.addActionListener(e -> new Thread(() -> {
 			Order orderToAdd = new Order.OrderBuilder(Integer.parseInt(idTextBox.getText()),
-					LocalDate.parse(orderDateTextBox.getText()), 0, null, null, null).build();
+					LocalDate.parse(orderDateTextBox.getText()),
+					Double.parseDouble(grossTextBox.getText().replace("€", "").replace(",", ".").trim()), paymentTextBox.getText(),
+					productTextBox.getText(), emailTextBox.getText()).build();
 			subscriptionsController.newOrder(orderToAdd);
 			this.orderAdded(orderToAdd);
 		}).start());
@@ -787,7 +789,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_btnUpdate.gridx = 1;
 		gbc_btnUpdate.gridy = 19;
 		contentPane.add(btnUpdate, gbc_btnUpdate);
-		
+
 		btnUpdate.addActionListener(e -> new Thread(() -> {
 			Order orderToUpdate = new Order.OrderBuilder(Integer.parseInt(idTextBox.getText()),
 					LocalDate.parse(orderDateTextBox.getText()), 0, null, null, null).build();
@@ -802,7 +804,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_btnDelete.gridx = 4;
 		gbc_btnDelete.gridy = 19;
 		contentPane.add(btnDelete, gbc_btnDelete);
-		
+
 		btnDelete.addActionListener(e -> new Thread(() -> {
 			Order orderToDelete = new Order.OrderBuilder(Integer.parseInt(idTextBox.getText()),
 					LocalDate.parse(orderDateTextBox.getText()), 0, null, null, null).build();
@@ -811,8 +813,6 @@ public class OrderSwingView extends JFrame implements OrderView {
 		}).start());
 
 	}
-
-
 
 	@Override
 	public void showOrderDetails(Order order) {
@@ -843,7 +843,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 			messagesTextBox.setText("Order with id " + order.getOrderId() + " was removed");
 		});
 	}
-	
+
 	public void orderUpdated(Order order) {
 		SwingUtilities.invokeLater(() -> {
 			resetMessagesTextBox();

@@ -2,7 +2,6 @@ package org.blefuscu.apt.subscriptions.view;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.net.InetSocketAddress;
 import java.time.LocalDate;
 
 import org.assertj.swing.core.matcher.JButtonMatcher;
@@ -13,52 +12,50 @@ import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
 import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoRepository;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.testcontainers.containers.MongoDBContainer;
 
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 
-import de.bwaldvogel.mongo.MongoServer;
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
-
 @RunWith(GUITestRunner.class)
-public class ListSwingViewIT extends AssertJSwingJUnitTestCase {
+public class ListSwingViewTestcontainersIT extends AssertJSwingJUnitTestCase {
 
-	private static MongoServer server;
-	private static InetSocketAddress serverAddress;
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		server = new MongoServer(new MemoryBackend());
-		serverAddress = server.bind();
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		server.shutdown();
-	}
+	@ClassRule
+	public static final MongoDBContainer mongo = new MongoDBContainer("mongo:4.4.3");
 
 	private MongoClient mongoClient;
 	private OrderMongoRepository orderRepository;
+
 	private OrderSwingView orderSwingView;
 	private ListSwingView listSwingView;
 	private SubscriptionsController subscriptionsController;
 	private FrameFixture listWindow;
 	private FrameFixture orderWindow;
 
+
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+	}
+
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+	}
+
 	@Override
 	protected void onSetUp() throws Exception {
-		mongoClient = new MongoClient(new ServerAddress(serverAddress));
+		mongoClient = new MongoClient(new ServerAddress(mongo.getHost(), mongo.getFirstMappedPort()));
 		orderRepository = new OrderMongoRepository(mongoClient);
-
-		// Empty the database
+		
 		for (Order order : orderRepository.findAll()) {
 			orderRepository.delete(order.getOrderId());
 		}
-
+		
 		GuiActionRunner.execute(() -> {
 			orderSwingView = new OrderSwingView();
 			listSwingView = new ListSwingView();
@@ -71,12 +68,11 @@ public class ListSwingViewIT extends AssertJSwingJUnitTestCase {
 		orderWindow = new FrameFixture(robot(), orderSwingView);
 
 		listWindow.show();
-		// searchWindow.show();
-		// orderWindow.show();
+		
 	}
 
-	@Override
-	protected void onTearDown() throws Exception {
+	@After
+	public void onTearDown() throws Exception {
 		mongoClient.close();
 	}
 
@@ -94,7 +90,7 @@ public class ListSwingViewIT extends AssertJSwingJUnitTestCase {
 		assertThat(listWindow.list().contents()).containsExactly(order1.toString(), order2.toString(),
 				order3.toString());
 	}
-
+	
 	@Test
 	public void testIfAnOrderIsSelectedAndShowDetailsIsClickedShouldReadOrderDetailsFromDatabase() {
 		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 11, 01), 0, null, null, null).build();
@@ -117,9 +113,8 @@ public class ListSwingViewIT extends AssertJSwingJUnitTestCase {
 		assertThat(subscriptionsController.orderDetails(3)).isEqualTo(order3);
 		orderWindow.show(); // TODO : is this a hack? In case I should fix it
 		assertThat(orderWindow.textBox("idTextBox")).toString().equals("3");
-
 	}
-
+	
 	@Test
 	public void testIfAnOrderIsSelectedAndDeleteIsClickedShouldDeleteOrderFromDatabase() {
 		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2024, 11, 01), 30.00, "Carta di credito", "Abbonamento solo digitale", "test@address.com").build();
@@ -142,4 +137,8 @@ public class ListSwingViewIT extends AssertJSwingJUnitTestCase {
 		assertThat(listWindow.list().contents()).containsExactly(order1.toString(), order3.toString());
 		assertThat(orderRepository.findAll()).containsExactly(order1, order3);
 	}
+	
+
+
+
 }

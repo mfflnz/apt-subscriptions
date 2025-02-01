@@ -7,7 +7,6 @@ import static java.util.Arrays.asList;
 
 import java.time.LocalDate;
 import org.blefuscu.apt.subscriptions.model.Order;
-import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoRepository;
 import org.blefuscu.apt.subscriptions.view.ListView;
 import org.blefuscu.apt.subscriptions.view.OrderView;
