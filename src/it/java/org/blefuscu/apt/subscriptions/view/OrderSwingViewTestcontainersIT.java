@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.awaitility.Awaitility.*;
 
+import java.time.LocalDate;
 import java.util.concurrent.TimeUnit;
 
 import org.assertj.swing.core.matcher.JButtonMatcher;
@@ -37,7 +38,6 @@ public class OrderSwingViewTestcontainersIT extends AssertJSwingJUnitTestCase {
 	private OrderSwingView orderSwingView;
 	private ListSwingView listSwingView;
 	private SubscriptionsController subscriptionsController;
-	private FrameFixture listWindow;
 	private FrameFixture orderWindow;
 
 	@BeforeClass
@@ -65,7 +65,6 @@ public class OrderSwingViewTestcontainersIT extends AssertJSwingJUnitTestCase {
 			return orderSwingView;
 		});
 
-		listWindow = new FrameFixture(robot(), listSwingView);
 		orderWindow = new FrameFixture(robot(), orderSwingView);
 
 		orderWindow.show();
@@ -94,7 +93,8 @@ public class OrderSwingViewTestcontainersIT extends AssertJSwingJUnitTestCase {
 		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
 			assertThat(orderRepository.findById(1).getOrderId()).isEqualTo(1);
 			assertThat(orderRepository.findById(1).getOrderDate()).isEqualTo("2024-10-12");
-			assertThat(orderRepository.findById(1).getOrderAttributionReferrer()).isEqualTo("Abbonamento annuale cartaceo");
+			assertThat(orderRepository.findById(1).getOrderAttributionReferrer())
+					.isEqualTo("Abbonamento annuale cartaceo");
 			assertThat(orderRepository.findById(1).getOrderTotal()).isEqualTo(65.00);
 			assertThat(orderRepository.findById(1).getPaymentMethodTitle()).isEqualTo("Bonifico");
 			assertThat(orderRepository.findById(1).getBillingEmail()).isEqualTo("user@email.com");
@@ -105,10 +105,54 @@ public class OrderSwingViewTestcontainersIT extends AssertJSwingJUnitTestCase {
 	@Test
 	public void testUpdateButtonShouldUpdateOrderInDatabase() {
 
+		orderRepository.save(new Order.OrderBuilder(1, LocalDate.of(2024, 10, 12), 65.00, "Bonifico",
+				"Abbonamento annuale cartaceo", "user@email.com").build());
+
+		orderWindow.textBox("idTextBox").setText("1");
+		orderWindow.textBox("orderDateTextBox").setText("2024-10-12");
+		orderWindow.textBox("productTextBox").setText("Abbonamento annuale cartaceo");
+		orderWindow.textBox("grossTextBox").setText("€65,00");
+		orderWindow.textBox("paymentTextBox").setText("Bonifico");
+		orderWindow.textBox("emailTextBox").setText("user@email.com");
+
+		orderWindow.checkBox("unlockCheckBox").check();
+		orderWindow.textBox("emailTextBox").deleteText().setText("new@email.com");
+
+		orderWindow.button(JButtonMatcher.withText("Update")).click();
+
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+			assertThat(orderRepository.findById(1).getOrderId()).isEqualTo(1);
+			assertThat(orderRepository.findById(1).getOrderDate()).isEqualTo("2024-10-12");
+			assertThat(orderRepository.findById(1).getOrderAttributionReferrer())
+					.isEqualTo("Abbonamento annuale cartaceo");
+			assertThat(orderRepository.findById(1).getOrderTotal()).isEqualTo(65.00);
+			assertThat(orderRepository.findById(1).getPaymentMethodTitle()).isEqualTo("Bonifico");
+			assertThat(orderRepository.findById(1).getBillingEmail()).isEqualTo("new@email.com");
+		});
+
 	}
 
 	@Test
 	public void testDeleteButtonShouldDeleteOrderFromDatabase() {
+		orderRepository.save(new Order.OrderBuilder(1, LocalDate.of(2024, 10, 12), 65.00, "Bonifico",
+				"Abbonamento annuale cartaceo", "user@email.com").build());
+
+		orderWindow.textBox("idTextBox").setText("1");
+		orderWindow.textBox("orderDateTextBox").setText("2024-10-12");
+		orderWindow.textBox("productTextBox").setText("Abbonamento annuale cartaceo");
+		orderWindow.textBox("grossTextBox").setText("€65,00");
+		orderWindow.textBox("paymentTextBox").setText("Bonifico");
+		orderWindow.textBox("emailTextBox").setText("user@email.com");
+
+		orderWindow.checkBox("unlockCheckBox").check();
+
+		orderWindow.button(JButtonMatcher.withText("Delete")).click();
+		
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+			assertThat(orderRepository.findById(1)).isNull();
+
+		});
+
 
 	}
 }

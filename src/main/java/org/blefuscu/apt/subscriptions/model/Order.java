@@ -117,6 +117,7 @@ public class Order {
 		private String shippingState;
 		private String shippingCountry;
 
+		// Builder with required fields only
 		public OrderBuilder(int orderId, LocalDate orderDate, double orderTotal, String paymentMethodTitle,
 				String orderAttributionReferrer, String billingEmail) {
 			this.orderId = orderId;
@@ -125,6 +126,7 @@ public class Order {
 			this.paymentMethodTitle = paymentMethodTitle;
 			this.orderAttributionReferrer = orderAttributionReferrer;
 			this.billingEmail = billingEmail;
+
 		}
 
 		public OrderBuilder setDepositDate(LocalDate depositDate) {
@@ -571,30 +573,21 @@ public class Order {
 
 	@Override
 	public String toString() {
-		return "" + orderId + "," + orderDate;
+		return "Order [orderId=" + orderId + ", orderDate=" + orderDate + ", depositDate=" + depositDate
+				+ ", orderTotal=" + orderTotal + ", netOrderTotal=" + netOrderTotal + ", paymentMethodTitle="
+				+ paymentMethodTitle + ", billingFirstName=" + billingFirstName + ", billingLastName=" + billingLastName
+				+ ", billingCompany=" + billingCompany + ", billingAddress1=" + billingAddress1 + ", billingAddress2="
+				+ billingAddress2 + ", billingPostcode=" + billingPostcode + ", billingCity=" + billingCity
+				+ ", billingState=" + billingState + ", billingCountry=" + billingCountry + ", billingEmail="
+				+ billingEmail + ", billingPhone=" + billingPhone + ", orderAttributionReferrer="
+				+ orderAttributionReferrer + ", firstIssue=" + firstIssue + ", lastIssue=" + lastIssue + ", notes="
+				+ notes + ", shippingFirstName=" + shippingFirstName + ", shippingLastName=" + shippingLastName
+				+ ", shippingCompany=" + shippingCompany + ", shippingEmail=" + shippingEmail + ", shippingPhone="
+				+ shippingPhone + ", shippingAddress1=" + shippingAddress1 + ", shippingAddress2=" + shippingAddress2
+				+ ", shippingPostcode=" + shippingPostcode + ", shippingCity=" + shippingCity + ", shippingState="
+				+ shippingState + ", shippingCountry=" + shippingCountry + "]";
 	}
 
-	// TODO stringare tutti gli altri campi
-
-	/*
-	 * @Override public String toString() { return "" + orderId + "," + orderDate +
-	 * ", depositDate=" + depositDate + ", orderTotal=" + orderTotal +
-	 * ", netOrderTotal=" + netOrderTotal + ", paymentMethodTitle=" +
-	 * paymentMethodTitle + ", billingFirstName=" + billingFirstName +
-	 * ", billingLastName=" + billingLastName + ", billingCompany=" + billingCompany
-	 * + ", billingAddress1=" + billingAddress1 + ", billingAddress2=" +
-	 * billingAddress2 + ", billingPostcode=" + billingPostcode + ", billingCity=" +
-	 * billingCity + ", billingState=" + billingState + ", billingCountry=" +
-	 * billingCountry + ", billingEmail=" + billingEmail + ", billingPhone=" +
-	 * billingPhone + ", orderAttributionReferrer=" + orderAttributionReferrer +
-	 * ", firstIssue=" + firstIssue + ", lastIssue=" + lastIssue + ", notes=" +
-	 * notes + ", shippingFirstName=" + shippingFirstName + ", shippingLastName=" +
-	 * shippingLastName + ", shippingCompany=" + shippingCompany +
-	 * ", shippingEmail=" + shippingEmail + ", shippingPhone=" + shippingPhone +
-	 * ", shippingAddress1=" + shippingAddress1 + ", shippingAddress2=" +
-	 * shippingAddress2 + ", shippingPostcode=" + shippingPostcode +
-	 * ", shippingCity=" + shippingCity + ", shippingState=" + shippingState +
-	 * ", shippingCountry=" + shippingCountry + "]"; }
-	 */
+	
 
 }

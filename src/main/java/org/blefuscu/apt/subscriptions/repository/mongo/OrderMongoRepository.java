@@ -17,7 +17,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import static com.mongodb.client.model.Sorts.ascending;
 
-
 public class OrderMongoRepository implements OrderRepository {
 
 	public static final String SUBSCRIPTIONS_DB_NAME = "subscriptions";
@@ -30,8 +29,8 @@ public class OrderMongoRepository implements OrderRepository {
 
 	@Override
 	public List<Order> findAll() {
-		return StreamSupport.stream(orderCollection.find().sort(ascending("orderId")).spliterator(), false).map(this::fromDocumentToOrder)
-				.collect(Collectors.toList());
+		return StreamSupport.stream(orderCollection.find().sort(ascending("orderId")).spliterator(), false)
+				.map(this::fromDocumentToOrder).collect(Collectors.toList());
 	}
 
 	@Override
@@ -49,14 +48,30 @@ public class OrderMongoRepository implements OrderRepository {
 
 	@Override
 	public void save(Order order) {
-		orderCollection.insertOne(
-				new Document().
-				append("orderId", order.getOrderId()).
-				append("orderDate", order.getOrderDate()).
-				append("orderTotal", order.getOrderTotal()).
-				append("paymentMethodTitle", order.getPaymentMethodTitle()).
-				append("orderAttributionReferrer", order.getOrderAttributionReferrer()).
-				append("billingEmail", order.getBillingEmail()));
+		orderCollection.insertOne(new Document().append("orderId", order.getOrderId())
+				.append("orderDate", order.getOrderDate()).append("orderTotal", order.getOrderTotal())
+				.append("paymentMethodTitle", order.getPaymentMethodTitle())
+				.append("orderAttributionReferrer", order.getOrderAttributionReferrer())
+				.append("billingEmail", order.getBillingEmail()).append("depositDate", order.getDepositDate())
+				.append("netOrderTotal", order.getNetOrderTotal())
+				.append("billingFirstName", order.getBillingFirstName())
+				.append("billingLastName", order.getBillingLastName())
+				.append("billingCompany", order.getBillingCompany())
+				.append("billingAddress1", order.getBillingAddress1())
+				.append("billingAddress2", order.getBillingAddress2())
+				.append("billingPostcode", order.getBillingPostcode()).append("billingCity", order.getBillingCity())
+				.append("billingState", order.getBillingState()).append("billingCountry", order.getBillingCountry())
+				.append("billingPhone", order.getBillingPhone()).append("firstIssue", order.getFirstIssue())
+				.append("lastIssue", order.getLastIssue()).append("notes", order.getNotes())
+				.append("shippingFirstName", order.getShippingFirstName())
+				.append("shippingLastName", order.getShippingLastName())
+				.append("shippingCompany", order.getShippingCompany()).append("shippingEmail", order.getShippingEmail())
+				.append("shippingPhone", order.getShippingPhone())
+				.append("shippingAddress1", order.getShippingAddress1())
+				.append("shippingAddress2", order.getShippingAddress2())
+				.append("shippingPostcode", order.getShippingPostcode()).append("shippingCity", order.getShippingCity())
+				.append("shippingState", order.getShippingState())
+				.append("shippingCountry", order.getShippingCountry()));
 	}
 
 	@Override
@@ -78,15 +93,16 @@ public class OrderMongoRepository implements OrderRepository {
 			throw new NullPointerException("Error: No order found with given Id");
 		}
 		deleteOneOrder(id);
-		orderCollection.insertOne(
-			new Document().
-			append("orderId", id).
-			append("orderDate", updatedOrder.getOrderDate()).
-			append("orderTotal", updatedOrder.getOrderTotal()).
-			append("paymentMethodTitle", updatedOrder.getPaymentMethodTitle()).
-			append("orderAttributionReferrer", updatedOrder.getOrderAttributionReferrer()).
-			append("billingEmail", updatedOrder.getBillingEmail())
-		);
+		orderCollection.insertOne(new Document().append("orderId", id).append("orderDate", updatedOrder.getOrderDate())
+				.append("orderTotal", updatedOrder.getOrderTotal())
+				.append("paymentMethodTitle", updatedOrder.getPaymentMethodTitle())
+				.append("orderAttributionReferrer", updatedOrder.getOrderAttributionReferrer())
+				.append("billingEmail", updatedOrder.getBillingEmail())
+				.append("depositDate", updatedOrder.getDepositDate())
+				.append("shippingFirstName", updatedOrder.getShippingFirstName())
+				.append("shippingLastName", updatedOrder.getShippingLastName())
+				
+				);
 	}
 
 	private void deleteOneOrder(int id) {
@@ -94,13 +110,10 @@ public class OrderMongoRepository implements OrderRepository {
 	}
 
 	private Order fromDocumentToOrder(Document d) {
-		return new Order.OrderBuilder(
-				d.getInteger("orderId"),
+		Order order = new Order.OrderBuilder(d.getInteger("orderId"),
 				d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDate(),
-				d.getDouble("orderTotal"),
-				d.getString("paymentMethodTitle"),
-				d.getString("orderAttributionReferrer"),
-				d.getString("billingEmail")).
-				build();
+				d.getDouble("orderTotal"), d.getString("paymentMethodTitle"), d.getString("orderAttributionReferrer"),
+				d.getString("billingEmail")).build();
+		return order;
 	}
 }

@@ -295,6 +295,10 @@
 						</mutators>
 						<mutationThreshold>90</mutationThreshold>
 						<verbose>true</verbose>
+						<features>
+							<!-- https://github.com/hcoles/pitest/issues/1033 -->
+							<feature>-macos_focus</feature>
+						</features>
 					</configuration>
 
 				</plugin>

@@ -32,6 +32,7 @@ jobs:
         xvfb-run mvn test
         -Pjacoco
         -DrepoToken=$COVERALLS_REPO_TOKEN coveralls:report
-#        org.pitest:pitest-maven:mutationCoverage
+		org.pitest:pitest-maven:mutationCoverage
+		
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}

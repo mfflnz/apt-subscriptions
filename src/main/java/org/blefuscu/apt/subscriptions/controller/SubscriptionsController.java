@@ -80,15 +80,37 @@ public class SubscriptionsController {
 
 	public int exportOrders(String filename, List<Order> ordersListToSave) throws IOException {
 		try {
-			String ordersListToSaveAsString = ordersListToSave.toString().replace("[", "").replace("]", "")
-					.replace(", ", "\n");
 			Path filePath = Paths.get(filename);
 			Files.createFile(filePath);
-			Files.write(filePath, ordersListToSaveAsString.getBytes(), StandardOpenOption.APPEND);
+			
+			for (Order order : ordersListToSave) {
+				String orderToSaveAsString = "" + order.getOrderId() 
+						+ "," + order.getOrderDate()
+						+ "," + order.getDepositDate()
+						+ "," + order.getOrderTotal()
+						+ "," + order.getNetOrderTotal()
+						+ "," + order.getPaymentMethodTitle()
+						+ "," + order.getShippingFirstName()
+						+ "," + order.getShippingLastName()
+						+ ",\"" + order.getShippingAddress1() + "\""
+						+ "," + order.getShippingPostcode()
+						+ "," + order.getShippingCity()
+						+ "," + order.getShippingState()
+						+ "," + order.getBillingEmail()
+						+ "," + order.getShippingPhone()
+						+ "," + order.getOrderAttributionReferrer()
+						+ "," + order.getFirstIssue()
+						+ "," + order.getLastIssue()
+						+ "," + order.getNotes()
+						+ "\r";
+				Files.write(filePath, orderToSaveAsString.getBytes(), StandardOpenOption.APPEND);	
+			}
+			
 			return 1;
 		} catch (IOException e) {
 			return -1;
 		}
+		
 	}
 
 }

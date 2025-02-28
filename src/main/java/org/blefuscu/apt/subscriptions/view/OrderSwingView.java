@@ -791,8 +791,12 @@ public class OrderSwingView extends JFrame implements OrderView {
 		contentPane.add(btnUpdate, gbc_btnUpdate);
 
 		btnUpdate.addActionListener(e -> new Thread(() -> {
+		
 			Order orderToUpdate = new Order.OrderBuilder(Integer.parseInt(idTextBox.getText()),
-					LocalDate.parse(orderDateTextBox.getText()), 0, null, null, null).build();
+					LocalDate.parse(orderDateTextBox.getText()),
+					Double.parseDouble(grossTextBox.getText().replace("€", "").replace(",", ".").trim()), paymentTextBox.getText(),
+					productTextBox.getText(), emailTextBox.getText()).build();
+			
 			subscriptionsController.updateOrder(Integer.parseInt(idTextBox.getText()), orderToUpdate);
 			this.orderUpdated(orderToUpdate);
 		}).start());
@@ -804,6 +808,8 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_btnDelete.gridx = 4;
 		gbc_btnDelete.gridy = 19;
 		contentPane.add(btnDelete, gbc_btnDelete);
+		
+		// TODO: confirm deletion
 
 		btnDelete.addActionListener(e -> new Thread(() -> {
 			Order orderToDelete = new Order.OrderBuilder(Integer.parseInt(idTextBox.getText()),

@@ -283,7 +283,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
 		window.button(JButtonMatcher.withText("Add")).click();
 
-		verify(subscriptionsController, timeout(TIMEOUT)).newOrder(new Order.OrderBuilder(1, LocalDate.of(2024, 10, 12), 0, null, null, null).build());
+		verify(subscriptionsController, timeout(TIMEOUT)).newOrder(new Order.OrderBuilder(1, LocalDate.of(2024, 10, 12), 65.00, "Bonifico", "Abbonamento annuale cartaceo", "user@email.com").build());
 		verifyNoMoreInteractions(subscriptionsController);
 		
 		window.textBox("messagesTextBox").requireText("Order added to database with id 1");
@@ -308,7 +308,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		
 		window.button(JButtonMatcher.withText("Update")).click();
 		
-		verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(1, new Order.OrderBuilder(1, LocalDate.of(2024, 10, 12), 0, null, null, null).build());
+		verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(1, new Order.OrderBuilder(1, LocalDate.of(2024, 10, 12), 65.00, "Bonifico", "Abbonamento annuale cartaceo", "user@email.com").build());
 		verifyNoMoreInteractions(subscriptionsController);
 		
 	}
