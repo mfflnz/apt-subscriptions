@@ -1,7 +1,6 @@
 package org.blefuscu.apt.subscriptions.view;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -36,31 +35,15 @@ public class SearchSwingView extends JFrame {
 	private JTextField fromTextBox;
 	private JTextField toTextBox;
 
-	private ListSwingView listSwingView = new ListSwingView();
 	private SubscriptionsController subscriptionsController;
 
 	private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					SearchSwingView frame = new SearchSwingView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
 	 * Create the frame.
 	 */
 	public SearchSwingView() {
+		
 		setTitle("Search by date");
 		setName("searchSwingView");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -157,8 +140,6 @@ public class SearchSwingView extends JFrame {
 				subscriptionsController.requestOrders(LocalDate.parse(fromTextBox.getText()),
 						LocalDate.parse(toTextBox.getText()));
 
-				listSwingView.setVisible(true);
-
 			}
 
 		});
@@ -179,14 +160,11 @@ public class SearchSwingView extends JFrame {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
 				btnSearch.setEnabled(true);
-
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {
 				// TODO Auto-generated method stub
-				
-				
 			}
 
 		};

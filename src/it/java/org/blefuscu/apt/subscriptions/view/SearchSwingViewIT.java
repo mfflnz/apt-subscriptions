@@ -24,6 +24,9 @@ import com.mongodb.ServerAddress;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
+import static org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoRepository.SUBSCRIPTIONS_DB_NAME;
+import static org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoRepository.ORDER_COLLECTION_NAME;
+
 @RunWith(GUITestRunner.class)
 public class SearchSwingViewIT extends AssertJSwingJUnitTestCase {
 
@@ -52,7 +55,7 @@ public class SearchSwingViewIT extends AssertJSwingJUnitTestCase {
 	@Override
 	protected void onSetUp() throws Exception {
 		mongoClient = new MongoClient(new ServerAddress(serverAddress));
-		orderRepository = new OrderMongoRepository(mongoClient);
+		orderRepository = new OrderMongoRepository(mongoClient, SUBSCRIPTIONS_DB_NAME, ORDER_COLLECTION_NAME);
 
 		// Empty the database
 		for (Order order : orderRepository.findAll()) {

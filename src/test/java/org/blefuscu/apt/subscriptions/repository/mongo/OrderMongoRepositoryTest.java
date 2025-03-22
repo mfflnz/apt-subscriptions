@@ -51,7 +51,7 @@ public class OrderMongoRepositoryTest {
 	@Before
 	public void setup() throws Exception {
 		client = new MongoClient(new ServerAddress(serverAddress));
-		orderRepository = new OrderMongoRepository(client);
+		orderRepository = new OrderMongoRepository(client, SUBSCRIPTIONS_DB_NAME, ORDER_COLLECTION_NAME);
 		MongoDatabase database = client.getDatabase(SUBSCRIPTIONS_DB_NAME);
 		database.drop();
 		orderCollection = database.getCollection(ORDER_COLLECTION_NAME);

@@ -2,6 +2,7 @@ package org.blefuscu.apt.subscriptions.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoRepository.SUBSCRIPTIONS_DB_NAME;
+import static org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoRepository.ORDER_COLLECTION_NAME;
 import static org.mockito.Mockito.verify;
 import static java.util.Arrays.asList;
 
@@ -43,7 +44,7 @@ public class SubscriptionsControllerIT {
 	public void setUp() throws Exception {
 		client = new MongoClient(new ServerAddress(mongo.getHost(), mongo.getFirstMappedPort()));
 
-		orderRepository = new OrderMongoRepository(client);
+		orderRepository = new OrderMongoRepository(client, SUBSCRIPTIONS_DB_NAME, ORDER_COLLECTION_NAME);
 		MongoDatabase database = client.getDatabase(SUBSCRIPTIONS_DB_NAME);
 		database.drop();
 		

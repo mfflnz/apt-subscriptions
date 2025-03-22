@@ -26,6 +26,9 @@ import org.testcontainers.containers.MongoDBContainer;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 
+import static org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoRepository.SUBSCRIPTIONS_DB_NAME;
+import static org.blefuscu.apt.subscriptions.repository.mongo.OrderMongoRepository.ORDER_COLLECTION_NAME;
+
 @RunWith(GUITestRunner.class)
 public class OrderSwingViewTestcontainersIT extends AssertJSwingJUnitTestCase {
 
@@ -51,7 +54,7 @@ public class OrderSwingViewTestcontainersIT extends AssertJSwingJUnitTestCase {
 	@Override
 	protected void onSetUp() throws Exception {
 		mongoClient = new MongoClient(new ServerAddress(mongo.getHost(), mongo.getFirstMappedPort()));
-		orderRepository = new OrderMongoRepository(mongoClient);
+		orderRepository = new OrderMongoRepository(mongoClient, SUBSCRIPTIONS_DB_NAME, ORDER_COLLECTION_NAME);
 
 		for (Order order : orderRepository.findAll()) {
 			orderRepository.delete(order.getOrderId());

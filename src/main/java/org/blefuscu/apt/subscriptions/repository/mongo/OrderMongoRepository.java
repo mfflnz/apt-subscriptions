@@ -23,8 +23,8 @@ public class OrderMongoRepository implements OrderRepository {
 	public static final String ORDER_COLLECTION_NAME = "order";
 	private MongoCollection<Document> orderCollection;
 
-	public OrderMongoRepository(MongoClient client) {
-		orderCollection = client.getDatabase(SUBSCRIPTIONS_DB_NAME).getCollection(ORDER_COLLECTION_NAME);
+	public OrderMongoRepository(MongoClient client, String databaseName, String collectionName) {
+		orderCollection = client.getDatabase(databaseName).getCollection(collectionName);
 	}
 
 	@Override
@@ -110,10 +110,39 @@ public class OrderMongoRepository implements OrderRepository {
 	}
 
 	private Order fromDocumentToOrder(Document d) {
+		
 		Order order = new Order.OrderBuilder(d.getInteger("orderId"),
 				d.get("orderDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDate(),
 				d.getDouble("orderTotal"), d.getString("paymentMethodTitle"), d.getString("orderAttributionReferrer"),
 				d.getString("billingEmail")).build();
+	/*
+		order.setDepositDate(d.get("depositDate", Date.class).toInstant().atZone(ZoneId.of("UTC")).toLocalDate());
+		order.setNetOrderTotal(d.getDouble("netOrderTotal"));
+		order.setBillingFirstName(d.getString("billingFirstName"));
+		order.setBillingLastName(d.getString("billingLastName"));
+		order.setBillingCompany(d.getString("billingCompany"));
+		order.setBillingAddress1(d.getString("billingAddress1"));
+		order.setBillingAddress2(d.getString("billingAddress2"));
+		order.setBillingPostcode(d.getString("billingPostcode"));
+		order.setBillingCity(d.getString("billingCity"));
+		order.setBillingState(d.getString("billingState"));
+		order.setBillingCountry(d.getString("billingCountry"));
+		order.setBillingPhone(d.getString("billingPhone"));
+		order.setFirstIssue(d.getInteger("firstIssue"));
+		order.setLastIssue(d.getInteger("lastIssue"));
+		order.setNotes(d.getString("notes"));
+		order.setShippingFirstName(d.getString("shippingFirstName"));
+		order.setShippingLastName(d.getString("shippingLastName"));
+		order.setShippingCompany(d.getString("shippingCompany"));
+		order.setShippingEmail(d.getString("shippingEmail"));
+		order.setShippingPhone(d.getString("shippingPhone"));
+		order.setShippingAddress1(d.getString("shippingAddress1"));
+		order.setShippingAddress2(d.getString("shippingAddress2"));
+		order.setShippingPostcode(d.getString("shippingPostcode"));
+		order.setShippingCity(d.getString("shippingCity"));
+		order.setShippingState(d.getString("shippingState"));
+		order.setShippingCountry(d.getString("shippingCountry"));
+		*/
 		return order;
 	}
 }

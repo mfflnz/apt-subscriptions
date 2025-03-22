@@ -39,7 +39,7 @@ public class OrderMongoRepositoryTestcontainersIT {
 	@Before
 	public void setup() {
 		client = new MongoClient(new ServerAddress(mongo.getHost(), mongo.getMappedPort(27017)));
-		orderRepository = new OrderMongoRepository(client);
+		orderRepository = new OrderMongoRepository(client, SUBSCRIPTIONS_DB_NAME, ORDER_COLLECTION_NAME);
 		MongoDatabase database = client.getDatabase(SUBSCRIPTIONS_DB_NAME);
 		database.drop();
 		orderCollection = database.getCollection(ORDER_COLLECTION_NAME);

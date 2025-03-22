@@ -199,7 +199,14 @@ public class SubscriptionsControllerTest {
 				.setShippingPhone("+393287654321")		
 				.setFirstIssue(118)		
 				.setLastIssue(123)		
-				.setNotes("Abbonamento regalato da Fabrizia Ramondino")		
+				.setNotes("Abbonamento regalato da Fabrizia Ramondino")
+				.setBillingFirstName("Livia")		
+				.setBillingLastName("Apa")		
+				.setBillingAddress1("via dei Tribunali 32")		
+				.setBillingPostcode("80138")		
+				.setBillingCity("Napoli")		
+				.setBillingState("NA")		
+				.setBillingPhone("+393287654321")
 				.build();
 		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2024, 8, 29), 65.00, "Bonifico",
 				"Abbonamento annuale cartaceo", "gianluca@email.com")
