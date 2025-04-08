@@ -79,6 +79,7 @@ public class ListSwingViewTest extends AssertJSwingJUnitTestCase {
 		listWindow.button(JButtonMatcher.withText("Show Details")).requireDisabled();
 		listWindow.button(JButtonMatcher.withText("Export CSV")).requireEnabled();
 		listWindow.button(JButtonMatcher.withText("Delete")).requireDisabled();
+		assertThat(listWindow.button(JButtonMatcher.withText("Show Details")).requireDisabled());
 
 	}
 
