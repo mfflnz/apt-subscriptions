@@ -1,0 +1,5 @@
+target/
+assets/orders.csv
+
+# Backup files
+*~
