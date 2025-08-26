@@ -1,4 +1,49 @@
-**Pacchetti e plugin**
+**Requisiti**
+
+Voglio leggere da un database le informazioni relative agli ordini di acquisto di copie o abbonamenti a una rivista, filtrare e formattare i risultati, e quindi esportarli in un file in cui mantengo solo alcuni campi a cui sono interessato.
+
+Voglio visualizzare un elenco sintetico degli ordini presenti e i dettagli di un particolare ordine selezionato. Voglio fare operazioni di lettura, aggiornamento e cancellazione sul database degli ordini.
+
+La funzione che mi interessa particolarmente è specificare un intervallo di date ed estrarre gli ordini conclusi in quel periodo.
+
+---
+
+**Scelte di design**
+
+Per l'accesso al database intendo seguire il pattern Repository (descritto in [Eva03] nel riferimento bibliografico del testo). Per la creazione degli oggetti mi rifaccio al pattern Builder ([GHJV95]).
+
+(Il termine "Order" = "ordine" è da intendersi nel senso di ordine di acquisto di un prodotto.)
+
+Schema del Model–view–presenter:
+
+    model
+        Order
+
+    repository
+        OrderRepository
+
+    view
+        DashboardView
+            SearchView
+                - ricerca degli ordini per intervallo di date
+            ListView
+                - elenco sintetico degli ordini
+                - esportazione degli ordini
+            OrderView
+                - vista dettagliata dell'ordine selezionato
+                - aggiornamento dell'ordine selezionato
+                - eliminazione dell'ordine selezionato
+
+    controller
+        SubscriptionsController
+
+Inizialmente faccio uno sketch del Model e scrivo le interfacce del Repository e delle View (File > New > Interface). Quindi comincio ad applicare il TDD per costruire il Controller.
+
+Faccio un mock del Repository e della View; quindi nel primo test verifico che il metodo `requestOrders()`, invocato senza parametri, riporti sulla View la lista di tutti gli ordini presenti. Per passare dalla fase *red* alla fase *green*, con il content assist di Eclipse comincio a definire i primi tratti del Controller: i campi `listView` e `orderRepository` e il metodo `requestOrders()`.
+
+---
+
+**Preparazione dell'ambiente**
 
 Con il gestore di pacchetti del S.O. (Arch Linux) installo:
 
@@ -33,12 +78,12 @@ Lancio il container di MongoDB:
 
 Nella cartella assets ho copiato un file .csv con i dati da caricare su MongoDB (intestazione e informazioni sugli ordini) e lo importo con il tool mongoimport:
 
-    docker run -it --network apt-network -v "$PWD"/assets:/assets --rm mongo:latest mongoimport --host my-mongo --collection='orders' --headerline --file=assets/orders.csv --type=csv
+    docker run -it --network apt-network -v "$PWD"/assets:/assets --rm mongo:latest mongoimport --host my-mongo --collection='orders' --headerline --file=assets/sample-orders.csv --type=csv
 
 Col comando sopra ottengo:
 
-    2025-08-11T14:19:07.198+0000    connected to: mongodb://my-mongo/
-    2025-08-11T14:19:08.005+0000    3868 document(s) imported successfully. 0 document(s) failed to import.
+    2025-08-21T11:05:38.680+0000    connected to: mongodb://my-mongo/
+    2025-08-21T11:05:38.730+0000    4 document(s) imported successfully. 0 document(s) failed to import.
 
 Nella shell di MongoDB (mongosh) faccio una verifica sui contenuti appena importati:
 
@@ -47,37 +92,11 @@ Nella shell di MongoDB (mongosh) faccio una verifica sui contenuti appena import
 Nella shell di MongoDB:
 
     test> db.orders.countDocuments()
-    3868
+    4
 
 Includo i comandi relativi a Docker in uno script (setup.sh).
 
 ---
-
-**Requisiti**
-
-Voglio leggere da un database le informazioni relative agli ordini di abbonamenti alla rivista, filtrare e formattare i risultati, e quindi salvarli in un file .csv in cui mantengo solo alcuni campi a cui sono interessato.
-
-Voglio vedere un elenco sintetico degli ordini presenti e i dettagli dell'ordine selezionato.  Voglio fare operazioni CRUD sugli ordini.
-
-La funzione che più mi interessa è specificare un range di date ed estrarre gli ordini conclusi in quel periodo.
-
-Per l'accesso al database intendo seguire il pattern Repository.
-
-Schema del Model–view–presenter:
-
-    model
-        Order
-
-    repository
-        OrderRepository
-
-    view
-        SearchView
-        ListView
-        OrderView
-
-    controller
-        SubscriptionsController
 
 Imposto il progetto Maven:
 
@@ -91,11 +110,34 @@ Imposto il progetto Maven:
 
 Dopodiché lo importo in Eclipse secondo la procedura descritta nella sezione 7.3.2 del libro.
 
-Inizializzo il repository di Git nella cartella apt-subscriptions appena creata:
+Inizializzo il repository Git nella cartella apt-subscriptions appena creata:
 
     git init
     git config user.name "Lorenzo Maffucci"
     git config user.email "lorenzo.maffucci@edu.unifi.it"
     
 Quindi importo il repository in Eclipse (Window > Show View > Other... > Git > Git Repositories).
+
+---  
+
+**Code Coverage**
+
+Escludo le classi del Model dal computo della code coverage.
+
+Faccio un test:
+
+    mvn clean jacoco:prepare-agent test jacoco:report
     
+---
+
+**Mutation Testing**
+
+Faccio un test:
+
+    mvn clean test org.pitest:pitest-maven:mutationCoverage
+
+---
+
+**Continuous Integration**
+
+// TODO
