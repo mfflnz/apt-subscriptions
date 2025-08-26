@@ -1,4 +1,8 @@
-**Requisiti**
+[![Java CI with Maven in Linux](https://github.com/mfflnz/apt-subscriptions/actions/workflows/linux.yml/badge.svg)](https://github.com/mfflnz/apt-subscriptions/actions/workflows/linux.yml) [![Coverage Status](https://coveralls.io/repos/github/mfflnz/apt-subscriptions/badge.svg?branch=main)](https://coveralls.io/github/mfflnz/apt-subscriptions?branch=main)
+
+---
+
+### Requisiti
 
 Voglio leggere da un database le informazioni relative agli ordini di acquisto di copie o abbonamenti a una rivista, filtrare e formattare i risultati, e quindi esportarli in un file in cui mantengo solo alcuni campi a cui sono interessato.
 
@@ -8,7 +12,7 @@ La funzione che mi interessa particolarmente è specificare un intervallo di dat
 
 ---
 
-**Scelte di design**
+### Scelte di design
 
 Per l'accesso al database intendo seguire il pattern Repository (descritto in [Eva03] nel riferimento bibliografico del testo). Per la creazione degli oggetti mi rifaccio al pattern Builder ([GHJV95]).
 
@@ -41,9 +45,17 @@ Inizialmente faccio uno sketch del Model e scrivo le interfacce del Repository e
 
 Faccio un mock del Repository e della View; quindi nel primo test verifico che il metodo `requestOrders()`, invocato senza parametri, riporti sulla View la lista di tutti gli ordini presenti. Per passare dalla fase *red* alla fase *green*, con il content assist di Eclipse comincio a definire i primi tratti del Controller: i campi `listView` e `orderRepository` e il metodo `requestOrders()`.
 
+Col test successivo scrivo una versione del metodo `requestOrders` che accetta due parametri di tipo `LocalDate` e verifico che ci siano interazioni coi mock del Repository e della View.
+
+**TODO**: Proseguo con alcuni test su `requestOrders(LocalDate fromDate, LocalDate toDate)` che permetteranno di gestire i casi di errore sulle date:
+
+- `fromDate`  non è specificato;
+- `toDate` non è specificato;
+- `fromDate` è successivo a `toDate`;
+
 ---
 
-**Preparazione dell'ambiente**
+### Preparazione dell'ambiente
 
 Con il gestore di pacchetti del S.O. (Arch Linux) installo:
 
@@ -66,7 +78,7 @@ Tramite il Marketplace di Eclipse installo alcuni plugin:
 
 ---
 
-**Docker**
+### Docker
 
 Creo una rete per mettere in comunicazione i container che useremo:
 
@@ -94,7 +106,7 @@ Nella shell di MongoDB:
     test> db.orders.countDocuments()
     4
 
-Includo i comandi relativi a Docker in uno script (setup.sh).
+Includo i comandi relativi a Docker in uno script (`setup.sh`).
 
 ---
 
@@ -120,7 +132,7 @@ Quindi importo il repository in Eclipse (Window > Show View > Other... > Git > G
 
 ---  
 
-**Code Coverage**
+### Code Coverage
 
 Escludo le classi del Model dal computo della code coverage.
 
@@ -130,7 +142,7 @@ Faccio un test:
     
 ---
 
-**Mutation Testing**
+### Mutation Testing
 
 Faccio un test:
 
@@ -138,6 +150,12 @@ Faccio un test:
 
 ---
 
-**Continuous Integration**
+### Continuous Integration
 
-// TODO
+Faccio un primo workflow su GitHub Actions coi plugin di JaCoCo e Pitest. Il repository è connesso a Coveralls; faccio un test in locale:
+
+    mvn coveralls:report -DrepoToken=<TOKEN>
+    
+Inserisco il token di Coveralls tra i *secrets* del repository e aggiorno di conseguenza il workflow finora sperimentato (`linux.yaml`).
+
+**TODO** Apprendo che il Quality Gate di SonarCloud non è andato a buon fine per eccesso di codice duplicato nel Model: devo escluderlo dall'analisi.

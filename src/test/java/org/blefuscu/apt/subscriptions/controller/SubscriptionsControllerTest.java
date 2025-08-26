@@ -33,6 +33,7 @@ public class SubscriptionsControllerTest {
 	@Before
 	public void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
+		subscriptionsController = new SubscriptionsController(listView, orderRepository);
 	}
 
 	@After
@@ -49,6 +50,19 @@ public class SubscriptionsControllerTest {
 		subscriptionsController.requestOrders();
 		verify(listView).showOrders(orders);
 
+	}
+
+	@Test
+	public void testRequestOrdersWhenDatesAreProvided() {
+		List<Order> orders = asList(
+				new Order.OrderBuilder(1, LocalDate.of(2025, 8, 25), "customer_1@address.com").build(),
+				new Order.OrderBuilder(2, LocalDate.of(2025, 8, 26), "customer_2@address.com").build(),
+				new Order.OrderBuilder(3, LocalDate.of(2025, 8, 27), "customer_3@address.com").build());
+		LocalDate fromDate = LocalDate.of(2025, 8, 25);
+		LocalDate toDate = LocalDate.of(2025, 8, 26);
+		when(orderRepository.findByDateRange(fromDate, toDate)).thenReturn(asList(orders.get(0), orders.get(1)));
+		subscriptionsController.requestOrders(fromDate, toDate);
+		verify(listView).showOrders(asList(orders.get(0), orders.get(1)));
 	}
 
 }

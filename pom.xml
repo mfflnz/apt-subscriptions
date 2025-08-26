@@ -20,6 +20,7 @@
 		<mockito.version>4.11.0</mockito.version>
 		<jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
 		<pitest-maven.version>1.5.2</pitest-maven.version>
+		<coveralls-maven-plugin.version>4.5.0-M6</coveralls-maven-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -96,6 +97,11 @@
 						</mutators>
 						<mutationThreshold>100</mutationThreshold>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>com.github.hazendaz.maven</groupId>
+					<artifactId>coveralls-maven-plugin</artifactId>
+					<version>${coveralls-maven-plugin.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
