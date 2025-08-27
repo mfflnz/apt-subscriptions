@@ -21,6 +21,7 @@
 		<jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
 		<pitest-maven.version>1.5.2</pitest-maven.version>
 		<coveralls-maven-plugin.version>4.5.0-M6</coveralls-maven-plugin.version>
+		<sonar.organization>mfflnz</sonar.organization>
 	</properties>
 
 	<dependencies>

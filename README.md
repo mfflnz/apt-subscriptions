@@ -1,4 +1,4 @@
-[![Java CI with Maven in Linux](https://github.com/mfflnz/apt-subscriptions/actions/workflows/linux.yml/badge.svg)](https://github.com/mfflnz/apt-subscriptions/actions/workflows/linux.yml) [![Coverage Status](https://coveralls.io/repos/github/mfflnz/apt-subscriptions/badge.svg?branch=main)](https://coveralls.io/github/mfflnz/apt-subscriptions?branch=main)
+[![Java CI with Maven in Linux](https://github.com/mfflnz/apt-subscriptions/actions/workflows/linux.yml/badge.svg)](https://github.com/mfflnz/apt-subscriptions/actions/workflows/linux.yml) [![Coverage Status](https://coveralls.io/repos/github/mfflnz/apt-subscriptions/badge.svg?branch=main)](https://coveralls.io/github/mfflnz/apt-subscriptions?branch=main) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mfflnz_apt-subscriptions&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mfflnz_apt-subscriptions)
 
 ---
 
@@ -12,7 +12,7 @@ La funzione che mi interessa particolarmente è specificare un intervallo di dat
 
 ---
 
-### Scelte di design
+### Design
 
 Per l'accesso al database intendo seguire il pattern Repository (descritto in [Eva03] nel riferimento bibliografico del testo). Per la creazione degli oggetti mi rifaccio al pattern Builder ([GHJV95]).
 
@@ -41,6 +41,10 @@ Schema del Model–view–presenter:
     controller
         SubscriptionsController
 
+---
+
+### TDD
+
 Inizialmente faccio uno sketch del Model e scrivo le interfacce del Repository e delle View (File > New > Interface). Quindi comincio ad applicare il TDD per costruire il Controller.
 
 Faccio un mock del Repository e della View; quindi nel primo test verifico che il metodo `requestOrders()`, invocato senza parametri, riporti sulla View la lista di tutti gli ordini presenti. Per passare dalla fase *red* alla fase *green*, con il content assist di Eclipse comincio a definire i primi tratti del Controller: i campi `listView` e `orderRepository` e il metodo `requestOrders()`.
@@ -55,7 +59,7 @@ Col test successivo scrivo una versione del metodo `requestOrders` che accetta d
 
 ---
 
-### Preparazione dell'ambiente
+### Ambiente
 
 Con il gestore di pacchetti del S.O. (Arch Linux) installo:
 
@@ -166,10 +170,10 @@ Faccio un primo workflow su GitHub Actions coi plugin di JaCoCo e Pitest. Il rep
     
 Inserisco il token di Coveralls tra i *secrets* del repository e aggiorno di conseguenza il workflow finora sperimentato (`linux.yaml`).
 
-A una prima build, il Quality Gate di SonarCloud non è va a buon fine per eccesso di codice duplicato nel Model: lo escludo dall'analisi.
+A una prima build, il Quality Gate di SonarCloud non è va a buon fine per eccesso di codice duplicato nel Model: lo escludo dall'analisi (nell'interfaccia web di SonarCloud: Administration > General Settings > Analysis Scope > Coverage Exclusions e Duplication Exclusions).
 
 Modifico il POM spostando in due profili ad hoc l'attivazione dei plugin di JaCoCo e Pitest. I *goal* che generano i report sono legati alla fase *verify*, per cui il comando diventa:
 
     mvn clean verify -Pjacoco,mutation-testing
 
-Per il momento IWOMM. **TODO**: Configurare SonarCloud. 
+Per il momento IWOMM. Verifico in locale la configurazione di SonarCloud con GitHub Actions (finora era impostata la Automatic Analysis).
