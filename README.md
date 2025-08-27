@@ -177,3 +177,9 @@ Modifico il POM spostando in due profili ad hoc l'attivazione dei plugin di JaCo
     mvn clean verify -Pjacoco,mutation-testing
 
 Per il momento IWOMM. Verifico in locale la configurazione di SonarCloud con GitHub Actions (finora era impostata la Automatic Analysis).
+
+La build va a buon fine ma, probabilmente per via della formattazione degli `additional-maven-args`, non esegue i profili e i goal richiesti per la versione 17 di Java:
+
+    Warning:  The requested profile "mutation-testing coveralls:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=mfflnz_apt-subscriptions" could not be activated because it does not exist.
+
+(Infatti anche l'ultimo computo di Coveralls non ha ricevuto i dati dell'ultimo commit.)

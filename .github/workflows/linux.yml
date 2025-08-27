@@ -13,9 +13,9 @@ jobs:
           - java: 8
           - java: 17
             additional-maven-args: >
-              "-Pjacoco,mutation-testing coveralls:report
+              -Pjacoco,mutation-testing coveralls:report
               org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-              -Dsonar.projectKey=mfflnz_apt-subscriptions"
+              -Dsonar.projectKey=mfflnz_apt-subscriptions
 
     name: Build with Java ${{ matrix.java }}
     steps:
