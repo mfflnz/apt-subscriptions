@@ -110,7 +110,9 @@ Includo i comandi relativi a Docker in uno script (`setup.sh`).
 
 ---
 
-Imposto il progetto Maven:
+### Maven
+
+Imposto il progetto:
 
     mvn archetype:generate \
     -DarchetypeGroupId=org.apache.maven.archetypes \
@@ -122,13 +124,19 @@ Imposto il progetto Maven:
 
 Dopodiché lo importo in Eclipse secondo la procedura descritta nella sezione 7.3.2 del libro.
 
-Inizializzo il repository Git nella cartella apt-subscriptions appena creata:
+---
+
+### Git
+
+Inizializzo il repository nella cartella `apt-subscriptions` appena creata:
 
     git init
     git config user.name "Lorenzo Maffucci"
     git config user.email "lorenzo.maffucci@edu.unifi.it"
     
-Quindi importo il repository in Eclipse (Window > Show View > Other... > Git > Git Repositories).
+Quindi lo importo in Eclipse (Window > Show View > Other... > Git > Git Repositories) e lo connetto al repository remoto su GitHub:
+
+    git remote add origin git@github.com:mfflnz/apt-subscriptions.git
 
 ---  
 
@@ -158,4 +166,10 @@ Faccio un primo workflow su GitHub Actions coi plugin di JaCoCo e Pitest. Il rep
     
 Inserisco il token di Coveralls tra i *secrets* del repository e aggiorno di conseguenza il workflow finora sperimentato (`linux.yaml`).
 
-**TODO** Apprendo che il Quality Gate di SonarCloud non è andato a buon fine per eccesso di codice duplicato nel Model: devo escluderlo dall'analisi.
+A una prima build, il Quality Gate di SonarCloud non è va a buon fine per eccesso di codice duplicato nel Model: lo escludo dall'analisi.
+
+Modifico il POM spostando in due profili ad hoc l'attivazione dei plugin di JaCoCo e Pitest. I *goal* che generano i report sono legati alla fase *verify*, per cui il comando diventa:
+
+    mvn clean verify -Pjacoco,mutation-testing
+
+Per il momento IWOMM. **TODO**: Configurare SonarCloud. 
