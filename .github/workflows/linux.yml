@@ -13,7 +13,7 @@ jobs:
           - java: 8
           - java: 17
             additional-maven-args: >
-              -Pjacoco,mutation-testing coveralls:report
+              -Pjacoco,mutation-testing,docker coveralls:report
               org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
               -Dsonar.projectKey=mfflnz_apt-subscriptions
 

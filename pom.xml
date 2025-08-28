@@ -22,6 +22,7 @@
 		<pitest-maven.version>1.5.2</pitest-maven.version>
 		<coveralls-maven-plugin.version>4.5.0-M6</coveralls-maven-plugin.version>
 		<sonar.organization>mfflnz</sonar.organization>
+		<docker-maven-plugin.version>0.45.1</docker-maven-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -119,6 +120,80 @@
 						<repoToken>${env.COVERALLS_REPO_TOKEN}</repoToken>
 					</configuration>
 				</plugin>
+				<!-- Docker -->
+				<plugin>
+					<groupId>io.fabric8</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>${docker-maven-plugin.version}</version>
+					<configuration>
+						<autoCreateCustomNetworks>true</autoCreateCustomNetworks>
+						<images>
+							<!-- MongoDB -->
+							<image>
+								<name>mongo:5</name>
+								<alias>mongod</alias>
+								<run>
+									<ports>
+										<port>27017:27017</port>
+									</ports>
+									<network>
+										<mode>custom</mode>
+										<name>apt-network</name>
+										<alias>mongodb</alias>
+									</network>
+									<log>
+										<!-- %a è l'alias dell'immagine -->
+										<prefix>%a</prefix>
+										<date>default</date>
+										<color>cyan</color>
+									</log>
+									<!-- "mongod":  -->
+									<containerNamePattern>%a</containerNamePattern>
+								</run>
+							</image>
+							<image>
+								<name>mongo:5</name>
+								<alias>mongoimport</alias>
+								<run>
+									<network>
+										<mode>custom</mode>
+										<name>apt-network</name>
+										<alias>mongodb</alias>
+									</network>
+									<volumes>
+										<bind>
+											<volume>assets</volume>
+											<volume>./assets:/assets</volume>
+										</bind>
+									</volumes>
+									<cmd>mongoimport --host mongod --collection='orders' --headerline --file=assets/sample-orders.csv --type=csv</cmd>
+									<log>
+										<!-- %a è l'alias dell'immagine -->
+										<prefix>%a</prefix>
+										<date>default</date>
+										<color>yellow</color>
+									</log>
+								</run>
+							</image>
+						</images>
+					</configuration>
+					<executions>
+						<execution>
+							<id>docker-start</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>start</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>docker-stop</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>stop</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -149,6 +224,17 @@
 								<phase>verify</phase>
 							</execution>
 						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>docker</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
 					</plugin>
 				</plugins>
 			</build>

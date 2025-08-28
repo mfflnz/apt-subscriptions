@@ -1,4 +1,4 @@
-[![Java CI with Maven in Linux](https://github.com/mfflnz/apt-subscriptions/actions/workflows/linux.yml/badge.svg)](https://github.com/mfflnz/apt-subscriptions/actions/workflows/linux.yml) [![Coverage Status](https://coveralls.io/repos/github/mfflnz/apt-subscriptions/badge.svg?branch=main)](https://coveralls.io/github/mfflnz/apt-subscriptions?branch=main) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mfflnz_apt-subscriptions&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mfflnz_apt-subscriptions)
+[![Java CI with Maven in Linux](https://github.com/mfflnz/apt-subscriptions/actions/workflows/linux.yml/badge.svg)](https://github.com/mfflnz/apt-subscriptions/actions/workflows/linux.yml) [![Coverage Status](https://coveralls.io/repos/github/mfflnz/apt-subscriptions/badge.svg?branch=main)](https://coveralls.io/github/mfflnz/apt-subscriptions?branch=main) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mfflnz_apt-subscriptions&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mfflnz_apt-subscriptions) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mfflnz_apt-subscriptions&metric=coverage)](https://sonarcloud.io/summary/new_code?id=mfflnz_apt-subscriptions) [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=mfflnz_apt-subscriptions&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=mfflnz_apt-subscriptions) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=mfflnz_apt-subscriptions&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=mfflnz_apt-subscriptions)
 
 ---
 
@@ -65,9 +65,10 @@ Con il gestore di pacchetti del S.O. (Arch Linux) installo:
 
 - OpenJDK 8.462.u08-1
 - Eclipse 2025-06
-- Maven 3.9.10
-- Git 2.50.1
+- Maven 3.9.11
+- Git 2.51.0
 - Docker Engine 28.3.3
+- Docker Compose 2.39.2
 
 Sul sistema sono già presenti le versioni 17 e 24 di OpenJDK; imposto la 8 come default:
 
@@ -183,3 +184,5 @@ La build va a buon fine ma, probabilmente per via della formattazione degli `add
     Warning:  The requested profile "mutation-testing coveralls:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=mfflnz_apt-subscriptions" could not be activated because it does not exist.
 
 (Infatti anche l'ultimo computo di Coveralls non ha ricevuto i dati dell'ultimo commit.)
+
+**TODO**: Impostare Docker su GitHub Actions. Nel POM configuro il `docker-maven-plugin` in modo da attivarlo con il profilo `docker`. (Faccio un test in locale con `mvn verify -Pdocker`.)
