@@ -200,6 +200,12 @@ Ripeto il job con messaggi di debug e vedo che:
     Starting lima instance
     Error: The process '/opt/homebrew/bin/limactl' failed with exit code 1
     
-Provo a usare il runner `macos-latest` (che al momento equivale a `macos-15`) con la versione 4 della `setup-docker-action` (senza specifiche sulle versioni minori, come da esempio sul [README](https://github.com/docker/setup-docker-action) della action) e la variabile d'ambiente per Lima (di nuovo come da esempio, con specifiche sul numero di CPU e sulla quantità di memoria da emulare). Di nuovo ottengo lo stesso errore, e altrettanto succede con il workflow minimale riportato nella documentazione della action. Sembra un problema legato alla versione 9.1.0 di QEMU, che pare non presentarsi usando la versione 9.0.2. Faccio un tentativo.
+Provo a usare il runner `macos-latest` (che al momento equivale a `macos-15`) con la versione 4 della `setup-docker-action` (senza specifiche sulle versioni minori, come da esempio sul [README](https://github.com/docker/setup-docker-action) della action) e la variabile d'ambiente per Lima (di nuovo come da esempio, con specifiche sul numero di CPU e sulla quantità di memoria da emulare). Di nuovo ottengo lo stesso errore, e altrettanto succede con il workflow minimale riportato nella documentazione della action. Sembra un problema legato alla versione 9.1.0 di QEMU, che pare non presentarsi usando la versione 9.0.2. Faccio riferimento a [questa issue](https://github.com/docker/actions-toolkit/issues/455) e a [questa](https://github.com/docker/setup-docker-action/issues/108). Faccio un tentativo e sembra funzionare con questa configurazione:
+
+- runner `macos-13`
+- QEMU 9.0.2
+- `setup-docker-action@v3`
+
+Provo a integrare questo espediente nel precedente workflow.
 
 TODO: Provo a impostare un IT per vedere se riesco a comunicare correttamente con il database.
