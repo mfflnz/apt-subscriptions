@@ -6,11 +6,11 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-latest
     strategy:
       matrix:
         include:
-          - java: 8
+          - java: 11
           - java: 17
 
     name: Build with Java ${{ matrix.java }}
@@ -22,9 +22,11 @@ jobs:
         java-version: ${{ matrix.java }}
         distribution: 'temurin'
     - name: Install Docker
-      uses: docker/setup-docker-action@v4.1.0
+      uses: docker/setup-docker-action@v4
       with:
         set-host: true
+      env:
+        LIMA_START_ARGS: --cpus 4 --memory 8
     - name: Cache Maven packages
       uses: actions/cache@v4
       with:

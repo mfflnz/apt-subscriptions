@@ -187,6 +187,19 @@ La build va a buon fine ma, probabilmente per via della formattazione degli `add
 
 Imposto Docker su GitHub Actions. Nel POM configuro il `docker-maven-plugin` in modo da attivarlo con il profilo `docker`. (Faccio un test in locale con `mvn verify -Pdocker`.) Attivo due container di MongoDB, uno dei quali con funzione di server, l'altro per importare da shell (`mongoimport`) alcuni documenti-campione su cui fare i test.
 
-Provo a impostare i workflow anche per macOS e Windows per verificare se per il momento tutto va a buon fine.
+#### Aggiustamenti con macOS
+
+Provo a impostare i workflow anche per macOS e Windows per verificare se per il momento tutto va a buon fine. Scopro che il JDK 8 non è disponibile per il runner macos-13 e lo sostituisco con il JDK 11. Nella build per Java 17, allo step "Install Docker", vedo intanto che:
+
+    Installing QEMU
+    /opt/homebrew/bin/brew install qemu
+    Error: The operation was canceled.
+
+Ripeto il job con messaggi di debug e vedo che:
+
+    Starting lima instance
+    Error: The process '/opt/homebrew/bin/limactl' failed with exit code 1
+    
+Provo a usare il runner `macos-latest` (che al momento equivale a `macos-15`) con la versione 4 della `setup-docker-action` (senza specifiche sulle versioni minori, come da esempio sul [README](https://github.com/docker/setup-docker-action) della action) e la variabile d'ambiente per Lima (di nuovo come da esempio, con specifiche sul numero di CPU e sulla quantità di memoria da emulare).
 
 TODO: Provo a impostare un IT per vedere se riesco a comunicare correttamente con il database.
