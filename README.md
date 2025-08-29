@@ -1,4 +1,6 @@
-[![Java CI with Maven in Linux](https://github.com/mfflnz/apt-subscriptions/actions/workflows/linux.yml/badge.svg)](https://github.com/mfflnz/apt-subscriptions/actions/workflows/linux.yml) [![Coverage Status](https://coveralls.io/repos/github/mfflnz/apt-subscriptions/badge.svg?branch=main)](https://coveralls.io/github/mfflnz/apt-subscriptions?branch=main) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mfflnz_apt-subscriptions&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mfflnz_apt-subscriptions) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mfflnz_apt-subscriptions&metric=coverage)](https://sonarcloud.io/summary/new_code?id=mfflnz_apt-subscriptions) [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=mfflnz_apt-subscriptions&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=mfflnz_apt-subscriptions) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=mfflnz_apt-subscriptions&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=mfflnz_apt-subscriptions)
+[![Java CI with Maven in Linux](https://github.com/mfflnz/apt-subscriptions/actions/workflows/linux.yml/badge.svg)](https://github.com/mfflnz/apt-subscriptions/actions/workflows/linux.yml) [![Java CI with Maven in macOS](https://github.com/mfflnz/apt-subscriptions/actions/workflows/macos.yml/badge.svg)](https://github.com/mfflnz/apt-subscriptions/actions/workflows/macos.yml) [![Java CI with Maven in Windows](https://github.com/mfflnz/apt-subscriptions/actions/workflows/windows.yml/badge.svg)](https://github.com/mfflnz/apt-subscriptions/actions/workflows/windows.yml)
+[![Coverage Status](https://coveralls.io/repos/github/mfflnz/apt-subscriptions/badge.svg?branch=main)](https://coveralls.io/github/mfflnz/apt-subscriptions?branch=main)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mfflnz_apt-subscriptions&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mfflnz_apt-subscriptions) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mfflnz_apt-subscriptions&metric=coverage)](https://sonarcloud.io/summary/new_code?id=mfflnz_apt-subscriptions) [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=mfflnz_apt-subscriptions&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=mfflnz_apt-subscriptions) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=mfflnz_apt-subscriptions&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=mfflnz_apt-subscriptions)
 
 ---
 
@@ -215,5 +217,13 @@ Aggiungo la chiave `set-host` alla configurazione di `setup-docker-action`, che 
 #### Workflow per Windows
 
 Provo a impostare un workflow per Windows 2025 con Java 11, 17 e 21.
+
+Docker mi dà errore:
+
+    Error:  DOCKER> I/O Error [Unable to create container for [mongo:5] : {"message":"invalid volume specification: 'D:\\a\\apt-subscriptions\\apt-subscriptions\\assets:/assets'"} (Internal Server Error: 500)]
+    
+Provo a risolvere inserendo il percorso della cartella `assets` nelle proprietà del POM e a sovrascriverlo con l'opzione `--define` di Maven da linea di comando nel workflow di Windows:
+
+    -Dassets.path="%cd%\assets"
 
 TODO: Provo a impostare un IT per vedere se riesco a comunicare correttamente con il database.
