@@ -224,6 +224,13 @@ Docker mi dà errore:
     
 Provo a risolvere inserendo il percorso della cartella `assets` nelle proprietà del POM e a sovrascriverlo con l'opzione `--define` di Maven da linea di comando nel workflow di Windows:
 
-    -Dassets.path="%cd%\assets"
+    -Dassetspath="%cd%\assets"
+    
+La build di Java 21 si interrompe:
+
+    Warning: Failed to download action 'https://api.github.com/repos/actions/setup-java/zipball/c5195efecf7bdfc987ee8bae7a71cb8b11521c00'. Error: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond. (api.github.com:443) 
+    Warning: Back off 18.306 seconds before retry.
+    Error: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond. (api.github.com:443)
+
 
 TODO: Provo a impostare un IT per vedere se riesco a comunicare correttamente con il database.
