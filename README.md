@@ -206,6 +206,10 @@ Provo a usare il runner `macos-latest` (che al momento equivale a `macos-15`) co
 - QEMU 9.0.2
 - `setup-docker-action@v3`
 
-Provo a integrare questo espediente nel precedente workflow.
+Provo a integrare questo espediente nel precedente workflow e ottengo questo errore:
+
+    Error:  Failed to execute goal io.fabric8:docker-maven-plugin:0.45.1:start (docker-start) on project apt-subscriptions: Execution docker-start of goal io.fabric8:docker-maven-plugin:0.45.1:start failed: No <dockerHost> given, no DOCKER_HOST environment variable, no read/writable '/var/run/docker.sock' or '//./pipe/docker_engine' and no external provider like Docker machine configured -> [Help 1]
+    
+Aggiungo la chiave `set-host` alla configurazione di `setup-docker-action`, che avevo dimenticato di specificare, e la imposto a `true`.
 
 TODO: Provo a impostare un IT per vedere se riesco a comunicare correttamente con il database.
