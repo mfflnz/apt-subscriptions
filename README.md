@@ -212,4 +212,8 @@ Provo a integrare questo espediente nel precedente workflow e ottengo questo err
     
 Aggiungo la chiave `set-host` alla configurazione di `setup-docker-action`, che avevo dimenticato di specificare, e la imposto a `true`.
 
+#### Workflow per Windows
+
+Provo a impostare un workflow per Windows 2025 con Java 11, 17 e 21.
+
 TODO: Provo a impostare un IT per vedere se riesco a comunicare correttamente con il database.

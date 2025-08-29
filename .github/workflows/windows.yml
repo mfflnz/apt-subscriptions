@@ -1,16 +1,18 @@
-name: Java CI with Maven in macOS
+name: Java CI with Maven in Windows
 
 on:
+  push:
   pull_request:
 
 jobs:
   build:
-    runs-on: macos-13
+    runs-on: windows-2025
     strategy:
       matrix:
         include:
           - java: 11
           - java: 17
+          - java: 21
 
     name: Build with Java ${{ matrix.java }}
     steps:
@@ -20,13 +22,6 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
         distribution: 'temurin'
-    # https://github.com/crazy-max/ghaction-setup-docker/issues/108
-    - name: Set up QEMU
-      uses: docker/actions-toolkit/.github/actions/macos-setup-qemu@19ca9ade20f5da695f76a10988d6532058575f82
-    - name: Install Docker
-      uses: docker/setup-docker-action@v3
-      with:
-        set-host: true
     - name: Cache Maven packages
       uses: actions/cache@v4
       with:
