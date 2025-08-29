@@ -29,6 +29,6 @@ jobs:
     - name: Build with Maven
       run: >
         mvn
-        -Dassetspath="\assets"
+        -Dassetspath="%cd%\assets\"
         -Pdocker
         clean verify
