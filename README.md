@@ -185,4 +185,8 @@ La build va a buon fine ma, probabilmente per via della formattazione degli `add
 
 (Infatti anche l'ultimo computo di Coveralls non ha ricevuto i dati dell'ultimo commit.)
 
-**TODO**: Impostare Docker su GitHub Actions. Nel POM configuro il `docker-maven-plugin` in modo da attivarlo con il profilo `docker`. (Faccio un test in locale con `mvn verify -Pdocker`.)
+Imposto Docker su GitHub Actions. Nel POM configuro il `docker-maven-plugin` in modo da attivarlo con il profilo `docker`. (Faccio un test in locale con `mvn verify -Pdocker`.) Attivo due container di MongoDB, uno dei quali con funzione di server, l'altro per importare da shell (`mongoimport`) alcuni documenti-campione su cui fare i test.
+
+Provo a impostare i workflow anche per macOS e Windows per verificare se per il momento tutto va a buon fine.
+
+TODO: Provo a impostare un IT per vedere se riesco a comunicare correttamente con il database.

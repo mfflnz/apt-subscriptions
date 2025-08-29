@@ -128,7 +128,7 @@
 					<configuration>
 						<autoCreateCustomNetworks>true</autoCreateCustomNetworks>
 						<images>
-							<!-- MongoDB -->
+							<!-- MongoDB: server -->
 							<image>
 								<name>mongo:5</name>
 								<alias>mongod</alias>
@@ -151,6 +151,7 @@
 									<containerNamePattern>%a</containerNamePattern>
 								</run>
 							</image>
+							<!-- MongoDB: client per importare i dati -->
 							<image>
 								<name>mongo:5</name>
 								<alias>mongoimport</alias>
@@ -168,7 +169,6 @@
 									</volumes>
 									<cmd>mongoimport --host mongod --collection='orders' --headerline --file=assets/sample-orders.csv --type=csv</cmd>
 									<log>
-										<!-- %a è l'alias dell'immagine -->
 										<prefix>%a</prefix>
 										<date>default</date>
 										<color>yellow</color>
