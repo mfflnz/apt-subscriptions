@@ -23,7 +23,8 @@
 		<coveralls-maven-plugin.version>4.5.0-M6</coveralls-maven-plugin.version>
 		<sonar.organization>mfflnz</sonar.organization>
 		<docker-maven-plugin.version>0.45.1</docker-maven-plugin.version>
-		<assetspath>./assets/</assetspath>
+		<assets-host>./assets</assets-host>
+		<assets-container>/assets</assets-container>
 	</properties>
 
 	<dependencies>
@@ -165,7 +166,7 @@
 									<volumes>
 										<bind>
 											<volume>assets</volume>
-											<volume>${assetspath}:/assets/</volume>
+											<volume>${assets-host}:${assets-container}</volume>
 										</bind>
 									</volumes>
 									<cmd>mongoimport --host mongod --collection='orders' --headerline --file=assets/sample-orders.csv --type=csv</cmd>
