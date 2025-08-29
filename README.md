@@ -232,5 +232,6 @@ La build di Java 21 si interrompe:
     Warning: Back off 18.306 seconds before retry.
     Error: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond. (api.github.com:443)
 
+Il problema del path non si è ancora risolto. TODO: forse con un Docker compose?
 
 TODO: Provo a impostare un IT per vedere se riesco a comunicare correttamente con il database.
