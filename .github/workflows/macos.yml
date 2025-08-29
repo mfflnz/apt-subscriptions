@@ -23,8 +23,6 @@ jobs:
         distribution: 'temurin'
     - name: Install Docker
       uses: docker/setup-docker-action@v4
-      with:
-        set-host: true
       env:
         LIMA_START_ARGS: --cpus 4 --memory 8
     - name: Cache Maven packages
