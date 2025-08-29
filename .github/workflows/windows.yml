@@ -29,7 +29,7 @@ jobs:
     - name: Build with Maven
       run: >
         mvn
-        -Dassets-host="%cd%\assets\"
-        -Dassets-container="C:\assets\"
+        -Dassetshost="%cd%\assets\"
+        -Dassetscontainer="C:\assets\"
         -Pdocker
         clean verify
