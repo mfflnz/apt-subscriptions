@@ -8,6 +8,10 @@ jobs:
     runs-on: macos-latest
     steps:
       -
+        # https://github.com/crazy-max/ghaction-setup-docker/issues/108
+        name: Set up QEMU
+        uses: docker/actions-toolkit/.github/actions/macos-setup-qemu@19ca9ade20f5da695f76a10988d6532058575f82
+      -
         name: Set up Docker
         uses: docker/setup-docker-action@v4
         env:
