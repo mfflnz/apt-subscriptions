@@ -55,7 +55,7 @@ Col test successivo scrivo una versione del metodo `requestOrders` che accetta d
 
 **TODO**: Proseguo con alcuni test su `requestOrders(LocalDate fromDate, LocalDate toDate)` che permetteranno di gestire i casi di errore sulle date:
 
-- `fromDate`  non è specificato;
+- `fromDate` non è specificato;
 - `toDate` non è specificato;
 - `fromDate` è successivo a `toDate`;
 
@@ -241,3 +241,5 @@ Il problema del path non si è ancora risolto. Per il momento sospendo la config
 Aggiungo al POM le dipendenze di Mongo Java API e di Logback, e aggiungo i plugin Build Helper (per gestire la cartella degli IT) e Failsafe (per eseguire gli IT). Faccio una bozza dell'implementazione di OrderRepository.
 
 Sposto fuori dal profilo `docker` l'attivazione del plugin Docker.
+
+**TODO**: Ho cominciato a tracciare uno schema di implementazione del repository per il quale ancora però non ho scritto unit test: fino a quel momento lo tengo escluso dal conteggio della code coverage.

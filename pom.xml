@@ -143,8 +143,7 @@
 								</volumes>
 								<cmd>mongoimport --host mongod
 									--collection='orders' --headerline
-									--file=assets/sample-orders.csv
-									--type=csv</cmd>
+									--file=assets/sample-orders.csv--type=csv</cmd>
 								<log>
 									<prefix>%a</prefix>
 									<date>default</date>
@@ -182,6 +181,10 @@
 					<configuration>
 						<excludes>
 							<exclude>**/model/*.*</exclude>
+							<!-- TODO: il repository è temporaneamente escluso
+							per ragioni di coverage (ancora non ci sono unit
+							test) -->
+							<exclude>**/repository/*.*</exclude>
 						</excludes>
 					</configuration>
 					<executions>

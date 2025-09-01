@@ -42,7 +42,15 @@ public class SubscriptionsControllerIT {
 
 	@Test
 	public void testReadFromDatabase() {
+		// TODO: Only a stub
 		subscriptionsController.requestOrders();
+		verify(listView).showOrders(null);
+	}
+	
+	@Test
+	public void testReadFromDatabaseWhenDatesAreProvided() {
+		// TODO: Only a stub
+		subscriptionsController.requestOrders(null, null);
 		verify(listView).showOrders(null);
 	}
 
