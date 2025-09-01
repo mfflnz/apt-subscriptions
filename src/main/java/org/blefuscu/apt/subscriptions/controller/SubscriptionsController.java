@@ -10,7 +10,7 @@ public class SubscriptionsController {
 
 	private ListView listView;
 	private OrderRepository orderRepository;
-	
+
 	public SubscriptionsController(ListView listView, OrderRepository orderRepository) {
 		this.listView = listView;
 		this.orderRepository = orderRepository;
@@ -33,16 +33,26 @@ public class SubscriptionsController {
 		listView.showOrders(orderRepository.findByDateRange(fromDate, toDate));
 	}
 
-	public void deleteOrder(Order orderToDelete) {
-		// TODO Auto-generated method stub
-		
+	public void deleteOrder(int orderId) {
+		checkOrderAvailability(orderId);
+		orderRepository.delete(orderId);
 	}
 
 	public Order orderDetails(int orderId) {
+		checkOrderAvailability(orderId);
+		return orderRepository.findById(orderId);
+	}
+
+	public void updateOrder(int orderId, Order updatedOrder) {
+		checkOrderAvailability(orderId);
+		orderRepository.update(orderId, updatedOrder);		
+	}
+	
+	private void checkOrderAvailability(int orderId) {
 		if (orderRepository.findById(orderId) == null) {
 			throw new IllegalArgumentException("The requested order is not available");
 		}
-		return orderRepository.findById(orderId);
 	}
+
 
 }

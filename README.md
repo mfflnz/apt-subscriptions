@@ -87,10 +87,14 @@ Verifico che il codice del Controller sia raggiungibile e che i mutanti siano el
 
 Proseguo con l'implementazione di altre funzioni del Controller:
 
-- recupero dei dettagli di un ordine;
-- eliminazione di un ordine;
-- modifica di un ordine;
-- esportazione di una lista di ordini secondo la formattazione stabilita.
+- ✅ recupero dei dettagli di un ordine;
+- ✅ eliminazione di un ordine;
+- ✅ modifica di un ordine;
+- ❌ esportazione di una lista di ordini secondo la formattazione stabilita.
+
+(Osservo che SonarCloud lamenta diverse *issues* dovute alla disseminazione di vari TODO.)
+
+Nella classe `SubscriptionsController` estraggo il metodo privato `checkOrderAvailability`.
 
 ---
 
@@ -173,6 +177,8 @@ Faccio un test:
     mvn clean test org.pitest:pitest-maven:mutationCoverage
     
 **TODO**: aggiustare Pitclipse per escludere il Model.
+
+Configuro il plugin di Pitest in modo da includere i mutator del gruppo STRONGER.
 
 ---
 

@@ -3,6 +3,7 @@ package org.blefuscu.apt.subscriptions.controller;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static java.util.Arrays.asList;
 
@@ -106,20 +107,41 @@ public class SubscriptionsControllerTest {
 				.hasMessage("The requested order is not available");
 	}
 
-	// TODO:
 	@Test
 	public void testDeleteOrderWhenOrderExists() {
-		Order orderToDelete = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 1), "customer@address.com").build();
-		when(orderRepository.findById(1)).thenReturn(orderToDelete);
-		subscriptionsController.deleteOrder(orderToDelete);
+		Order orderInDB = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 1), "customer@address.com").build();
+		when(orderRepository.findById(1)).thenReturn(orderInDB);
+		subscriptionsController.deleteOrder(1);
+		verify(orderRepository).delete(1);
 	}
 
-	// TODO:
 	@Test
 	public void testDeleteOrderWhenOrderDoesNotExist() {
-		Order orderToDelete = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 1), "customer@address.com").build();
-		when(orderRepository.findById(1)).thenReturn(orderToDelete);
-		subscriptionsController.deleteOrder(orderToDelete);
+		assertThatThrownBy(() -> subscriptionsController.deleteOrder(1)).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("The requested order is not available");
+		verify(orderRepository).findById(1);
+		verifyNoMoreInteractions(orderRepository);
+	}
+
+	@Test
+	public void testUpdateOrderWhenOrderExists() {
+		Order updatedOrder = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 1), "updated_customer@address.com")
+				.build();
+		when(orderRepository.findById(1)).thenReturn(updatedOrder);
+		subscriptionsController.updateOrder(1, updatedOrder);
+		verify(orderRepository).update(1, updatedOrder);
+	}
+
+	@Test
+	public void testUpdateOrderWhenOrderDoesNotExist() {
+		Order updatedOrder = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 1), "updated_customer@address.com")
+				.build();
+		when(orderRepository.findById(1)).thenReturn(null);
+		assertThatThrownBy(() -> subscriptionsController.updateOrder(1, updatedOrder))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("The requested order is not available");
+		verify(orderRepository).findById(1);
+		verifyNoMoreInteractions(orderRepository);
+
 	}
 
 }
