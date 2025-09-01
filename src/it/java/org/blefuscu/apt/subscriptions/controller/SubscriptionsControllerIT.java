@@ -50,7 +50,7 @@ public class SubscriptionsControllerIT {
 	@Test
 	public void testReadFromDatabaseWhenDatesAreProvided() {
 		// TODO: Only a stub
-		subscriptionsController.requestOrders(null, null);
+		subscriptionsController.requestOrders(LocalDate.of(2025, 9, 1), LocalDate.of(2025, 9, 1));
 		verify(listView).showOrders(null);
 	}
 

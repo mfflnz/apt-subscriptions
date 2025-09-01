@@ -14,6 +14,30 @@ La funzione che mi interessa particolarmente è specificare un intervallo di dat
 
 ---
 
+### Ambiente
+
+Con il gestore di pacchetti del S.O. (Arch Linux) installo:
+
+- OpenJDK 8.462.u08-1
+- Eclipse 2025-06
+- Maven 3.9.11
+- Git 2.51.0
+- Docker Engine 28.3.3
+- Docker Compose 2.39.2
+
+Sul sistema sono già presenti le versioni 17 e 24 di OpenJDK; imposto la 8 come default:
+
+    # archlinux-java set java-8-openjdk
+
+Tramite il Marketplace di Eclipse installo alcuni plugin:
+
+- Pitclipse 2.2.0
+- Docker Tooling 5.18.1
+- SonarQube for IDE 11.13
+- WindowBuilder 1.20.0
+
+---
+
 ### Design
 
 Per l'accesso al database intendo seguire il pattern Repository (descritto in [Eva03] nel riferimento bibliografico del testo). Per la creazione degli oggetti mi rifaccio al pattern Builder ([GHJV95]).
@@ -53,35 +77,20 @@ Faccio un mock del Repository e della View; quindi nel primo test verifico che i
 
 Col test successivo scrivo una versione del metodo `requestOrders` che accetta due parametri di tipo `LocalDate` e verifico che ci siano interazioni coi mock del Repository e della View.
 
-**TODO**: Proseguo con alcuni test su `requestOrders(LocalDate fromDate, LocalDate toDate)` che permetteranno di gestire i casi di errore sulle date:
+Proseguo con alcuni test su `requestOrders(LocalDate fromDate, LocalDate toDate)` che permetteranno di gestire i casi di errore sulle date verificando con AssertJ che si sollevino eccezioni accompagnate da messaggi pertinenti:
 
 - `fromDate` non è specificato;
 - `toDate` non è specificato;
-- `fromDate` è successivo a `toDate`;
+- `fromDate` è successivo a `toDate`.
 
----
+Verifico che il codice del Controller sia raggiungibile e che i mutanti siano eliminati.
 
-### Ambiente
+Proseguo con l'implementazione di altre funzioni del Controller:
 
-Con il gestore di pacchetti del S.O. (Arch Linux) installo:
-
-- OpenJDK 8.462.u08-1
-- Eclipse 2025-06
-- Maven 3.9.11
-- Git 2.51.0
-- Docker Engine 28.3.3
-- Docker Compose 2.39.2
-
-Sul sistema sono già presenti le versioni 17 e 24 di OpenJDK; imposto la 8 come default:
-
-    # archlinux-java set java-8-openjdk
-
-Tramite il Marketplace di Eclipse installo alcuni plugin:
-
-- Pitclipse 2.2.0
-- Docker Tooling 5.18.1
-- SonarQube for IDE 11.13
-- WindowBuilder 1.20.0
+- recupero dei dettagli di un ordine;
+- eliminazione di un ordine;
+- modifica di un ordine;
+- esportazione di una lista di ordini secondo la formattazione stabilita.
 
 ---
 
@@ -162,6 +171,8 @@ Faccio un test:
 Faccio un test:
 
     mvn clean test org.pitest:pitest-maven:mutationCoverage
+    
+**TODO**: aggiustare Pitclipse per escludere il Model.
 
 ---
 
@@ -242,4 +253,4 @@ Aggiungo al POM le dipendenze di Mongo Java API e di Logback, e aggiungo i plugi
 
 Sposto fuori dal profilo `docker` l'attivazione del plugin Docker.
 
-**TODO**: Ho cominciato a tracciare uno schema di implementazione del repository per il quale ancora però non ho scritto unit test: fino a quel momento lo tengo escluso dal conteggio della code coverage.
+**TODO**: Ho cominciato a tracciare uno schema di implementazione del repository e delle view, per le quali ancora però non ho scritto unit test: fino a quel momento le tengo escluse dal conteggio della code coverage. (Osservo che SonarCloud indica un'ora di technical debt relative al codice non raggiunto.)
