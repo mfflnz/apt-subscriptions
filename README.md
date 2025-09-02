@@ -48,6 +48,7 @@ Schema del Model–view–presenter:
 
     model
         Order
+        FormattedOrder
 
     repository
         OrderRepository
@@ -90,11 +91,34 @@ Proseguo con l'implementazione di altre funzioni del Controller:
 - ✅ recupero dei dettagli di un ordine;
 - ✅ eliminazione di un ordine;
 - ✅ modifica di un ordine;
-- ❌ esportazione di una lista di ordini secondo la formattazione stabilita.
+- ❌ formattazione di una lista di ordini secondo i seguenti criteri:
+    1. `orderId`
+    2. `orderDate`: "2025-08-05 11:11:01" -> "05/08/2025"
+    3. `paidDate`: come sopra, se presente, altrimenti campo vuoto
+    4. `orderTotal`
+    5. `orderNetTotal`
+    6. `paymentMethodTitle` **TODO**
+    7. `shippingFirstName` se presente, altrimenti `shippingFirstName` <- `billingFirstName`
+    8. `shippingLastName` se presente, altrimenti `shippingLastName` <- `billingLastName`
+    9. `shippingAddress1`: come sopra (medesimo criterio)
+    10. `shippingPostcode`: come sopra
+    11. `shippingCity`: come sopra
+    12. `shippingState`: come sopra
+    13. `customerEmail`
+    14. `billingPhone`
+    15. `shippingItems`: togliere la stringa "items:" in testa e togliere a partire dal primo carattere "|" fino a fine della stringa
+    16. `firstIssue` **TODO**
+    17. `lastIssue` **TODO**
+    18. `customerNote` **TODO**
+- ❌ esportazione della lista formattata nel file .csv.
 
 (Osservo che SonarCloud lamenta diverse *issues* dovute alla disseminazione di vari TODO.)
 
 Nella classe `SubscriptionsController` estraggo il metodo privato `checkOrderAvailability`.
+
+**TODO**: Nella conversione dei documenti in Order, le stringhe `orderDate` e `paidDate` vanno tradotte in oggetti di tipo `LocalDate` (es: "2025-08-05 11:11:01" -> `LocalDate.of(2025, 8, 5)`; stringhe che eventualmente contengono doppi apici ("), segnatamente `shippingItems`, vanno trattate in modo consono.
+
+**TODO**: Migliorare la formattazione di orderDate e paidDate.
 
 ---
 
@@ -252,6 +276,8 @@ La build di Java 21 si interrompe:
 Il problema del path non si è ancora risolto. Per il momento sospendo la configurazione del workflow di Windows e provo a impostare un IT per vedere se riesco a comunicare correttamente con il database.
 
 **TODO**: Configurare il workflow di Windows
+
+---
 
 ### Integration Tests
 
