@@ -255,7 +255,7 @@ Provo a integrare questo espediente nel precedente workflow e ottengo questo err
     
 Aggiungo la chiave `set-host` alla configurazione di `setup-docker-action`, che avevo dimenticato di specificare, e la imposto a `true`.
 
-Con il commit https://github.com/mfflnz/apt-subscriptions/commit/68cbfdb6d7e47e241ebb85acd180fae6f0933934 la build su macOS si interrompe con l'errore di prima relativo a QEMU. Provo a modificare il workflow.
+Con il commit https://github.com/mfflnz/apt-subscriptions/commit/68cbfdb6d7e47e241ebb85acd180fae6f0933934 la build su macOS si interrompe con l'errore di prima relativo a QEMU. Provo a modificare il workflow. Il runner macos-latest gira su architettura ARM, quindi [non è supportato](https://github.com/docker/setup-docker-action?tab=readme-ov-file#about) da setup-docker-actions. Come non detto: mantengo macos-13 nel workflow e riprovo con la [soluzione](https://github.com/docker/setup-docker-action/issues/108#issuecomment-2393657360) applicata finora.
 
 #### Workflow per Windows
 
