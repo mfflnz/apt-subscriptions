@@ -255,6 +255,8 @@ Provo a integrare questo espediente nel precedente workflow e ottengo questo err
     
 Aggiungo la chiave `set-host` alla configurazione di `setup-docker-action`, che avevo dimenticato di specificare, e la imposto a `true`.
 
+Con il commit https://github.com/mfflnz/apt-subscriptions/commit/68cbfdb6d7e47e241ebb85acd180fae6f0933934 la build su macOS si interrompe con l'errore di prima relativo a QEMU. Provo a modificare il workflow.
+
 #### Workflow per Windows
 
 Provo a impostare un workflow per Windows 2025 con Java 11, 17 e 21.
