@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import static java.util.Arrays.asList;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import org.blefuscu.apt.subscriptions.model.FormattedOrder;
@@ -29,6 +30,9 @@ public class SubscriptionsControllerTest {
 
 	@Mock
 	private ListView listView;
+	
+	@Mock
+	private ExportManager exportManager;
 
 	@InjectMocks
 	private SubscriptionsController subscriptionsController;
@@ -144,168 +148,190 @@ public class SubscriptionsControllerTest {
 		verify(orderRepository).findById(1);
 		verifyNoMoreInteractions(orderRepository);
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldFormatOrderDate() {
 		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getOrderDate()).isEqualTo("02/09/2025");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldFormatPaidDateWhenItsNull() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setPaidDate(null).build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setPaidDate(null).build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getPaidDate()).isEqualTo("");
 	}
 
 	@Test
 	public void testFormatOrderShouldFormatPaidDateWhenItsNotNull() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setPaidDate(LocalDate.of(2025, 9, 5)).build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setPaidDate(LocalDate.of(2025, 9, 5)).build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getPaidDate()).isEqualTo("05/09/2025");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldFormatOrderTotal() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setOrderTotal(65.00).build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setOrderTotal(65.00).build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getOrderTotal()).isEqualTo("€ 65.0");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldFormatOrderNetTotal() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setOrderNetTotal(62.50).build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setOrderNetTotal(62.50).build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getOrderNetTotal()).isEqualTo("€ 62.5");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldCopyShippingFirstNameWhenItsNotEmpty() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingFirstName("Anna").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingFirstName("Anna").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingFirstName()).isEqualTo("Anna");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldFormatShippingFirstNameWhenItsEmpty() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingFirstName("").setBillingFirstName("Anna").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingFirstName("").setBillingFirstName("Anna").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingFirstName()).isEqualTo("Anna");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldFormatShippingFirstNameWhenItsNull() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingFirstName(null).setBillingFirstName("Anna").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingFirstName(null).setBillingFirstName("Anna").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingFirstName()).isEqualTo("Anna");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldCopyShippingLastNameWhenItsNotEmpty() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingLastName("Bianchi").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingLastName("Bianchi").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingLastName()).isEqualTo("Bianchi");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldFormatShippingLastNameWhenItsEmpty() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingLastName("").setBillingLastName("Bianchi").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingLastName("").setBillingLastName("Bianchi").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingLastName()).isEqualTo("Bianchi");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldFormatShippingLastNameWhenItsNull() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingFirstName(null).setBillingLastName("Bianchi").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingFirstName(null).setBillingLastName("Bianchi").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingLastName()).isEqualTo("Bianchi");
 	}
 
 	@Test
 	public void testFormatOrderShouldCopyShippingAddress1WhenItsNotEmpty() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingAddress1("\"viale dei Giardini, 1\"").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingAddress1("\"viale dei Giardini, 1\"").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingAddress1()).isEqualTo("\"viale dei Giardini, 1\"");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldFormatShippingAddress1WhenItsEmpty() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingAddress1("").setBillingAddress1("\"viale dei Giardini, 1\"").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingAddress1("").setBillingAddress1("\"viale dei Giardini, 1\"").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingAddress1()).isEqualTo("\"viale dei Giardini, 1\"");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldFormatShippingAddress1WhenItsNull() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingAddress1(null).setBillingAddress1("\"viale dei Giardini, 1\"").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingAddress1(null).setBillingAddress1("\"viale dei Giardini, 1\"").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingAddress1()).isEqualTo("\"viale dei Giardini, 1\"");
 	}
 
 	@Test
 	public void testFormatOrderShouldCopyShippingPostcodeWhenItsNotEmpty() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingPostcode("01234").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingPostcode("01234").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingPostcode()).isEqualTo("01234");
 	}
 
 	@Test
 	public void testFormatOrderShouldFormatShippingPostcodeWhenItsEmpty() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingPostcode("").setBillingPostcode("01234").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingPostcode("").setBillingPostcode("01234").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingPostcode()).isEqualTo("01234");
 	}
 
 	@Test
 	public void testFormatOrderShouldFormatShippingPostcodeWhenItsNull() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingPostcode(null).setBillingPostcode("01234").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingPostcode(null).setBillingPostcode("01234").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingPostcode()).isEqualTo("01234");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldCopyShippingCityWhenItsNotEmpty() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingCity("Monopoli").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingCity("Monopoli").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingCity()).isEqualTo("Monopoli");
 	}
 
 	@Test
 	public void testFormatOrderShouldFormatShippingCityWhenItsEmpty() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingCity("").setBillingCity("Monopoli").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingCity("").setBillingCity("Monopoli").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingCity()).isEqualTo("Monopoli");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldFormatShippingCityWhenItsNull() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingCity(null).setBillingCity("Monopoli").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingCity(null).setBillingCity("Monopoli").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingCity()).isEqualTo("Monopoli");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldCopyShippingStateWhenItsNotEmpty() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingState("BA").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingState("BA").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingState()).isEqualTo("BA");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldFormatShippingStateWhenItsEmpty() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingState("").setBillingState("BA").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingState("").setBillingState("BA").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingState()).isEqualTo("BA");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldFormatShippingStateWhenItsNull() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingState(null).setBillingState("BA").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingState(null).setBillingState("BA").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingState()).isEqualTo("BA");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldCopyCustomerEmail() {
 		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").build();
@@ -315,15 +341,87 @@ public class SubscriptionsControllerTest {
 
 	@Test
 	public void testFormatOrderShouldCopyBillingPhone() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setBillingPhone("+391234567898").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setBillingPhone("+391234567898").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getBillingPhone()).isEqualTo("+391234567898");
 	}
-	
+
 	@Test
 	public void testFormatOrderShouldFormatShippingItems() {
-		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").setShippingItems("items:Gli asini – nuova serie · 121 · luglio-agosto 2025 &times; 1, Gli asini – nuova serie · 120 · maggio-giugno 2025 &times; 1|method_id:flat_rate|taxes:a:1:{s:5:\"total\";a:0:{}}").build();
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingItems(
+						"items:Gli asini – nuova serie · 121 · luglio-agosto 2025 &times; 1, Gli asini – nuova serie · 120 · maggio-giugno 2025 &times; 1|method_id:flat_rate|taxes:a:1:{s:5:\"total\";a:0:{}}")
+				.build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
-		assertThat(formattedOrder.getShippingItems()).isEqualTo("Gli asini – nuova serie · 121 · luglio-agosto 2025 &times; 1, Gli asini – nuova serie · 120 · maggio-giugno 2025 &times; 1");
+		assertThat(formattedOrder.getShippingItems()).isEqualTo(
+				"Gli asini – nuova serie · 121 · luglio-agosto 2025 &times; 1, Gli asini – nuova serie · 120 · maggio-giugno 2025 &times; 1");
 	}
+
+	@Test
+	public void testFormatOrderShouldCopyFirstIssue() {
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setFirstIssue(114).build();
+		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
+		assertThat(formattedOrder.getFirstIssue()).isEqualTo("114");
+	}
+
+	@Test
+	public void testFormatOrderShouldCopyLastIssue() {
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setLastIssue(119).build();
+		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
+		assertThat(formattedOrder.getLastIssue()).isEqualTo("119");
+	}
+
+	@Test
+	public void testFormatOrderShouldCopyCustomerNote() {
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setCustomerNote("Abbonamento regalato da Carla Verdi").build();
+		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
+		assertThat(formattedOrder.getCustomerNote()).isEqualTo("Abbonamento regalato da Carla Verdi");
+	}
+
+	@Test
+	public void testFormatOrderShouldCopyPaymentMethodTitle() {
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setPaymentMethodTitle("Carta di credito").build();
+		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
+		assertThat(formattedOrder.getPaymentMethodTitle()).isEqualTo("Carta di credito");
+	}
+
+	@Test
+	public void testExportOrdersWhenFormattedOrdersListIsNullShouldThrow() {
+		List<FormattedOrder> formattedOrders = null;
+		String filename = "filename.csv";
+		assertThatThrownBy(() -> subscriptionsController.exportOrders(formattedOrders, filename))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("Error: no orders to export");
+	}
+
+	@Test
+	public void testExportOrdersWhenFilenameIsNullShouldThrow() {
+		FormattedOrder formattedOrder1 = new FormattedOrder.FormattedOrderBuilder("1").build();
+		List<FormattedOrder> formattedOrders = asList(formattedOrder1);
+		String filename = null;
+		assertThatThrownBy(() -> subscriptionsController.exportOrders(formattedOrders, filename))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("Please provide file name");
+	}
+	
+	@Test
+	public void testExportOrdersWhenFormattedOrdersListIsEmptyShouldThrow() {
+		List<FormattedOrder> formattedOrders = Collections.<FormattedOrder>emptyList();
+		String filename = "filename.csv";
+		assertThatThrownBy(() -> subscriptionsController.exportOrders(formattedOrders, filename))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("Error: no orders to export");
+	}
+	
+	@Test
+	public void testExportOrdersWhenFilenameIsEmptyShouldThrow() {
+		FormattedOrder formattedOrder1 = new FormattedOrder.FormattedOrderBuilder("1").build();
+		List<FormattedOrder> formattedOrders = asList(formattedOrder1);
+		String filename = "";
+		assertThatThrownBy(() -> subscriptionsController.exportOrders(formattedOrders, filename))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("Please provide file name");
+	}
+	
 }

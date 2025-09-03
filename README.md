@@ -52,6 +52,9 @@ Schema del Model–view–presenter:
 
     repository
         OrderRepository
+            operazioni sugli ordini (-> database)
+        ExportManager
+            operazioni sugli export (-> filesystem)
 
     view
         DashboardView
@@ -91,13 +94,13 @@ Proseguo con l'implementazione di altre funzioni del Controller:
 - ✅ recupero dei dettagli di un ordine;
 - ✅ eliminazione di un ordine;
 - ✅ modifica di un ordine;
-- ❌ formattazione di una lista di ordini secondo i seguenti criteri:
+- ✅ formattazione di una lista di ordini secondo i seguenti criteri:
     1. `orderId`
     2. `orderDate`: "2025-08-05 11:11:01" -> "05/08/2025"
     3. `paidDate`: come sopra, se presente, altrimenti campo vuoto
     4. `orderTotal`
     5. `orderNetTotal`
-    6. `paymentMethodTitle` **TODO**
+    6. `paymentMethodTitle`
     7. `shippingFirstName` se presente, altrimenti `shippingFirstName` <- `billingFirstName`
     8. `shippingLastName` se presente, altrimenti `shippingLastName` <- `billingLastName`
     9. `shippingAddress1`: come sopra (medesimo criterio)
@@ -107,10 +110,13 @@ Proseguo con l'implementazione di altre funzioni del Controller:
     13. `customerEmail`
     14. `billingPhone`
     15. `shippingItems`: togliere la stringa "items:" in testa e togliere a partire dal primo carattere "|" fino a fine della stringa
-    16. `firstIssue` **TODO**
-    17. `lastIssue` **TODO**
-    18. `customerNote` **TODO**
+    16. `firstIssue`
+    17. `lastIssue`
+    18. `customerNote`
 - ❌ esportazione della lista formattata nel file .csv.
+    - Si pone il problema di organizzare degli unit test su un metodo che scrive sul filesystem. Per farlo, dichiaro un'interfaccia *wrapper* con i metodi necessari (controllo presenza del file, scrittura del file, cancellazione del file) che invocherò come mock in questa fase e successivamente implementerò richiamando metodi delle API `java.nio`.
+    **TODO**
+
 
 (Osservo che SonarCloud lamenta diverse *issues* dovute alla disseminazione di vari TODO.)
 
@@ -191,7 +197,7 @@ Escludo le classi del Model dal computo della code coverage.
 Faccio un test:
 
     mvn clean jacoco:prepare-agent test jacoco:report
-    
+
 ---
 
 ### Mutation Testing
@@ -243,7 +249,7 @@ Ripeto il job con messaggi di debug e vedo che:
     Starting lima instance
     Error: The process '/opt/homebrew/bin/limactl' failed with exit code 1
     
-Provo a usare il runner `macos-latest` (che al momento equivale a `macos-15`) con la versione 4 della `setup-docker-action` (senza specifiche sulle versioni minori, come da esempio sul [README](https://github.com/docker/setup-docker-action) della action) e la variabile d'ambiente per Lima (di nuovo come da esempio, con specifiche sul numero di CPU e sulla quantità di memoria da emulare). Di nuovo ottengo lo stesso errore, e altrettanto succede con il workflow minimale riportato nella documentazione della action. Sembra un problema legato alla versione 9.1.0 di QEMU, che pare non presentarsi usando la versione 9.0.2. Faccio riferimento a [questa issue](https://github.com/docker/actions-toolkit/issues/455) e a [questa](https://github.com/docker/setup-docker-action/issues/108). Faccio un tentativo e sembra funzionare con questa configurazione:
+Provo a usare il runner `macos-latest` (che al momento equivale a `macos-15`) con la versione 4 della `setup-docker-action` (senza specifiche sulle versioni minori, come da esempio sul [README](https://github.com/docker/setup-docker-action) della action) e la variabile d'ambiente per Lima (di nuovo come da esempio, con specifiche sul numero di CPU e sulla quantità di memoria da emulare). Di nuovo ottengo lo stesso errore, e altrettanto succede con il workflow minimale riportato nella documentazione della action. Almeno due i punti problematici di questa configurazione: il fatto che `macos-latest` gira su architettura ARM (non supportata), e la versione 9.1.0 dell'emulatore QEMU (pare che vada tutto a buon fine con la versione 9.0.2). Faccio riferimento a [questa issue](https://github.com/docker/actions-toolkit/issues/455) e a [questa](https://github.com/docker/setup-docker-action/issues/108). Faccio un tentativo e sembra funzionare con questa configurazione:
 
 - runner `macos-13`
 - QEMU 9.0.2
@@ -255,7 +261,7 @@ Provo a integrare questo espediente nel precedente workflow e ottengo questo err
     
 Aggiungo la chiave `set-host` alla configurazione di `setup-docker-action`, che avevo dimenticato di specificare, e la imposto a `true`.
 
-Con il commit https://github.com/mfflnz/apt-subscriptions/commit/68cbfdb6d7e47e241ebb85acd180fae6f0933934 la build su macOS si interrompe con l'errore di prima relativo a QEMU. Provo a modificare il workflow. Il runner macos-latest gira su architettura ARM, quindi [non è supportato](https://github.com/docker/setup-docker-action?tab=readme-ov-file#about) da setup-docker-actions. Come non detto: mantengo macos-13 nel workflow e riprovo con la [soluzione](https://github.com/docker/setup-docker-action/issues/108#issuecomment-2393657360) applicata finora.
+Con il commit https://github.com/mfflnz/apt-subscriptions/commit/68cbfdb6d7e47e241ebb85acd180fae6f0933934 la build su macOS si interrompe con l'errore di prima relativo a QEMU. Provo a modificare il workflow. Il runner macos-latest gira su architettura ARM, quindi [non è supportato](https://github.com/docker/setup-docker-action?tab=readme-ov-file#about) da setup-docker-actions. Come non detto: mantengo macos-13 nel workflow e riprovo con la [soluzione](https://github.com/docker/setup-docker-action/issues/108#issuecomment-2393657360) applicata finora. La build con Java 11 ha un buon esito;
 
 #### Workflow per Windows
 

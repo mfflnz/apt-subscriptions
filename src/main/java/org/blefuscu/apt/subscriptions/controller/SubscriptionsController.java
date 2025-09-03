@@ -2,6 +2,7 @@ package org.blefuscu.apt.subscriptions.controller;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import org.blefuscu.apt.subscriptions.model.FormattedOrder;
 import org.blefuscu.apt.subscriptions.model.Order;
@@ -64,6 +65,7 @@ public class SubscriptionsController {
 		String paidDate;
 		String orderTotal = "€ " + Double.toString(orderToFormat.getOrderTotal());
 		String orderNetTotal = "€ " + Double.toString(orderToFormat.getOrderNetTotal());
+		String paymentMethodTitle = orderToFormat.getPaymentMethodTitle();
 		String shippingFirstName = orderToFormat.getShippingFirstName();
 		String shippingLastName = orderToFormat.getShippingLastName();
 		String shippingAddress1 = orderToFormat.getShippingAddress1();
@@ -73,6 +75,9 @@ public class SubscriptionsController {
 		String customerEmail = orderToFormat.getCustomerEmail();
 		String billingPhone = orderToFormat.getBillingPhone();
 		String shippingItems = orderToFormat.getShippingItems();
+		String firstIssue = Integer.toString(orderToFormat.getFirstIssue());
+		String lastIssue = Integer.toString(orderToFormat.getLastIssue());
+		String customerNote = orderToFormat.getCustomerNote();
 
 		if (orderToFormat.getPaidDate() == null) {
 			paidDate = "";
@@ -103,18 +108,32 @@ public class SubscriptionsController {
 		if (("".equals(shippingState)) || (shippingState == null)) {
 			shippingState = orderToFormat.getBillingState();
 		}
-		
+
 		if (shippingItems != null) {
-			 // Toglie il prefisso "items:" e il suffisso a partire dalla prima occorrenza di "|"
+			// Toglie il prefisso "items:" e il suffisso a partire dalla prima occorrenza di
+			// "|"
 			shippingItems = shippingItems.substring(6, shippingItems.indexOf("|"));
 		}
 
 		return new FormattedOrder.FormattedOrderBuilder(Integer.toString(orderToFormat.getOrderId()))
 				.setOrderDate(orderDate).setPaidDate(paidDate).setOrderTotal(orderTotal).setOrderNetTotal(orderNetTotal)
-				.setShippingFirstName(shippingFirstName).setShippingLastName(shippingLastName)
-				.setShippingAddress1(shippingAddress1).setShippingPostcode(shippingPostcode)
-				.setShippingCity(shippingCity).setShippingState(shippingState).setCustomerEmail(customerEmail)
-				.setBillingPhone(billingPhone).setShippingItems(shippingItems).build();
+				.setPaymentMethodTitle(paymentMethodTitle).setShippingFirstName(shippingFirstName)
+				.setShippingLastName(shippingLastName).setShippingAddress1(shippingAddress1)
+				.setShippingPostcode(shippingPostcode).setShippingCity(shippingCity).setShippingState(shippingState)
+				.setCustomerEmail(customerEmail).setBillingPhone(billingPhone).setShippingItems(shippingItems)
+				.setFirstIssue(firstIssue).setLastIssue(lastIssue).setCustomerNote(customerNote).build();
+	}
+
+	public void exportOrders(List<FormattedOrder> ordersToExport, String filename) {
+
+		if (ordersToExport == null || ordersToExport.isEmpty()) {
+			throw new IllegalArgumentException("Error: no orders to export");
+		}
+
+		if (filename == null || filename.isEmpty()) {
+			throw new IllegalArgumentException("Please provide file name");
+		}
+
 	}
 
 }
