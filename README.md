@@ -113,12 +113,12 @@ Proseguo con l'implementazione di altre funzioni del Controller:
     16. `firstIssue`
     17. `lastIssue`
     18. `customerNote`
-- ❌ esportazione della lista formattata nel file .csv.
-    - Si pone il problema di organizzare degli unit test su un metodo che scrive sul filesystem. Per farlo, dichiaro un'interfaccia *wrapper* con i metodi necessari (controllo presenza del file, scrittura del file, cancellazione del file) che invocherò come mock in questa fase e successivamente implementerò richiamando metodi delle API `java.nio`.
-    **TODO**
+- ✅ esportazione della lista formattata nel file .csv.
+    - Si pone il problema di organizzare degli unit test su un metodo che scrive sul filesystem. Per farlo, dichiaro un'interfaccia *wrapper*, `ExportManager`, con i metodi necessari (controllo presenza del file, scrittura del file, cancellazione del file) che invocherò come mock in questa fase e successivamente implementerò richiamando metodi delle API `java.nio`.
+- ✅ comunicazione con le view
 
 
-(Osservo che SonarCloud lamenta diverse *issues* dovute alla disseminazione di vari TODO.)
+(Osservo che al comparire di nuovi scheletri di codice SonarCloud lamenta diverse *issues* dovute alla disseminazione di vari TODO e la build nella CI non va a buon fine perché la coverage complessiva scende al di sotto del 100%.)
 
 Nella classe `SubscriptionsController` estraggo il metodo privato `checkOrderAvailability`.
 

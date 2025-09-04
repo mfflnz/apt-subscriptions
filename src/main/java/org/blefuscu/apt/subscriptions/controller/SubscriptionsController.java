@@ -8,15 +8,20 @@ import org.blefuscu.apt.subscriptions.model.FormattedOrder;
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.blefuscu.apt.subscriptions.view.ListView;
+import org.blefuscu.apt.subscriptions.view.OrderView;
 
 public class SubscriptionsController {
 
 	private ListView listView;
+	private OrderView orderView;
 	private OrderRepository orderRepository;
+	private ExportManager exportManager;
 
-	public SubscriptionsController(ListView listView, OrderRepository orderRepository) {
+	public SubscriptionsController(ListView listView, OrderView orderView, OrderRepository orderRepository, ExportManager exportManager) {
 		this.listView = listView;
+		this.orderView = orderView;
 		this.orderRepository = orderRepository;
+		this.exportManager = exportManager;
 	}
 
 	public void requestOrders() {
@@ -36,25 +41,34 @@ public class SubscriptionsController {
 		listView.showOrders(orderRepository.findByDateRange(fromDate, toDate));
 	}
 
-	public void deleteOrder(int orderId) {
-		checkOrderAvailability(orderId);
-		orderRepository.delete(orderId);
-	}
-
 	public Order orderDetails(int orderId) {
-		checkOrderAvailability(orderId);
-		return orderRepository.findById(orderId);
-	}
+		Order order = orderRepository.findById(orderId);
 
-	public void updateOrder(int orderId, Order updatedOrder) {
-		checkOrderAvailability(orderId);
-		orderRepository.update(orderId, updatedOrder);
-	}
-
-	private void checkOrderAvailability(int orderId) {
-		if (orderRepository.findById(orderId) == null) {
+		if (order == null) {
 			throw new IllegalArgumentException("The requested order is not available");
 		}
+		orderView.showOrderDetails(orderRepository.findById(orderId));
+		return orderRepository.findById(orderId);
+	}
+	
+	public void updateOrder(int orderId, Order updatedOrder) {
+		Order orderToUpdate = orderRepository.findById(orderId);
+		if (orderToUpdate == null) {
+			throw new IllegalArgumentException("The requested order is not available");
+		}
+		orderRepository.update(orderId, updatedOrder);
+		orderView.orderUpdated(orderId, updatedOrder);
+		listView.orderUpdated(orderId, updatedOrder);
+	}
+	
+	public void deleteOrder(int orderId) {
+		Order orderToDelete = orderRepository.findById(orderId);
+		if (orderToDelete == null) {
+			throw new IllegalArgumentException("The requested order is not available");
+		}
+		orderView.orderDeleted(orderToDelete);
+		listView.orderDeleted(orderToDelete);
+		orderRepository.delete(orderId);
 	}
 
 	public FormattedOrder formatOrder(Order orderToFormat) {
@@ -134,6 +148,7 @@ public class SubscriptionsController {
 			throw new IllegalArgumentException("Please provide file name");
 		}
 
+		exportManager.saveData(ordersToExport, filename);
 	}
 
 }

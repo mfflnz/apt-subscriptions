@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static java.util.Arrays.asList;
@@ -12,15 +13,18 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-import org.blefuscu.apt.subscriptions.model.FormattedOrder;
 import org.blefuscu.apt.subscriptions.model.Order;
+import org.blefuscu.apt.subscriptions.model.FormattedOrder;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.blefuscu.apt.subscriptions.view.ListView;
+import org.blefuscu.apt.subscriptions.view.OrderView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public class SubscriptionsControllerTest {
@@ -30,7 +34,10 @@ public class SubscriptionsControllerTest {
 
 	@Mock
 	private ListView listView;
-	
+
+	@Mock
+	private OrderView orderView;
+
 	@Mock
 	private ExportManager exportManager;
 
@@ -42,7 +49,6 @@ public class SubscriptionsControllerTest {
 	@Before
 	public void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
-		subscriptionsController = new SubscriptionsController(listView, orderRepository);
 	}
 
 	@After
@@ -161,7 +167,7 @@ public class SubscriptionsControllerTest {
 		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
 				.setPaidDate(null).build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
-		assertThat(formattedOrder.getPaidDate()).isEqualTo("");
+		assertThat(formattedOrder.getPaidDate()).isEmpty();
 	}
 
 	@Test
@@ -406,7 +412,7 @@ public class SubscriptionsControllerTest {
 		assertThatThrownBy(() -> subscriptionsController.exportOrders(formattedOrders, filename))
 				.isInstanceOf(IllegalArgumentException.class).hasMessage("Please provide file name");
 	}
-	
+
 	@Test
 	public void testExportOrdersWhenFormattedOrdersListIsEmptyShouldThrow() {
 		List<FormattedOrder> formattedOrders = Collections.<FormattedOrder>emptyList();
@@ -414,7 +420,7 @@ public class SubscriptionsControllerTest {
 		assertThatThrownBy(() -> subscriptionsController.exportOrders(formattedOrders, filename))
 				.isInstanceOf(IllegalArgumentException.class).hasMessage("Error: no orders to export");
 	}
-	
+
 	@Test
 	public void testExportOrdersWhenFilenameIsEmptyShouldThrow() {
 		FormattedOrder formattedOrder1 = new FormattedOrder.FormattedOrderBuilder("1").build();
@@ -423,5 +429,68 @@ public class SubscriptionsControllerTest {
 		assertThatThrownBy(() -> subscriptionsController.exportOrders(formattedOrders, filename))
 				.isInstanceOf(IllegalArgumentException.class).hasMessage("Please provide file name");
 	}
-	
+
+	@Test
+	public void testExportOrdersWhenFormattedOrdersListIsNotEmptyAndFilenameIsNotEmpty() {
+		FormattedOrder formattedOrder1 = new FormattedOrder.FormattedOrderBuilder("1").build();
+		List<FormattedOrder> formattedOrders = asList(formattedOrder1);
+		String filename = "export_example.csv";
+		subscriptionsController.exportOrders(formattedOrders, filename);
+		verify(exportManager).saveData(formattedOrders, filename);
+	}
+
+	@Test
+	public void testOrderDetailsShouldShowOrderDetailsInOrderView() {
+		Order orderInDB = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 1), "customer@address.com").build();
+		when(orderRepository.findById(1)).thenReturn(orderInDB);
+		Order orderForDetails = subscriptionsController.orderDetails(1);
+		assertEquals(orderInDB, orderForDetails);
+		verify(orderView).showOrderDetails(orderInDB);
+	}
+
+	@Test
+	public void testDeleteOrderWhenOrderExistsShouldUpdateViews() {
+		Order orderInDB = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 1), "customer@address.com").build();
+		when(orderRepository.findById(1)).thenReturn(orderInDB);
+		subscriptionsController.deleteOrder(1);
+		InOrder inOrder = Mockito.inOrder(orderRepository, orderView, listView);
+		inOrder.verify(orderView).orderDeleted(orderInDB);
+		inOrder.verify(listView).orderDeleted(orderInDB);
+		inOrder.verify(orderRepository).delete(1);
+	}
+
+	@Test
+	public void testDeleteOrderWhenOrderDoesNotExistShouldNotUpdateViews() {
+		assertThatThrownBy(() -> subscriptionsController.deleteOrder(1)).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("The requested order is not available");
+		verify(orderRepository).findById(1);
+		verifyNoMoreInteractions(orderRepository);
+		verifyNoInteractions(listView, orderView);
+	}
+
+	@Test
+	public void testUpdateOrderWhenOrderExistsShouldUpdateViews() {
+		Order updatedOrder = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 1), "updated_customer@address.com")
+				.build();
+		when(orderRepository.findById(1)).thenReturn(updatedOrder);
+		subscriptionsController.updateOrder(1, updatedOrder);
+		InOrder inOrder = Mockito.inOrder(orderRepository, orderView, listView);
+		inOrder.verify(orderRepository).update(1, updatedOrder);
+		inOrder.verify(orderView).orderUpdated(1, updatedOrder);
+		inOrder.verify(listView).orderUpdated(1, updatedOrder);
+	}
+
+	@Test
+	public void testUpdateOrderWhenOrderDoesNotExistShouldNotUpdateViews() {
+		Order updatedOrder = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 1), "updated_customer@address.com")
+				.build();
+		when(orderRepository.findById(1)).thenReturn(null);
+		assertThatThrownBy(() -> subscriptionsController.updateOrder(1, updatedOrder))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("The requested order is not available");
+		verify(orderRepository).findById(1);
+		verifyNoMoreInteractions(orderRepository);
+		verifyNoInteractions(listView, orderView);
+
+	}
+
 }

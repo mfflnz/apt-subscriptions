@@ -1,16 +1,13 @@
 package org.blefuscu.apt.subscriptions.controller;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
-import static java.util.Arrays.asList;
 
-import java.io.Closeable;
 import java.time.LocalDate;
 
-import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderMongoRepository;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.blefuscu.apt.subscriptions.view.ListView;
+import org.blefuscu.apt.subscriptions.view.OrderView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,15 +21,19 @@ public class SubscriptionsControllerIT {
 	private AutoCloseable closeable;
 	private OrderRepository orderRepository;
 	private SubscriptionsController subscriptionsController;
+	private ExportManager exportManager;
 	
 	@Mock
 	private ListView listView;
+	
+	@Mock
+	private OrderView orderView;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
 		orderRepository = new OrderMongoRepository(new MongoClient("localhost"));
-		subscriptionsController = new SubscriptionsController(listView, orderRepository);
+		subscriptionsController = new SubscriptionsController(listView, orderView, orderRepository, exportManager);
 	}
 
 	@After
