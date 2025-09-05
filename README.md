@@ -117,14 +117,17 @@ Proseguo con l'implementazione di altre funzioni del Controller:
     - Si pone il problema di organizzare degli unit test su un metodo che scrive sul filesystem. Per farlo, dichiaro un'interfaccia *wrapper*, `ExportManager`, con i metodi necessari (controllo presenza del file, scrittura del file, cancellazione del file) che invocherò come mock in questa fase e successivamente implementerò richiamando metodi delle API `java.nio`.
 - ✅ comunicazione con le view
 
-
 (Osservo che al comparire di nuovi scheletri di codice SonarCloud lamenta diverse *issues* dovute alla disseminazione di vari TODO e la build nella CI non va a buon fine perché la coverage complessiva scende al di sotto del 100%.)
-
-Nella classe `SubscriptionsController` estraggo il metodo privato `checkOrderAvailability`.
 
 **TODO**: Nella conversione dei documenti in Order, le stringhe `orderDate` e `paidDate` vanno tradotte in oggetti di tipo `LocalDate` (es: "2025-08-05 11:11:01" -> `LocalDate.of(2025, 8, 5)`; stringhe che eventualmente contengono doppi apici ("), segnatamente `shippingItems`, vanno trattate in modo consono.
 
 **TODO**: Migliorare la formattazione di orderDate e paidDate.
+
+Proseguo con l'implementazione del Repository. Ho già aggiunto al POM le dipendenze per il Mongo Java Driver e per l'accesso ai log. Aggiungo la dipendenza per MongoDB Java Server (database in-memory). Al lancio del primo unit test ottengo un errore di inizializzazione:
+
+    java.lang.UnsupportedClassVersionError: de/bwaldvogel/mongo/MongoBackend has been compiled by a more recent version of the Java Runtime (class file version 61.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+    
+Abbasso la versione del mongo-java-server in modo da farlo funzionare anche con Java 8 (52.0). Aggiungo `toString`, `equals` e `hashCode` al codice della classe Order per far funzionare i confronti con la mappatura dei documenti estratti dal database (v. `findAll()` nel Repository).
 
 ---
 

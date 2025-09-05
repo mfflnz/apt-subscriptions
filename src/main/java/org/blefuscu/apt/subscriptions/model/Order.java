@@ -1,6 +1,7 @@
 package org.blefuscu.apt.subscriptions.model;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Order {
 
@@ -259,6 +260,11 @@ public class Order {
 			this.orderId = orderId;
 			this.orderDate = orderDate;
 			this.customerEmail = customerEmail;
+		}
+
+		public OrderBuilder setOrderNumber(int orderNumber) {
+			this.orderNumber = orderNumber;
+			return this;
 		}
 
 		public OrderBuilder setPaidDate(LocalDate paidDate) {
@@ -950,5 +956,140 @@ public class Order {
 	public int getLastIssue() {
 		return lastIssue;
 	}
+
+	@Override
+	public String toString() {
+		return "Order [orderId=" + orderId + ", orderDate=" + orderDate + ", customerEmail=" + customerEmail
+				+ ", orderNumber=" + orderNumber + ", paidDate=" + paidDate + ", status=" + status + ", shippingTotal="
+				+ shippingTotal + ", shippingTaxTotal=" + shippingTaxTotal + ", feeTotal=" + feeTotal + ", feeTaxTotal="
+				+ feeTaxTotal + ", taxTotal=" + taxTotal + ", cartDiscount=" + cartDiscount + ", orderDiscount="
+				+ orderDiscount + ", discountTotal=" + discountTotal + ", orderTotal=" + orderTotal + ", orderSubtotal="
+				+ orderSubtotal + ", orderKey=" + orderKey + ", orderCurrency=" + orderCurrency + ", paymentMethod="
+				+ paymentMethod + ", paymentMethodTitle=" + paymentMethodTitle + ", transactionId=" + transactionId
+				+ ", customerIpAddress=" + customerIpAddress + ", customerUserAgent=" + customerUserAgent
+				+ ", shippingMethod=" + shippingMethod + ", customerId=" + customerId + ", customerUser=" + customerUser
+				+ ", billingFirstName=" + billingFirstName + ", billingLastName=" + billingLastName
+				+ ", billingCompany=" + billingCompany + ", billingEmail=" + billingEmail + ", billingPhone="
+				+ billingPhone + ", billingAddress1=" + billingAddress1 + ", billingAddress2=" + billingAddress2
+				+ ", billingPostcode=" + billingPostcode + ", billingCity=" + billingCity + ", billingState="
+				+ billingState + ", billingCountry=" + billingCountry + ", shippingFirstName=" + shippingFirstName
+				+ ", shippingLastName=" + shippingLastName + ", shippingCompany=" + shippingCompany + ", shippingPhone="
+				+ shippingPhone + ", shippingAddress1=" + shippingAddress1 + ", shippingAddress2=" + shippingAddress2
+				+ ", shippingPostcode=" + shippingPostcode + ", shippingCity=" + shippingCity + ", shippingState="
+				+ shippingState + ", shippingCountry=" + shippingCountry + ", customerNote=" + customerNote
+				+ ", wtImportKey=" + wtImportKey + ", taxItems=" + taxItems + ", shippingItems=" + shippingItems
+				+ ", feeItems=" + feeItems + ", couponItems=" + couponItems + ", refundItems=" + refundItems
+				+ ", orderNotes=" + orderNotes + ", downloadPermissions=" + downloadPermissions
+				+ ", metaWcOrderAttributionDeviceType=" + metaWcOrderAttributionDeviceType
+				+ ", metaWcOrderAttributionReferrer=" + metaWcOrderAttributionReferrer
+				+ ", metaWcOrderAttributionSessionCount=" + metaWcOrderAttributionSessionCount
+				+ ", metaWcOrderAttributionSessionEntry=" + metaWcOrderAttributionSessionEntry
+				+ ", metaWcOrderAttributionSessionPages=" + metaWcOrderAttributionSessionPages
+				+ ", metaWcOrderAttributionSessionStartTime=" + metaWcOrderAttributionSessionStartTime
+				+ ", metaWcOrderAttributionSourceType=" + metaWcOrderAttributionSourceType
+				+ ", metaWcOrderAttributionUserAgent=" + metaWcOrderAttributionUserAgent
+				+ ", metaWcOrderAttributionUtmSource=" + metaWcOrderAttributionUtmSource + ", metaPpcpPaypalFees="
+				+ metaPpcpPaypalFees + ", metaStripeCurrency=" + metaStripeCurrency + ", metaStripeFee=" + metaStripeFee
+				+ ", metaStripeNet=" + metaStripeNet + ", lineItem1=" + lineItem1 + ", lineItem2=" + lineItem2
+				+ ", lineItem3=" + lineItem3 + ", lineItem4=" + lineItem4 + ", lineItem5=" + lineItem5
+				+ ", orderConfirmed=" + orderConfirmed + ", orderNetTotal=" + orderNetTotal + ", firstIssue="
+				+ firstIssue + ", lastIssue=" + lastIssue + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(billingAddress1, billingAddress2, billingCity, billingCompany, billingCountry, billingEmail,
+				billingFirstName, billingLastName, billingPhone, billingPostcode, billingState, cartDiscount,
+				couponItems, customerEmail, customerId, customerIpAddress, customerNote, customerUser,
+				customerUserAgent, discountTotal, downloadPermissions, feeItems, feeTaxTotal, feeTotal, firstIssue,
+				lastIssue, lineItem1, lineItem2, lineItem3, lineItem4, lineItem5, metaPpcpPaypalFees,
+				metaStripeCurrency, metaStripeFee, metaStripeNet, metaWcOrderAttributionDeviceType,
+				metaWcOrderAttributionReferrer, metaWcOrderAttributionSessionCount, metaWcOrderAttributionSessionEntry,
+				metaWcOrderAttributionSessionPages, metaWcOrderAttributionSessionStartTime,
+				metaWcOrderAttributionSourceType, metaWcOrderAttributionUserAgent, metaWcOrderAttributionUtmSource,
+				orderConfirmed, orderCurrency, orderDate, orderDiscount, orderId, orderKey, orderNetTotal, orderNotes,
+				orderNumber, orderSubtotal, orderTotal, paidDate, paymentMethod, paymentMethodTitle, refundItems,
+				shippingAddress1, shippingAddress2, shippingCity, shippingCompany, shippingCountry, shippingFirstName,
+				shippingItems, shippingLastName, shippingMethod, shippingPhone, shippingPostcode, shippingState,
+				shippingTaxTotal, shippingTotal, status, taxItems, taxTotal, transactionId, wtImportKey);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Order other = (Order) obj;
+		return Objects.equals(billingAddress1, other.billingAddress1)
+				&& Objects.equals(billingAddress2, other.billingAddress2)
+				&& Objects.equals(billingCity, other.billingCity)
+				&& Objects.equals(billingCompany, other.billingCompany)
+				&& Objects.equals(billingCountry, other.billingCountry)
+				&& Objects.equals(billingEmail, other.billingEmail)
+				&& Objects.equals(billingFirstName, other.billingFirstName)
+				&& Objects.equals(billingLastName, other.billingLastName)
+				&& Objects.equals(billingPhone, other.billingPhone)
+				&& Objects.equals(billingPostcode, other.billingPostcode)
+				&& Objects.equals(billingState, other.billingState)
+				&& Double.doubleToLongBits(cartDiscount) == Double.doubleToLongBits(other.cartDiscount)
+				&& Objects.equals(couponItems, other.couponItems) && Objects.equals(customerEmail, other.customerEmail)
+				&& customerId == other.customerId && Objects.equals(customerIpAddress, other.customerIpAddress)
+				&& Objects.equals(customerNote, other.customerNote) && Objects.equals(customerUser, other.customerUser)
+				&& Objects.equals(customerUserAgent, other.customerUserAgent)
+				&& Double.doubleToLongBits(discountTotal) == Double.doubleToLongBits(other.discountTotal)
+				&& Objects.equals(downloadPermissions, other.downloadPermissions)
+				&& Objects.equals(feeItems, other.feeItems)
+				&& Double.doubleToLongBits(feeTaxTotal) == Double.doubleToLongBits(other.feeTaxTotal)
+				&& Double.doubleToLongBits(feeTotal) == Double.doubleToLongBits(other.feeTotal)
+				&& firstIssue == other.firstIssue && lastIssue == other.lastIssue
+				&& Objects.equals(lineItem1, other.lineItem1) && Objects.equals(lineItem2, other.lineItem2)
+				&& Objects.equals(lineItem3, other.lineItem3) && Objects.equals(lineItem4, other.lineItem4)
+				&& Objects.equals(lineItem5, other.lineItem5)
+				&& Double.doubleToLongBits(metaPpcpPaypalFees) == Double.doubleToLongBits(other.metaPpcpPaypalFees)
+				&& Objects.equals(metaStripeCurrency, other.metaStripeCurrency)
+				&& Double.doubleToLongBits(metaStripeFee) == Double.doubleToLongBits(other.metaStripeFee)
+				&& Double.doubleToLongBits(metaStripeNet) == Double.doubleToLongBits(other.metaStripeNet)
+				&& Objects.equals(metaWcOrderAttributionDeviceType, other.metaWcOrderAttributionDeviceType)
+				&& Objects.equals(metaWcOrderAttributionReferrer, other.metaWcOrderAttributionReferrer)
+				&& Objects.equals(metaWcOrderAttributionSessionCount, other.metaWcOrderAttributionSessionCount)
+				&& Objects.equals(metaWcOrderAttributionSessionEntry, other.metaWcOrderAttributionSessionEntry)
+				&& Objects.equals(metaWcOrderAttributionSessionPages, other.metaWcOrderAttributionSessionPages)
+				&& Objects.equals(metaWcOrderAttributionSessionStartTime, other.metaWcOrderAttributionSessionStartTime)
+				&& Objects.equals(metaWcOrderAttributionSourceType, other.metaWcOrderAttributionSourceType)
+				&& Objects.equals(metaWcOrderAttributionUserAgent, other.metaWcOrderAttributionUserAgent)
+				&& Objects.equals(metaWcOrderAttributionUtmSource, other.metaWcOrderAttributionUtmSource)
+				&& orderConfirmed == other.orderConfirmed && Objects.equals(orderCurrency, other.orderCurrency)
+				&& Objects.equals(orderDate, other.orderDate)
+				&& Double.doubleToLongBits(orderDiscount) == Double.doubleToLongBits(other.orderDiscount)
+				&& orderId == other.orderId && Objects.equals(orderKey, other.orderKey)
+				&& Double.doubleToLongBits(orderNetTotal) == Double.doubleToLongBits(other.orderNetTotal)
+				&& Objects.equals(orderNotes, other.orderNotes) && orderNumber == other.orderNumber
+				&& Double.doubleToLongBits(orderSubtotal) == Double.doubleToLongBits(other.orderSubtotal)
+				&& Double.doubleToLongBits(orderTotal) == Double.doubleToLongBits(other.orderTotal)
+				&& Objects.equals(paidDate, other.paidDate) && Objects.equals(paymentMethod, other.paymentMethod)
+				&& Objects.equals(paymentMethodTitle, other.paymentMethodTitle)
+				&& Objects.equals(refundItems, other.refundItems)
+				&& Objects.equals(shippingAddress1, other.shippingAddress1)
+				&& Objects.equals(shippingAddress2, other.shippingAddress2)
+				&& Objects.equals(shippingCity, other.shippingCity)
+				&& Objects.equals(shippingCompany, other.shippingCompany)
+				&& Objects.equals(shippingCountry, other.shippingCountry)
+				&& Objects.equals(shippingFirstName, other.shippingFirstName)
+				&& Objects.equals(shippingItems, other.shippingItems)
+				&& Objects.equals(shippingLastName, other.shippingLastName)
+				&& Objects.equals(shippingMethod, other.shippingMethod)
+				&& Objects.equals(shippingPhone, other.shippingPhone)
+				&& Objects.equals(shippingPostcode, other.shippingPostcode)
+				&& Objects.equals(shippingState, other.shippingState)
+				&& Double.doubleToLongBits(shippingTaxTotal) == Double.doubleToLongBits(other.shippingTaxTotal)
+				&& Double.doubleToLongBits(shippingTotal) == Double.doubleToLongBits(other.shippingTotal)
+				&& Objects.equals(status, other.status) && Objects.equals(taxItems, other.taxItems)
+				&& Double.doubleToLongBits(taxTotal) == Double.doubleToLongBits(other.taxTotal)
+				&& Objects.equals(transactionId, other.transactionId) && Objects.equals(wtImportKey, other.wtImportKey);
+	}
+	
 	
 }
