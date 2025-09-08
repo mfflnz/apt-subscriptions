@@ -39,7 +39,7 @@ public class SubscriptionsControllerTest {
 	private OrderView orderView;
 
 	@Mock
-	private ExportManager exportManager;
+	private ExportController exportManager;
 
 	@InjectMocks
 	private SubscriptionsController subscriptionsController;

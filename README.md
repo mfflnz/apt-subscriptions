@@ -127,7 +127,11 @@ Proseguo con l'implementazione del Repository. Ho già aggiunto al POM le dipend
 
     java.lang.UnsupportedClassVersionError: de/bwaldvogel/mongo/MongoBackend has been compiled by a more recent version of the Java Runtime (class file version 61.0), this version of the Java Runtime only recognizes class file versions up to 52.0
     
-Abbasso la versione del mongo-java-server in modo da farlo funzionare anche con Java 8 (52.0). Aggiungo `toString`, `equals` e `hashCode` al codice della classe Order per far funzionare i confronti con la mappatura dei documenti estratti dal database (v. `findAll()` nel Repository).
+Abbasso la versione del mongo-java-server in modo da farlo funzionare anche con Java 8 (52.0). Aggiungo `toString`, `equals` e `hashCode` al codice della classe Order per far funzionare i confronti con la mappatura dei documenti estratti dal database (v. `findAll()` nel Repository). **TODO**: testFindDateByRangeWhenStartDateIsEqualToEndDate (problema tostring)
+
+Andrebbe risolta alla radice:
+nel db vengono inserite delle stringhe data. Prima di inserirle nel db devo convertirle in formata data
+
 
 ---
 

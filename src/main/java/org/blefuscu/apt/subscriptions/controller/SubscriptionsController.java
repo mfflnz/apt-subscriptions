@@ -15,9 +15,9 @@ public class SubscriptionsController {
 	private ListView listView;
 	private OrderView orderView;
 	private OrderRepository orderRepository;
-	private ExportManager exportManager;
+	private ExportController exportManager;
 
-	public SubscriptionsController(ListView listView, OrderView orderView, OrderRepository orderRepository, ExportManager exportManager) {
+	public SubscriptionsController(ListView listView, OrderView orderView, OrderRepository orderRepository, ExportController exportManager) {
 		this.listView = listView;
 		this.orderView = orderView;
 		this.orderRepository = orderRepository;
@@ -71,6 +71,7 @@ public class SubscriptionsController {
 		orderRepository.delete(orderId);
 	}
 
+	// TODO: Spostare nell'ExportController
 	public FormattedOrder formatOrder(Order orderToFormat) {
 
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");

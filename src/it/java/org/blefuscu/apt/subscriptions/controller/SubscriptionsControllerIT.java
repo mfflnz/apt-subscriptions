@@ -22,7 +22,7 @@ public class SubscriptionsControllerIT {
 	private AutoCloseable closeable;
 	private OrderRepository orderRepository;
 	private SubscriptionsController subscriptionsController;
-	private ExportManager exportManager;
+	private ExportController exportManager;
 	
 	@Mock
 	private ListView listView;

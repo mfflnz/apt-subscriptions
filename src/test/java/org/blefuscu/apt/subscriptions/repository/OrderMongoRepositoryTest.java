@@ -65,8 +65,8 @@ public class OrderMongoRepositoryTest {
 
 	@Test
 	public void testFindAllWhenCollectionIsNotEmpty() {
-		addTestOrderToDatabase(1, "2025-09-05 11:11:01", "customer@address.com");
-		addTestOrderToDatabase(2, "2025-09-06 14:39:31", "other@address.com");
+		addTestOrderToDatabase(1, "2025-09-05", "customer@address.com");
+		addTestOrderToDatabase(2, "2025-09-06", "other@address.com");
 		assertThat(orderRepository.findAll()).containsExactly(
 				new Order.OrderBuilder(1, LocalDate.of(2025, 9, 5), "customer@address.com").build(),
 				new Order.OrderBuilder(2, LocalDate.of(2025, 9, 6), "other@address.com").build());
@@ -79,20 +79,20 @@ public class OrderMongoRepositoryTest {
 
 	@Test
 	public void testFindByDateRangeWhenNoOrderIsFound() {
-		addTestOrderToDatabase(1, "2025-08-01 11:11:01", "customer@address.com");
-		addTestOrderToDatabase(2, "2025-08-05 14:39:31", "other@address.com");
+		addTestOrderToDatabase(1, "2025-08-01", "customer@address.com");
+		addTestOrderToDatabase(2, "2025-08-05", "other@address.com");
 		assertThat(orderRepository.findByDateRange(LocalDate.of(2025, 9, 1), LocalDate.of(2025, 9, 4))).isEmpty();
 	}
 
 	@Test
 	public void testFindByDateRangeWhenSomeOrderIsFound() {
-		addTestOrderToDatabase(1, "2025-08-01 11:11:01", "customer@address.com");
-		addTestOrderToDatabase(2, "2025-08-05 14:39:31", "other@address.com");
-		addTestOrderToDatabase(3, "2025-08-07 21:07:49", "another@address.com");
-		assertThat(orderRepository.findByDateRange(LocalDate.of(2025, 8, 1), LocalDate.of(2025, 8, 3))).containsExactly(
-				new Order.OrderBuilder(1, LocalDate.of(2025, 8, 1), "customer@address.com").build());
+		addTestOrderToDatabase(1, "2025-08-01", "customer@address.com");
+		addTestOrderToDatabase(2, "2025-08-05", "other@address.com");
+		addTestOrderToDatabase(3, "2025-08-07", "another@address.com");
+		assertThat(orderRepository.findByDateRange(LocalDate.of(2025, 8, 1), LocalDate.of(2025, 8, 4)))
+				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2025, 8, 1), "customer@address.com").build());
 	}
-	
+
 	@Test
 	public void testFindByDateRangeWhenDateRangeIsIncorrect() {
 		assertThatThrownBy(() -> orderRepository.findByDateRange(LocalDate.of(2025, 8, 2), LocalDate.of(2025, 8, 1)))
@@ -100,14 +100,19 @@ public class OrderMongoRepositoryTest {
 				.hasMessage("Error: End date must be later than start date");
 	}
 
+	@Test
+	public void testFindByDateRangeWhenStartDateIsEqualToEndDate() {
+		addTestOrderToDatabase(1, "2025-08-01", "customer@address.com");
+		addTestOrderToDatabase(2, "2025-08-01", "other@address.com");
+		assertThat(orderRepository.findByDateRange(LocalDate.of(2025, 8, 1), LocalDate.of(2025, 8, 1))).containsExactly(
+				new Order.OrderBuilder(1, LocalDate.of(2025, 8, 1), "customer@address.com").build(),
+				new Order.OrderBuilder(2, LocalDate.of(2025, 8, 1), "other@address.com").build());
+	}
 
 	private void addTestOrderToDatabase(int orderId, String orderDate, String customerEmail) {
 		orderCollection.insertOne(new Document().append("order_id", orderId).append("order_date", orderDate)
-				.append("customer_email", customerEmail)
-				.append("order_number", 12345)
-				.append("status", "processing")
-				.append("paid_date", "2025-09-10 13:09:51")
-				.append("billing_first_name", "Anna")
+				.append("customer_email", customerEmail).append("order_number", 12345).append("status", "processing")
+				.append("paid_date", "2025-09-10").append("billing_first_name", "Anna")
 				.append("billing_last_name", "Rossi").append("billing_company", "")
 				.append("billing_email", "cliente1@address.com").append("billing_phone", "'+39333123456")
 				.append("billing_address_1", "vicolo Corto 1").append("billing_address_2", "")
@@ -140,6 +145,7 @@ public class OrderMongoRepositoryTest {
 				.append("line_item_2", "").append("line_item_3", "").append("line_item_4", "").append("line_item_5", "")
 				.append("order_confirmed", true).append("order_net_total", 15.30).append("first_issue", 112)
 				.append("last_issue", 117));
+
 	}
 
 }

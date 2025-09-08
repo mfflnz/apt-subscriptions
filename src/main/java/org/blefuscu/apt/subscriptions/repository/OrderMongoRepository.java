@@ -19,7 +19,7 @@ public class OrderMongoRepository implements OrderRepository {
 	public static final String SUBSCRIPTIONS_DB_NAME = "subscriptions";
 	public static final String ORDER_COLLECTION_NAME = "orders";
 	private MongoCollection<Document> orderCollection;
-	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	public OrderMongoRepository(MongoClient mongoClient, String databaseName, String collectionName) {
 		orderCollection = mongoClient.getDatabase(databaseName).getCollection(collectionName);
@@ -38,6 +38,7 @@ public class OrderMongoRepository implements OrderRepository {
 		if (fromDate.compareTo(toDate) > 0) {
 			throw new IllegalArgumentException("Error: End date must be later than start date");
 		}
+		
 		
 		Bson filter = Filters.and(Filters.gte("order_date", fromDate.toString()), Filters.lte("order_date", toDate.toString()));
 
@@ -65,7 +66,9 @@ public class OrderMongoRepository implements OrderRepository {
 	}
 
 	private Order fromDocumentToOrder(Document d) {
+		
 
+		
 		return new Order.OrderBuilder(d.getInteger("order_id"), LocalDate.parse(d.getString("order_date"), formatter),
 				d.getString("customer_email"))
 				/* TODO: set other fields
@@ -74,7 +77,9 @@ public class OrderMongoRepository implements OrderRepository {
 				.setStatus(d.get("status", ""))
 				*/
 				.build();
-
+		
+		
+		
 	}
 
 }
