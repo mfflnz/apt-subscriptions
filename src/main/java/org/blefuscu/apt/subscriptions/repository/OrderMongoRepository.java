@@ -18,8 +18,8 @@ public class OrderMongoRepository implements OrderRepository {
 
 	public static final String SUBSCRIPTIONS_DB_NAME = "subscriptions";
 	public static final String ORDER_COLLECTION_NAME = "orders";
+	public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	private MongoCollection<Document> orderCollection;
-	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	public OrderMongoRepository(MongoClient mongoClient, String databaseName, String collectionName) {
 		orderCollection = mongoClient.getDatabase(databaseName).getCollection(collectionName);
@@ -27,8 +27,7 @@ public class OrderMongoRepository implements OrderRepository {
 
 	@Override
 	public List<Order> findAll() {
-		return StreamSupport.stream(orderCollection.find().spliterator(), false)
-				.map(this::fromDocumentToOrder)
+		return StreamSupport.stream(orderCollection.find().spliterator(), false).map(this::fromDocumentToOrder)
 				.collect(Collectors.toList());
 	}
 
@@ -38,9 +37,9 @@ public class OrderMongoRepository implements OrderRepository {
 		if (fromDate.compareTo(toDate) > 0) {
 			throw new IllegalArgumentException("Error: End date must be later than start date");
 		}
-		
-		
-		Bson filter = Filters.and(Filters.gte("order_date", fromDate.toString()), Filters.lte("order_date", toDate.toString()));
+
+		Bson filter = Filters.and(Filters.gte("order_date", fromDate.toString()),
+				Filters.lte("order_date", toDate.toString()));
 
 		return StreamSupport.stream(orderCollection.find(filter).spliterator(), false).map(this::fromDocumentToOrder)
 				.collect(Collectors.toList());
@@ -49,37 +48,49 @@ public class OrderMongoRepository implements OrderRepository {
 
 	@Override
 	public Order findById(int id) {
-		// TODO Auto-generated method stub
-		return null;
+		return fromDocumentToOrder(orderCollection.find(Filters.eq("order_id", id)).first());
 	}
 
 	@Override
-	public void update(int id, Order updatedOrder) {
-		// TODO Auto-generated method stub
+	public void update(int id, Order updatedOrder) throws IllegalArgumentException {
+
+		if (findById(id) == null) {
+			throw new IllegalArgumentException("Error: Order not found");
+		}
+		
+		orderCollection.deleteOne(Filters.eq("order_id", id));
+		orderCollection.insertOne(fromOrderToDocument(updatedOrder));
 
 	}
 
 	@Override
-	public void delete(int id) {
-		// TODO Auto-generated method stub
-
+	public void delete(int id) throws IllegalArgumentException {
+		if (findById(id) == null) {
+			throw new IllegalArgumentException("Error: Order not found");
+		}
+		orderCollection.deleteOne(Filters.eq("order_id", id));
 	}
 
 	private Order fromDocumentToOrder(Document d) {
-		
 
-		
-		return new Order.OrderBuilder(d.getInteger("order_id"), LocalDate.parse(d.getString("order_date"), formatter),
+		if (d == null)
+			return null;
+
+		return new Order.OrderBuilder(d.getInteger("order_id"), LocalDate.parse(d.getString("order_date"), FORMATTER),
 				d.getString("customer_email"))
-				/* TODO: set other fields
-				.setOrderNumber(d.getInteger("order_number", 0))
-				.setPaidDate(LocalDate.parse(d.getString("paid_date"), formatter))
-				.setStatus(d.get("status", ""))
-				*/
+				/*
+				 * TODO: set other fields .setOrderNumber(d.getInteger("order_number", 0))
+				 * .setPaidDate(LocalDate.parse(d.getString("paid_date"), formatter))
+				 * .setStatus(d.get("status", ""))
+				 */
 				.build();
-		
-		
-		
+
+	}
+
+	private Document fromOrderToDocument(Order order) {
+		return new Document().append("order_id", order.getOrderId())
+				.append("order_date", order.getOrderDate().toString())
+				.append("customer_email", order.getCustomerEmail());
 	}
 
 }
