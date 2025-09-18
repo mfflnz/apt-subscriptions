@@ -134,7 +134,13 @@ Concludo l'implementazione del Repository e verifico in locale che tutto funzion
     mvn clean test
     mvn clean verify -Pjacoco,mutation-testing
 
-Controllo che il mutation test da Eclipse vada a buon fine e vedo che sopravvivono solo 4 mutanti nel Model. 
+Controllo che il mutation test da Eclipse vada a buon fine e vedo che sopravvivono solo 4 mutanti nel Model.
+
+Osservo i report di SonarQube e faccio un po' di pulizia. Nel Repository estraggo costanti laddove ho indicato con una stringa i riferimenti ai campi dei documenti (`ORDER_ID`, `ORDER_DATE`). Nel test del Repository SonarLint suggerisce, ad esempio, di limitare a uno i possibili metodi che possono sollevare un'eccezione nella lambda di `testFindByDateRangeWhenDateRangeIsIncorrect()`.
+
+Ripulisco e faccio un push, approfittandone anche per eseguire un workflow di Windows.
+
+Comincio a implementare la View preparando i primi unit test. Aggiorno nel POM la dipendenza di AssertJ Core sostituendola con AssertJ Swing.
 
 ---
 

@@ -43,7 +43,7 @@ public class OrderMongoRepositoryTest {
 	}
 
 	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
+	public static void tearDownAfterClass() {
 		server.shutdown();
 	}
 
@@ -98,7 +98,9 @@ public class OrderMongoRepositoryTest {
 
 	@Test
 	public void testFindByDateRangeWhenDateRangeIsIncorrect() {
-		assertThatThrownBy(() -> orderRepository.findByDateRange(LocalDate.of(2025, 8, 2), LocalDate.of(2025, 8, 1)))
+		LocalDate fromDate = LocalDate.of(2025, 8, 2);
+		LocalDate toDate = LocalDate.of(2025, 8, 1);
+		assertThatThrownBy(() -> orderRepository.findByDateRange(fromDate, toDate))
 				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Error: End date must be later than start date");
 	}
@@ -150,9 +152,9 @@ public class OrderMongoRepositoryTest {
 	public void testUpdateWhenOrderToUpdateIsNotFound() {
 		assertThat(orderCollection.find()).isEmpty();
 		addTestOrderToDatabase(2, "2025-09-09", "customer@email.com");
-		assertThatThrownBy(() -> orderRepository.update(1,
-				new Order.OrderBuilder(5, LocalDate.of(2025, 9, 9), "some@address.com").build()))
-				.isInstanceOf(IllegalArgumentException.class).hasMessage("Error: Order not found");
+		Order updatedOrder = new Order.OrderBuilder(5, LocalDate.of(2025, 9, 9), "some@address.com").build();
+		assertThatThrownBy(() -> orderRepository.update(1, updatedOrder)).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Error: Order not found");
 	}
 
 	@Test
