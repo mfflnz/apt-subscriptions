@@ -138,7 +138,11 @@ Controllo che il mutation test da Eclipse vada a buon fine e vedo che sopravvivo
 
 Osservo i report di SonarQube e faccio un po' di pulizia. Nel Repository estraggo costanti laddove ho indicato con una stringa i riferimenti ai campi dei documenti (`ORDER_ID`, `ORDER_DATE`). Nel test del Repository SonarLint suggerisce, ad esempio, di limitare a uno i possibili metodi che possono sollevare un'eccezione nella lambda di `testFindByDateRangeWhenDateRangeIsIncorrect()`.
 
-Ripulisco e faccio un push, approfittandone anche per eseguire un workflow di Windows.
+Ripulisco e faccio un push, approfittandone anche per eseguire un workflow di Windows. Osservo intanto che il technical debt stimato da SonarQube si è ridotto da 1h a 35m. Il workflow per Windows, come mi aspettavo, non funziona per un problema sul percorso del volume:
+
+    Error:  Failed to execute goal io.fabric8:docker-maven-plugin:0.45.1:start (docker-start) on project apt-subscriptions: I/O Error: Unable to create container for [mongo:5] : {"message":"invalid volume specification: 'D:\\a\\apt-subscriptions\\apt-subscriptions\\assets:/assets'"} (Internal Server Error: 500) -> [Help 1]
+    
+**TODO**: capire le [linee guida per lo storage](https://learn.microsoft.com/en-us/virtualization/windowscontainers/manage-containers/persistent-storage) su Microsoft Learn. Nel frattempo modifico il workflow in modo che il trigger avvenga solo [manualmente](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch) (`on: workflow_dispatch`).
 
 Comincio a implementare la View preparando i primi unit test. Aggiorno nel POM la dipendenza di AssertJ Core sostituendola con AssertJ Swing.
 
