@@ -1,7 +1,6 @@
 name: Java CI with Maven in Linux
 
 on:
-  push:
   pull_request:
 
 jobs:
