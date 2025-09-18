@@ -2,8 +2,6 @@ package org.blefuscu.apt.subscriptions.controller;
 
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.ORDER_COLLECTION_NAME;
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.SUBSCRIPTIONS_DB_NAME;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.verify;
 
 import org.blefuscu.apt.subscriptions.repository.OrderMongoRepository;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;

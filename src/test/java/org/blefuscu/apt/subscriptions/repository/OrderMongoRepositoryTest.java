@@ -4,9 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.ORDER_COLLECTION_NAME;
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.SUBSCRIPTIONS_DB_NAME;
+import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.FORMATTER;
 
 import java.net.InetSocketAddress;
 import java.time.LocalDate;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.bson.Document;
@@ -107,6 +110,66 @@ public class OrderMongoRepositoryTest {
 		assertThat(orderRepository.findByDateRange(LocalDate.of(2025, 8, 1), LocalDate.of(2025, 8, 1))).containsExactly(
 				new Order.OrderBuilder(1, LocalDate.of(2025, 8, 1), "customer@address.com").build(),
 				new Order.OrderBuilder(2, LocalDate.of(2025, 8, 1), "other@address.com").build());
+	}
+
+	@Test
+	public void testFindByIdWhenOrderIsNotFound() {
+		assertThat(orderRepository.findById(4)).isNull();
+	}
+
+	@Test
+	public void testFindByIdWhenOrderIsFound() {
+		addTestOrderToDatabase(1, "2025-09-09", "customer@address.com");
+		assertThat(orderRepository.findById(1))
+				.isEqualTo(new Order.OrderBuilder(1, LocalDate.of(2025, 9, 9), "customer@address.com").build());
+	}
+
+	@Test
+	public void testUpdateWhenOrderToUpdateIsFound() {
+		addTestOrderToDatabase(1, "2025-09-09", "customer@address.com");
+
+		assertThat(StreamSupport.stream(orderCollection.find().spliterator(), false)
+				.map(d -> new Order.OrderBuilder(d.getInteger("order_id"),
+						LocalDate.parse(d.getString("order_date"), FORMATTER), d.getString("customer_email")).build())
+				.collect(Collectors.toList()))
+				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2025, 9, 9), "customer@address.com").build());
+
+		Order updatedOrder = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 9), "updated@address.com").build();
+
+		orderRepository.update(1, updatedOrder);
+
+		assertThat(StreamSupport.stream(orderCollection.find().spliterator(), false)
+				.map(d -> new Order.OrderBuilder(d.getInteger("order_id"),
+						LocalDate.parse(d.getString("order_date"), FORMATTER), d.getString("customer_email")).build())
+				.collect(Collectors.toList()))
+				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2025, 9, 9), "updated@address.com").build());
+
+	}
+
+	@Test
+	public void testUpdateWhenOrderToUpdateIsNotFound() {
+		assertThat(orderCollection.find()).isEmpty();
+		addTestOrderToDatabase(2, "2025-09-09", "customer@email.com");
+		assertThatThrownBy(() -> orderRepository.update(1,
+				new Order.OrderBuilder(5, LocalDate.of(2025, 9, 9), "some@address.com").build()))
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("Error: Order not found");
+	}
+
+	@Test
+	public void testDeleteWhenOrderToDeleteIsFound() {
+		assertThat(orderCollection.find()).isEmpty();
+		addTestOrderToDatabase(1, "2025-09-09", "customer@address.com");
+		orderRepository.delete(1);
+		assertThat(orderCollection.find()).isEmpty();
+
+	}
+
+	@Test
+	public void testDeleteWhenOrderToDeleteIsNotFound() {
+		assertThat(orderCollection.find()).isEmpty();
+		assertThatThrownBy(() -> orderRepository.delete(1)).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Error: Order not found");
+
 	}
 
 	private void addTestOrderToDatabase(int orderId, String orderDate, String customerEmail) {
