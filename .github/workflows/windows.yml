@@ -28,5 +28,5 @@ jobs:
     - name: Build with Maven
       run: >
         mvn
-        -Dassetshost="assets"
+        -Dassetshost=${{ github.workspace }}
         clean verify
