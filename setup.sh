@@ -10,7 +10,7 @@ docker network rm apt-network
 docker network create apt-network
 
 # Lancio il container di MongoDB:
-docker run -d --name my-mongo --network apt-network -p 27017:27017 --rm mongo
+docker run -d --name my-mongo --network apt-network --publish 27017:27017 --rm mongo
 
 # Importo i dati nella collection 'subscriptions':
 docker run -it --network apt-network -v "$PWD"/assets:/assets --rm mongo:latest mongoimport --host my-mongo --collection='orders' --headerline --file=assets/sample-orders.csv --type=csv

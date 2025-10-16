@@ -70,9 +70,82 @@ public class OrderMongoRepositoryTest {
 	public void testFindAllWhenCollectionIsNotEmpty() {
 		addTestOrderToDatabase(1, "2025-09-05", "customer@address.com");
 		addTestOrderToDatabase(2, "2025-09-06", "other@address.com");
-		assertThat(orderRepository.findAll()).containsExactly(
-				new Order.OrderBuilder(1, LocalDate.of(2025, 9, 5), "customer@address.com").build(),
-				new Order.OrderBuilder(2, LocalDate.of(2025, 9, 6), "other@address.com").build());
+		assertThat(orderRepository.findAll()).containsExactly(new Order.OrderBuilder(1, LocalDate.of(2025, 9, 5),
+				"customer@address.com").setOrderNumber(12345).setPaidDate(LocalDate.of(2025, 9, 10))
+				.setStatus("processing").setShippingTotal(3.0).setShippingTotal(3.0).setShippingTaxTotal(0.0)
+				.setFeeTotal(0.0).setFeeTaxTotal(0.0).setTaxTotal(0.0).setCartDiscount(0.0).setOrderDiscount(0.0)
+				.setDiscountTotal(0.0).setOrderTotal(16.0).setOrderSubtotal(13.0).setOrderKey("wc_order_yo6dmEfz4tlg")
+				.setOrderCurrency("EUR").setPaymentMethod("stripe").setPaymentMethodTitle("Carta di credito")
+				.setTransactionId("fGz2WAt4dcsOemDvYUP1IH8WTnN").setCustomerIpAddress("0.0.0.0")
+				.setCustomerUserAgent(
+						"Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/373.1.772062114 Mobile/15E148 Safari/604.1")
+				.setShippingMethod("Spedizione con corriere tracciabile Gls (3-4 gg lavorativi)").setCustomerId(1234)
+				.setCustomerUser("1234").setBillingFirstName("Anna").setBillingLastName("Rossi").setBillingCompany("")
+				.setBillingEmail("cliente1@address.com").setBillingPhone("'+39333123456")
+				.setBillingAddress1("vicolo Corto 1").setBillingAddress2("").setBillingPostcode("40134")
+				.setBillingCity("Bologna").setBillingState("BO").setBillingCountry("IT").setShippingFirstName("Anna")
+				.setShippingLastName("Rossi").setShippingCompany("").setShippingPhone("")
+				.setShippingAddress1("Tabaccheria Tabucchi, via B. Cellini 10").setShippingAddress2("")
+				.setShippingPostcode("73030").setShippingCity("Lecce").setShippingState("LE").setShippingCountry("IT")
+				.setCustomerNote("").setWtImportKey("12345").setTaxItems("")
+				.setShippingItems(
+						"items:Gli asini – nuova serie · 121 · luglio-agosto 2025 &times; 1|method_id:flat_rate|taxes:a:1:{s:5:\"total\";a:0:{}}")
+				.setFeeItems("").setCouponItems("").setRefundItems("")
+				.setOrderNotes(
+						"content:Stripe payment intent created (Payment Intent ID: fGz2WAt4dcsOemDvYUP1IH8Wc7N)|date:2025-08-05 11:11:03|customer:|added_by:system||content:Lo stato dell'ordine è cambiato da In attesa di pagamento a In lavorazione.|date:2025-08-05 11:11:07|customer:|added_by:system||content:Transazione Stripe completata (ID Transazione: fGz2WAt4dsPpomDvYUP1IH8WTnN)|date:2025-08-05 11:11:07|customer:|added_by:system")
+				.setDownloadPermissions("1").setMetaWcOrderAttributionDeviceType("Mobile")
+				.setMetaWcOrderAttributionReferrer("https://www.google.com/").setMetaWcOrderAttributionSessionCount("1")
+				.setMetaWcOrderAttributionSessionEntry("https://gliasinirivista.org/")
+				.setMetaWcOrderAttributionSessionPages("6")
+				.setMetaWcOrderAttributionSessionStartTime("2025-08-05 09:01:16").setMetaWcOrderAttributionSourceType(
+						"organic")
+				.setMetaWcOrderAttributionUserAgent(
+						"Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/123.4.567898765 Mobile/15E148 Safari/604.1")
+				.setMetaWcOrderAttributionUtmSource("google").setMetaPpcpPaypalFees(0.34).setMetaStripeCurrency(
+						"\"EUR\"")
+				.setMetaStripeFee(0.49).setMetaStripeNet(15.51).setLineItem1(
+						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build(),
+				new Order.OrderBuilder(2, LocalDate.of(2025, 9, 6), "other@address.com").setOrderNumber(12345)
+						.setPaidDate(LocalDate.of(2025, 9, 10)).setStatus("processing").setShippingTotal(3.0)
+						.setShippingTotal(3.0).setShippingTaxTotal(0.0).setFeeTotal(0.0).setFeeTaxTotal(0.0)
+						.setTaxTotal(0.0).setCartDiscount(0.0).setOrderDiscount(0.0).setDiscountTotal(0.0)
+						.setOrderTotal(16.0).setOrderSubtotal(13.0).setOrderKey("wc_order_yo6dmEfz4tlg")
+						.setOrderCurrency("EUR").setPaymentMethod("stripe").setPaymentMethodTitle("Carta di credito")
+						.setTransactionId("fGz2WAt4dcsOemDvYUP1IH8WTnN").setCustomerIpAddress("0.0.0.0")
+						.setCustomerUserAgent(
+								"Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/373.1.772062114 Mobile/15E148 Safari/604.1")
+						.setShippingMethod("Spedizione con corriere tracciabile Gls (3-4 gg lavorativi)")
+						.setCustomerId(1234).setCustomerUser("1234").setBillingFirstName("Anna")
+						.setBillingLastName("Rossi").setBillingCompany("").setBillingEmail("cliente1@address.com")
+						.setBillingPhone("'+39333123456").setBillingAddress1("vicolo Corto 1").setBillingAddress2("")
+						.setBillingPostcode("40134").setBillingCity("Bologna").setBillingState("BO")
+						.setBillingCountry("IT").setShippingFirstName("Anna").setShippingLastName("Rossi")
+						.setShippingCompany("").setShippingPhone("")
+						.setShippingAddress1("Tabaccheria Tabucchi, via B. Cellini 10").setShippingAddress2("")
+						.setShippingPostcode("73030").setShippingCity("Lecce").setShippingState("LE")
+						.setShippingCountry("IT").setCustomerNote("").setWtImportKey("12345").setTaxItems("")
+						.setShippingItems(
+								"items:Gli asini – nuova serie · 121 · luglio-agosto 2025 &times; 1|method_id:flat_rate|taxes:a:1:{s:5:\"total\";a:0:{}}")
+						.setFeeItems("").setCouponItems("").setRefundItems("")
+						.setOrderNotes(
+								"content:Stripe payment intent created (Payment Intent ID: fGz2WAt4dcsOemDvYUP1IH8Wc7N)|date:2025-08-05 11:11:03|customer:|added_by:system||content:Lo stato dell'ordine è cambiato da In attesa di pagamento a In lavorazione.|date:2025-08-05 11:11:07|customer:|added_by:system||content:Transazione Stripe completata (ID Transazione: fGz2WAt4dsPpomDvYUP1IH8WTnN)|date:2025-08-05 11:11:07|customer:|added_by:system")
+						.setDownloadPermissions("1").setMetaWcOrderAttributionDeviceType("Mobile")
+						.setMetaWcOrderAttributionReferrer("https://www.google.com/")
+						.setMetaWcOrderAttributionSessionCount("1")
+						.setMetaWcOrderAttributionSessionEntry("https://gliasinirivista.org/")
+						.setMetaWcOrderAttributionSessionPages("6")
+						.setMetaWcOrderAttributionSessionStartTime("2025-08-05 09:01:16")
+						.setMetaWcOrderAttributionSourceType("organic")
+						.setMetaWcOrderAttributionUserAgent(
+								"Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/123.4.567898765 Mobile/15E148 Safari/604.1")
+						.setMetaWcOrderAttributionUtmSource("google").setMetaPpcpPaypalFees(0.34)
+						.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
+						.setLineItem1(
+								"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
+						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+						.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build());
 	}
 
 	@Test
@@ -92,8 +165,46 @@ public class OrderMongoRepositoryTest {
 		addTestOrderToDatabase(1, "2025-08-01", "customer@address.com");
 		addTestOrderToDatabase(2, "2025-08-05", "other@address.com");
 		addTestOrderToDatabase(3, "2025-08-07", "another@address.com");
-		assertThat(orderRepository.findByDateRange(LocalDate.of(2025, 8, 1), LocalDate.of(2025, 8, 4)))
-				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2025, 8, 1), "customer@address.com").build());
+		assertThat(orderRepository.findByDateRange(LocalDate.of(2025, 8, 1), LocalDate.of(2025, 8, 4))).containsExactly(
+				new Order.OrderBuilder(1, LocalDate.of(2025, 8, 1), "customer@address.com").setOrderNumber(12345)
+						.setPaidDate(LocalDate.of(2025, 9, 10)).setStatus("processing").setShippingTotal(3.0)
+						.setShippingTotal(3.0).setShippingTaxTotal(0.0).setFeeTotal(0.0).setFeeTaxTotal(0.0)
+						.setTaxTotal(0.0).setCartDiscount(0.0).setOrderDiscount(0.0).setDiscountTotal(0.0)
+						.setOrderTotal(16.0).setOrderSubtotal(13.0).setOrderKey("wc_order_yo6dmEfz4tlg")
+						.setOrderCurrency("EUR").setPaymentMethod("stripe").setPaymentMethodTitle("Carta di credito")
+						.setTransactionId("fGz2WAt4dcsOemDvYUP1IH8WTnN").setCustomerIpAddress("0.0.0.0")
+						.setCustomerUserAgent(
+								"Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/373.1.772062114 Mobile/15E148 Safari/604.1")
+						.setShippingMethod("Spedizione con corriere tracciabile Gls (3-4 gg lavorativi)")
+						.setCustomerId(1234).setCustomerUser("1234").setBillingFirstName("Anna")
+						.setBillingLastName("Rossi").setBillingCompany("").setBillingEmail("cliente1@address.com")
+						.setBillingPhone("'+39333123456").setBillingAddress1("vicolo Corto 1").setBillingAddress2("")
+						.setBillingPostcode("40134").setBillingCity("Bologna").setBillingState("BO")
+						.setBillingCountry("IT").setShippingFirstName("Anna").setShippingLastName("Rossi")
+						.setShippingCompany("").setShippingPhone("")
+						.setShippingAddress1("Tabaccheria Tabucchi, via B. Cellini 10").setShippingAddress2("")
+						.setShippingPostcode("73030").setShippingCity("Lecce").setShippingState("LE")
+						.setShippingCountry("IT").setCustomerNote("").setWtImportKey("12345").setTaxItems("")
+						.setShippingItems(
+								"items:Gli asini – nuova serie · 121 · luglio-agosto 2025 &times; 1|method_id:flat_rate|taxes:a:1:{s:5:\"total\";a:0:{}}")
+						.setFeeItems("").setCouponItems("").setRefundItems("")
+						.setOrderNotes(
+								"content:Stripe payment intent created (Payment Intent ID: fGz2WAt4dcsOemDvYUP1IH8Wc7N)|date:2025-08-05 11:11:03|customer:|added_by:system||content:Lo stato dell'ordine è cambiato da In attesa di pagamento a In lavorazione.|date:2025-08-05 11:11:07|customer:|added_by:system||content:Transazione Stripe completata (ID Transazione: fGz2WAt4dsPpomDvYUP1IH8WTnN)|date:2025-08-05 11:11:07|customer:|added_by:system")
+						.setDownloadPermissions("1").setMetaWcOrderAttributionDeviceType("Mobile")
+						.setMetaWcOrderAttributionReferrer("https://www.google.com/")
+						.setMetaWcOrderAttributionSessionCount("1")
+						.setMetaWcOrderAttributionSessionEntry("https://gliasinirivista.org/")
+						.setMetaWcOrderAttributionSessionPages("6")
+						.setMetaWcOrderAttributionSessionStartTime("2025-08-05 09:01:16")
+						.setMetaWcOrderAttributionSourceType("organic")
+						.setMetaWcOrderAttributionUserAgent(
+								"Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/123.4.567898765 Mobile/15E148 Safari/604.1")
+						.setMetaWcOrderAttributionUtmSource("google").setMetaPpcpPaypalFees(0.34)
+						.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
+						.setLineItem1(
+								"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
+						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+						.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build());
 	}
 
 	@Test
@@ -110,8 +221,83 @@ public class OrderMongoRepositoryTest {
 		addTestOrderToDatabase(1, "2025-08-01", "customer@address.com");
 		addTestOrderToDatabase(2, "2025-08-01", "other@address.com");
 		assertThat(orderRepository.findByDateRange(LocalDate.of(2025, 8, 1), LocalDate.of(2025, 8, 1))).containsExactly(
-				new Order.OrderBuilder(1, LocalDate.of(2025, 8, 1), "customer@address.com").build(),
-				new Order.OrderBuilder(2, LocalDate.of(2025, 8, 1), "other@address.com").build());
+				new Order.OrderBuilder(1, LocalDate.of(2025, 8, 1), "customer@address.com").setOrderNumber(12345)
+						.setPaidDate(LocalDate.of(2025, 9, 10)).setStatus("processing").setShippingTotal(3.0)
+						.setShippingTotal(3.0).setShippingTaxTotal(0.0).setFeeTotal(0.0).setFeeTaxTotal(0.0)
+						.setTaxTotal(0.0).setCartDiscount(0.0).setOrderDiscount(0.0).setDiscountTotal(0.0)
+						.setOrderTotal(16.0).setOrderSubtotal(13.0).setOrderKey("wc_order_yo6dmEfz4tlg")
+						.setOrderCurrency("EUR").setPaymentMethod("stripe").setPaymentMethodTitle("Carta di credito")
+						.setTransactionId("fGz2WAt4dcsOemDvYUP1IH8WTnN").setCustomerIpAddress("0.0.0.0")
+						.setCustomerUserAgent(
+								"Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/373.1.772062114 Mobile/15E148 Safari/604.1")
+						.setShippingMethod("Spedizione con corriere tracciabile Gls (3-4 gg lavorativi)")
+						.setCustomerId(1234).setCustomerUser("1234").setBillingFirstName("Anna")
+						.setBillingLastName("Rossi").setBillingCompany("").setBillingEmail("cliente1@address.com")
+						.setBillingPhone("'+39333123456").setBillingAddress1("vicolo Corto 1").setBillingAddress2("")
+						.setBillingPostcode("40134").setBillingCity("Bologna").setBillingState("BO")
+						.setBillingCountry("IT").setShippingFirstName("Anna").setShippingLastName("Rossi")
+						.setShippingCompany("").setShippingPhone("")
+						.setShippingAddress1("Tabaccheria Tabucchi, via B. Cellini 10").setShippingAddress2("")
+						.setShippingPostcode("73030").setShippingCity("Lecce").setShippingState("LE")
+						.setShippingCountry("IT").setCustomerNote("").setWtImportKey("12345").setTaxItems("")
+						.setShippingItems(
+								"items:Gli asini – nuova serie · 121 · luglio-agosto 2025 &times; 1|method_id:flat_rate|taxes:a:1:{s:5:\"total\";a:0:{}}")
+						.setFeeItems("").setCouponItems("").setRefundItems("")
+						.setOrderNotes(
+								"content:Stripe payment intent created (Payment Intent ID: fGz2WAt4dcsOemDvYUP1IH8Wc7N)|date:2025-08-05 11:11:03|customer:|added_by:system||content:Lo stato dell'ordine è cambiato da In attesa di pagamento a In lavorazione.|date:2025-08-05 11:11:07|customer:|added_by:system||content:Transazione Stripe completata (ID Transazione: fGz2WAt4dsPpomDvYUP1IH8WTnN)|date:2025-08-05 11:11:07|customer:|added_by:system")
+						.setDownloadPermissions("1").setMetaWcOrderAttributionDeviceType("Mobile")
+						.setMetaWcOrderAttributionReferrer("https://www.google.com/")
+						.setMetaWcOrderAttributionSessionCount("1")
+						.setMetaWcOrderAttributionSessionEntry("https://gliasinirivista.org/")
+						.setMetaWcOrderAttributionSessionPages("6")
+						.setMetaWcOrderAttributionSessionStartTime("2025-08-05 09:01:16")
+						.setMetaWcOrderAttributionSourceType("organic").setMetaWcOrderAttributionUserAgent(
+								"Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/123.4.567898765 Mobile/15E148 Safari/604.1")
+						.setMetaWcOrderAttributionUtmSource("google").setMetaPpcpPaypalFees(0.34).setMetaStripeCurrency(
+								"\"EUR\"")
+						.setMetaStripeFee(0.49).setMetaStripeNet(15.51).setLineItem1(
+								"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
+						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+						.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build(),
+				new Order.OrderBuilder(2, LocalDate.of(2025, 8, 1), "other@address.com").setOrderNumber(12345)
+						.setPaidDate(LocalDate.of(2025, 9, 10)).setStatus("processing").setShippingTotal(3.0)
+						.setShippingTotal(3.0).setShippingTaxTotal(0.0).setFeeTotal(0.0).setFeeTaxTotal(0.0)
+						.setTaxTotal(0.0).setCartDiscount(0.0).setOrderDiscount(0.0).setDiscountTotal(0.0)
+						.setOrderTotal(16.0).setOrderSubtotal(13.0).setOrderKey("wc_order_yo6dmEfz4tlg")
+						.setOrderCurrency("EUR").setPaymentMethod("stripe").setPaymentMethodTitle("Carta di credito")
+						.setTransactionId("fGz2WAt4dcsOemDvYUP1IH8WTnN").setCustomerIpAddress("0.0.0.0")
+						.setCustomerUserAgent(
+								"Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/373.1.772062114 Mobile/15E148 Safari/604.1")
+						.setShippingMethod("Spedizione con corriere tracciabile Gls (3-4 gg lavorativi)")
+						.setCustomerId(1234).setCustomerUser("1234").setBillingFirstName("Anna")
+						.setBillingLastName("Rossi").setBillingCompany("").setBillingEmail("cliente1@address.com")
+						.setBillingPhone("'+39333123456").setBillingAddress1("vicolo Corto 1").setBillingAddress2("")
+						.setBillingPostcode("40134").setBillingCity("Bologna").setBillingState("BO")
+						.setBillingCountry("IT").setShippingFirstName("Anna").setShippingLastName("Rossi")
+						.setShippingCompany("").setShippingPhone("")
+						.setShippingAddress1("Tabaccheria Tabucchi, via B. Cellini 10").setShippingAddress2("")
+						.setShippingPostcode("73030").setShippingCity("Lecce").setShippingState("LE")
+						.setShippingCountry("IT").setCustomerNote("").setWtImportKey("12345").setTaxItems("")
+						.setShippingItems(
+								"items:Gli asini – nuova serie · 121 · luglio-agosto 2025 &times; 1|method_id:flat_rate|taxes:a:1:{s:5:\"total\";a:0:{}}")
+						.setFeeItems("").setCouponItems("").setRefundItems("")
+						.setOrderNotes(
+								"content:Stripe payment intent created (Payment Intent ID: fGz2WAt4dcsOemDvYUP1IH8Wc7N)|date:2025-08-05 11:11:03|customer:|added_by:system||content:Lo stato dell'ordine è cambiato da In attesa di pagamento a In lavorazione.|date:2025-08-05 11:11:07|customer:|added_by:system||content:Transazione Stripe completata (ID Transazione: fGz2WAt4dsPpomDvYUP1IH8WTnN)|date:2025-08-05 11:11:07|customer:|added_by:system")
+						.setDownloadPermissions("1").setMetaWcOrderAttributionDeviceType("Mobile")
+						.setMetaWcOrderAttributionReferrer("https://www.google.com/")
+						.setMetaWcOrderAttributionSessionCount("1")
+						.setMetaWcOrderAttributionSessionEntry("https://gliasinirivista.org/")
+						.setMetaWcOrderAttributionSessionPages("6")
+						.setMetaWcOrderAttributionSessionStartTime("2025-08-05 09:01:16")
+						.setMetaWcOrderAttributionSourceType("organic")
+						.setMetaWcOrderAttributionUserAgent(
+								"Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/123.4.567898765 Mobile/15E148 Safari/604.1")
+						.setMetaWcOrderAttributionUtmSource("google").setMetaPpcpPaypalFees(0.34)
+						.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
+						.setLineItem1(
+								"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
+						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+						.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build());
 	}
 
 	@Test
@@ -122,8 +308,43 @@ public class OrderMongoRepositoryTest {
 	@Test
 	public void testFindByIdWhenOrderIsFound() {
 		addTestOrderToDatabase(1, "2025-09-09", "customer@address.com");
-		assertThat(orderRepository.findById(1))
-				.isEqualTo(new Order.OrderBuilder(1, LocalDate.of(2025, 9, 9), "customer@address.com").build());
+		assertThat(orderRepository.findById(1)).isEqualTo(new Order.OrderBuilder(1, LocalDate.of(2025, 9, 9),
+				"customer@address.com").setOrderNumber(12345).setPaidDate(LocalDate.of(2025, 9, 10))
+				.setStatus("processing").setShippingTotal(3.0).setShippingTotal(3.0).setShippingTaxTotal(0.0)
+				.setFeeTotal(0.0).setFeeTaxTotal(0.0).setTaxTotal(0.0).setCartDiscount(0.0).setOrderDiscount(0.0)
+				.setDiscountTotal(0.0).setOrderTotal(16.0).setOrderSubtotal(13.0).setOrderKey("wc_order_yo6dmEfz4tlg")
+				.setOrderCurrency("EUR").setPaymentMethod("stripe").setPaymentMethodTitle("Carta di credito")
+				.setTransactionId("fGz2WAt4dcsOemDvYUP1IH8WTnN").setCustomerIpAddress("0.0.0.0")
+				.setCustomerUserAgent(
+						"Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/373.1.772062114 Mobile/15E148 Safari/604.1")
+				.setShippingMethod("Spedizione con corriere tracciabile Gls (3-4 gg lavorativi)").setCustomerId(1234)
+				.setCustomerUser("1234").setBillingFirstName("Anna").setBillingLastName("Rossi").setBillingCompany("")
+				.setBillingEmail("cliente1@address.com").setBillingPhone("'+39333123456")
+				.setBillingAddress1("vicolo Corto 1").setBillingAddress2("").setBillingPostcode("40134")
+				.setBillingCity("Bologna").setBillingState("BO").setBillingCountry("IT").setShippingFirstName("Anna")
+				.setShippingLastName("Rossi").setShippingCompany("").setShippingPhone("")
+				.setShippingAddress1("Tabaccheria Tabucchi, via B. Cellini 10").setShippingAddress2("")
+				.setShippingPostcode("73030").setShippingCity("Lecce").setShippingState("LE").setShippingCountry("IT")
+				.setCustomerNote("").setWtImportKey("12345").setTaxItems("")
+				.setShippingItems(
+						"items:Gli asini – nuova serie · 121 · luglio-agosto 2025 &times; 1|method_id:flat_rate|taxes:a:1:{s:5:\"total\";a:0:{}}")
+				.setFeeItems("").setCouponItems("").setRefundItems("")
+				.setOrderNotes(
+						"content:Stripe payment intent created (Payment Intent ID: fGz2WAt4dcsOemDvYUP1IH8Wc7N)|date:2025-08-05 11:11:03|customer:|added_by:system||content:Lo stato dell'ordine è cambiato da In attesa di pagamento a In lavorazione.|date:2025-08-05 11:11:07|customer:|added_by:system||content:Transazione Stripe completata (ID Transazione: fGz2WAt4dsPpomDvYUP1IH8WTnN)|date:2025-08-05 11:11:07|customer:|added_by:system")
+				.setDownloadPermissions("1").setMetaWcOrderAttributionDeviceType("Mobile")
+				.setMetaWcOrderAttributionReferrer("https://www.google.com/").setMetaWcOrderAttributionSessionCount("1")
+				.setMetaWcOrderAttributionSessionEntry("https://gliasinirivista.org/")
+				.setMetaWcOrderAttributionSessionPages("6")
+				.setMetaWcOrderAttributionSessionStartTime("2025-08-05 09:01:16")
+				.setMetaWcOrderAttributionSourceType("organic")
+				.setMetaWcOrderAttributionUserAgent(
+						"Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/123.4.567898765 Mobile/15E148 Safari/604.1")
+				.setMetaWcOrderAttributionUtmSource("google").setMetaPpcpPaypalFees(0.34)
+				.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
+				.setLineItem1(
+						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build());
 	}
 
 	@Test
@@ -177,8 +398,18 @@ public class OrderMongoRepositoryTest {
 	private void addTestOrderToDatabase(int orderId, String orderDate, String customerEmail) {
 		orderCollection.insertOne(new Document().append("order_id", orderId).append("order_date", orderDate)
 				.append("customer_email", customerEmail).append("order_number", 12345).append("status", "processing")
-				.append("paid_date", "2025-09-10").append("billing_first_name", "Anna")
-				.append("billing_last_name", "Rossi").append("billing_company", "")
+				.append("shipping_total", 3.0).append("shipping_tax_total", 0.0).append("fee_total", 0.0)
+				.append("fee_tax_total", 0.0).append("tax_total", 0.0).append("cart_discount", 0.0)
+				.append("order_discount", 0.0).append("discount_total", 0.0).append("order_total", 16.0)
+				.append("order_subtotal", 13.0).append("order_key", "wc_order_yo6dmEfz4tlg")
+				.append("order_currency", "EUR").append("payment_method", "stripe")
+				.append("payment_method_title", "Carta di credito")
+				.append("transaction_id", "fGz2WAt4dcsOemDvYUP1IH8WTnN").append("customer_ip_address", "0.0.0.0")
+				.append("customer_user_agent",
+						"Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/373.1.772062114 Mobile/15E148 Safari/604.1")
+				.append("shipping_method", "Spedizione con corriere tracciabile Gls (3-4 gg lavorativi)")
+				.append("customer_id", 1234).append("customer_user", "1234").append("paid_date", "2025-09-10")
+				.append("billing_first_name", "Anna").append("billing_last_name", "Rossi").append("billing_company", "")
 				.append("billing_email", "cliente1@address.com").append("billing_phone", "'+39333123456")
 				.append("billing_address_1", "vicolo Corto 1").append("billing_address_2", "")
 				.append("billing_postcode", "40134").append("billing_city", "Bologna").append("billing_state", "BO")
@@ -193,11 +424,11 @@ public class OrderMongoRepositoryTest {
 				.append("fee_items", "").append("coupon_items", "").append("refund_items", "")
 				.append("order_notes",
 						"content:Stripe payment intent created (Payment Intent ID: fGz2WAt4dcsOemDvYUP1IH8Wc7N)|date:2025-08-05 11:11:03|customer:|added_by:system||content:Lo stato dell'ordine è cambiato da In attesa di pagamento a In lavorazione.|date:2025-08-05 11:11:07|customer:|added_by:system||content:Transazione Stripe completata (ID Transazione: fGz2WAt4dsPpomDvYUP1IH8WTnN)|date:2025-08-05 11:11:07|customer:|added_by:system")
-				.append("download_permissions", 1).append("'meta:_wc_order_attribution_device_type'", "Mobile")
+				.append("download_permissions", "1").append("'meta:_wc_order_attribution_device_type'", "Mobile")
 				.append("'meta:_wc_order_attribution_referrer'", "https://www.google.com/")
-				.append("'meta:_wc_order_attribution_session_count'", 1)
+				.append("'meta:_wc_order_attribution_session_count'", "1")
 				.append("'meta:_wc_order_attribution_session_entry'", "https://gliasinirivista.org/")
-				.append("'meta:_wc_order_attribution_session_pages'", 6)
+				.append("'meta:_wc_order_attribution_session_pages'", "6")
 				.append("'meta:_wc_order_attribution_session_start_time'", "2025-08-05 09:01:16")
 				.append("'meta:_wc_order_attribution_source_type'", "organic")
 				.append("'meta:_wc_order_attribution_user_agent'",
