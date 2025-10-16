@@ -178,6 +178,19 @@ Nella shell di MongoDB:
 
 Includo i comandi relativi a Docker in uno script (`setup.sh`).
 
+(Presumibilmente in seguito a un aggiornamento del kernel in locale, in occasione di un lancio di `mvn clean verify` ricevo questo errore:
+
+    [ERROR] Failed to execute goal io.fabric8:docker-maven-plugin:0.45.1:start (docker-start) on project apt-subscriptions: Execution docker-start of goal io.fabric8:docker-maven-plugin:0.45.1:start failed: No <dockerHost> given, no DOCKER_HOST environment variable, no read/writable '/var/run/docker.sock' or '//./pipe/docker_engine' and no external provider like Docker machine configured
+    
+Il problema è ancora più a monte: da `journalctl -xeu docker.service` trovo che:
+
+    [...]
+    level=error msg="failed to mount overlay: no such device" storage-driver=overlay2
+    level=error msg="[graphdriver] prior storage driver overlay2 failed: driver not supported"
+    [...]
+    
+Aggiorno il sistema e lo riavvio. Stavolta funziona.)
+
 ---
 
 ### Maven
