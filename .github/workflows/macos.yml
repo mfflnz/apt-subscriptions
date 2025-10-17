@@ -25,7 +25,7 @@ jobs:
     - name: Set up QEMU
       uses: docker/actions-toolkit/.github/actions/macos-setup-qemu@19ca9ade20f5da695f76a10988d6532058575f82
     - name: Install Docker
-      uses: docker/setup-docker-action@v4.4.0@3fb92d6d9c634363128c8cce4bc3b2826526370a
+      uses: docker/setup-docker-action@3fb92d6d9c634363128c8cce4bc3b2826526370a
       with:
         set-host: true
     - name: Cache Maven packages
