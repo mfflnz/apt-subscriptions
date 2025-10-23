@@ -296,7 +296,7 @@ Aggiungo la chiave `set-host` alla configurazione di `setup-docker-action`, che 
 
 Con il commit https://github.com/mfflnz/apt-subscriptions/commit/68cbfdb6d7e47e241ebb85acd180fae6f0933934 la build su macOS si interrompe con l'errore di prima relativo a QEMU. Provo a modificare il workflow. Il runner macos-latest gira su architettura ARM, quindi [non è supportato](https://github.com/docker/setup-docker-action?tab=readme-ov-file#about) da setup-docker-actions. Come non detto: mantengo macos-13 nel workflow e riprovo con la [soluzione](https://github.com/docker/setup-docker-action/issues/108#issuecomment-2393657360) applicata finora. La build con Java 11 ha un buon esito.
 
-Il Quality Gate di SonarQube segnala un Security Hotspot nel workflow, e prescrive di specificare il SHA del commit della `setup-docker-action`. Aggiorno il tag alla versione 4.4.0 e specifico il SHA.
+Il Quality Gate di SonarQube segnala un Security Hotspot nel workflow, e prescrive di specificare il SHA del commit della `setup-docker-action` anziché il tag. Procedo di conseguenza.
 
 #### Workflow per Windows
 
@@ -319,6 +319,32 @@ La build di Java 21 si interrompe:
 Il problema del path non si è ancora risolto. Per il momento sospendo la configurazione del workflow di Windows e provo a impostare un IT per vedere se riesco a comunicare correttamente con il database.
 
 **TODO**: Configurare il workflow di Windows
+
+---
+
+### UI
+
+La view è scomposta in tre interfacce, come indicato nello schema MVC: `SearchView`, `ListView` e `OrderView`, racchiuse in una `DashboardView`:
+
+#### SearchView
+- Due campi, "From" e "To", in cui è possibile specificare un intervallo di date entro cui effettuare la ricerca;
+- un pulsante "Search"; se i due campi sono entrambi vuoti, la ricerca restituisce tutti gli ordini presenti nel database; se i campi sono specificati, la ricerca restituisce gli ordini dell'intervallo richiesto. I riferimenti agli ordini vengono visualizzati nella `ListView`;
+- se uno solo dei campi è compilato, il pulsante "Search" si disattiva;
+- se le date specificate non sono formattate correttamente o non sono ordinate in modo coerente, verrà visualizzato un opportuno messaggio di errore nel campo dedicato.
+
+#### ListView
+- Una lista, con eventuale barra di scorrimento, in cui vengono riportati sinteticamente gli ordini individuati con la "Search" (id, data, nome e cognome);
+- selezionando uno degli ordini, nella `OrderView` vengono visualizzati i corrispondenti dettagli;
+- un pulsante "Export" che mostra un selettore di file tramite cui scegliere il percorso del file .csv che conterrà i campi rilevanti degli ordini al momento presenti nella lista; se la lista è vuota, il pulsante è disattivato.
+
+#### OrderView
+- Una maschera con form editabili corrispondenti ai campi di interesse specificati nel model `FormattedOrder` (id, data dell'ordine, data del pagamento, etc.);
+- un pulsante "Update" che richiama l'opportuno metodo del Controller (eventualmente aggiornando la corrispondente vista sintetica della `ListView`) per aggiornare nel database il documento corrispondente all'ordine presente con i campi al momento specificati;
+- un pulsante "Delete" che richiama l'opportuno metodo del Controller (cancellando contestualmente l'ordine presente dalla `ListView`) per rimuovere dal database il documento corrispondente all'ordine presente;
+- le operazioni di "Update" e "Delete" mostrano eventuali messaggi rilevanti (di informazione o di errore) nel campo a essi dedicato.
+
+#### DashboardView
+- Include le tre view precedenti, oltre a un campo di testo in cui vengono visualizzati eventuali messaggi informativi o di errore.
 
 ---
 
