@@ -346,6 +346,8 @@ La view è scomposta in tre interfacce, come indicato nello schema MVC: `SearchV
 #### DashboardView
 - Include le tre view precedenti, oltre a un campo di testo in cui vengono visualizzati eventuali messaggi informativi o di errore.
 
+Implemento la DashboardView con una classe `DashboardSwingView` (sottoclasse di `JFrame`), al cui interno collocherò `SearchSwingView`, `ListSwingView` e `OrderSwingView` (sottoclassi di `JPanel`).
+
 ---
 
 ### Integration Tests
