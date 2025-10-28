@@ -7,6 +7,4 @@ public interface OrderView {
 	void showOrderDetails(Order order);
 	void orderUpdated(int orderId, Order orderToUpdate);
 	void orderDeleted(Order orderToDelete);
-	void showMessage(String string);
-	
 }
