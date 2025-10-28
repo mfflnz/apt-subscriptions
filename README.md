@@ -343,10 +343,17 @@ La view è scomposta in tre interfacce, come indicato nello schema MVC: `SearchV
 - un pulsante "Delete" che richiama l'opportuno metodo del Controller (cancellando contestualmente l'ordine presente dalla `ListView`) per rimuovere dal database il documento corrispondente all'ordine presente;
 - le operazioni di "Update" e "Delete" mostrano eventuali messaggi rilevanti (di informazione o di errore) nel campo a essi dedicato.
 
+#### MessageView
+TODO
+
 #### DashboardView
 - Include le tre view precedenti, oltre a un campo di testo in cui vengono visualizzati eventuali messaggi informativi o di errore.
 
-Implemento la DashboardView con una classe `DashboardSwingView` (sottoclasse di `JFrame`), al cui interno collocherò `SearchSwingView`, `ListSwingView` e `OrderSwingView` (sottoclassi di `JPanel`).
+N.B.: Per testare le quattro view interne (Search, List, Order e Message), che implementano dei JPanel e non dei JFrame, uso la classe `Containers` di AssertJ-Swing (v. [https://assertj-swing.readthedocs.io/en/latest/assertj-swing-advanced/#support-for-platform-specific-features](https://assertj-swing.readthedocs.io/en/latest/assertj-swing-advanced/#support-for-platform-specific-features)).
+
+Implemento la DashboardView con una classe `DashboardSwingView` (sottoclasse di `JFrame`), al cui interno collocherò `SearchSwingView`, `ListSwingView` e `OrderSwingView` (sottoclassi di `JPanel`). Traccio un primo scheletro delle View con WindowBuilder.
+
+Faccio un test case per la `DashboardSwingView`, cioè il JFrame che posso testare esplicitamente con AssertJ Swing: il codice degli altri JPanel sarà quindi testato all'interno del test case `DashboardSwingViewTest`.
 
 ---
 

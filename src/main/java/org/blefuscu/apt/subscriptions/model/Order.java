@@ -957,6 +957,318 @@ public class Order {
 		return lastIssue;
 	}
 
+	public void setOrderId(int orderId) {
+		this.orderId = orderId;
+	}
+
+	public void setOrderDate(LocalDate orderDate) {
+		this.orderDate = orderDate;
+	}
+
+	public void setCustomerEmail(String customerEmail) {
+		this.customerEmail = customerEmail;
+	}
+
+	public void setOrderNumber(int orderNumber) {
+		this.orderNumber = orderNumber;
+	}
+
+	public void setPaidDate(LocalDate paidDate) {
+		this.paidDate = paidDate;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public void setShippingTotal(double shippingTotal) {
+		this.shippingTotal = shippingTotal;
+	}
+
+	public void setShippingTaxTotal(double shippingTaxTotal) {
+		this.shippingTaxTotal = shippingTaxTotal;
+	}
+
+	public void setFeeTotal(double feeTotal) {
+		this.feeTotal = feeTotal;
+	}
+
+	public void setFeeTaxTotal(double feeTaxTotal) {
+		this.feeTaxTotal = feeTaxTotal;
+	}
+
+	public void setTaxTotal(double taxTotal) {
+		this.taxTotal = taxTotal;
+	}
+
+	public void setCartDiscount(double cartDiscount) {
+		this.cartDiscount = cartDiscount;
+	}
+
+	public void setOrderDiscount(double orderDiscount) {
+		this.orderDiscount = orderDiscount;
+	}
+
+	public void setDiscountTotal(double discountTotal) {
+		this.discountTotal = discountTotal;
+	}
+
+	public void setOrderTotal(double orderTotal) {
+		this.orderTotal = orderTotal;
+	}
+
+	public void setOrderSubtotal(double orderSubtotal) {
+		this.orderSubtotal = orderSubtotal;
+	}
+
+	public void setOrderKey(String orderKey) {
+		this.orderKey = orderKey;
+	}
+
+	public void setOrderCurrency(String orderCurrency) {
+		this.orderCurrency = orderCurrency;
+	}
+
+	public void setPaymentMethod(String paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+
+	public void setPaymentMethodTitle(String paymentMethodTitle) {
+		this.paymentMethodTitle = paymentMethodTitle;
+	}
+
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
+	}
+
+	public void setCustomerIpAddress(String customerIpAddress) {
+		this.customerIpAddress = customerIpAddress;
+	}
+
+	public void setCustomerUserAgent(String customerUserAgent) {
+		this.customerUserAgent = customerUserAgent;
+	}
+
+	public void setShippingMethod(String shippingMethod) {
+		this.shippingMethod = shippingMethod;
+	}
+
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
+	}
+
+	public void setCustomerUser(String customerUser) {
+		this.customerUser = customerUser;
+	}
+
+	public void setBillingFirstName(String billingFirstName) {
+		this.billingFirstName = billingFirstName;
+	}
+
+	public void setBillingLastName(String billingLastName) {
+		this.billingLastName = billingLastName;
+	}
+
+	public void setBillingCompany(String billingCompany) {
+		this.billingCompany = billingCompany;
+	}
+
+	public void setBillingEmail(String billingEmail) {
+		this.billingEmail = billingEmail;
+	}
+
+	public void setBillingPhone(String billingPhone) {
+		this.billingPhone = billingPhone;
+	}
+
+	public void setBillingAddress1(String billingAddress1) {
+		this.billingAddress1 = billingAddress1;
+	}
+
+	public void setBillingAddress2(String billingAddress2) {
+		this.billingAddress2 = billingAddress2;
+	}
+
+	public void setBillingPostcode(String billingPostcode) {
+		this.billingPostcode = billingPostcode;
+	}
+
+	public void setBillingCity(String billingCity) {
+		this.billingCity = billingCity;
+	}
+
+	public void setBillingState(String billingState) {
+		this.billingState = billingState;
+	}
+
+	public void setBillingCountry(String billingCountry) {
+		this.billingCountry = billingCountry;
+	}
+
+	public void setShippingFirstName(String shippingFirstName) {
+		this.shippingFirstName = shippingFirstName;
+	}
+
+	public void setShippingLastName(String shippingLastName) {
+		this.shippingLastName = shippingLastName;
+	}
+
+	public void setShippingCompany(String shippingCompany) {
+		this.shippingCompany = shippingCompany;
+	}
+
+	public void setShippingPhone(String shippingPhone) {
+		this.shippingPhone = shippingPhone;
+	}
+
+	public void setShippingAddress1(String shippingAddress1) {
+		this.shippingAddress1 = shippingAddress1;
+	}
+
+	public void setShippingAddress2(String shippingAddress2) {
+		this.shippingAddress2 = shippingAddress2;
+	}
+
+	public void setShippingPostcode(String shippingPostcode) {
+		this.shippingPostcode = shippingPostcode;
+	}
+
+	public void setShippingCity(String shippingCity) {
+		this.shippingCity = shippingCity;
+	}
+
+	public void setShippingState(String shippingState) {
+		this.shippingState = shippingState;
+	}
+
+	public void setShippingCountry(String shippingCountry) {
+		this.shippingCountry = shippingCountry;
+	}
+
+	public void setCustomerNote(String customerNote) {
+		this.customerNote = customerNote;
+	}
+
+	public void setWtImportKey(String wtImportKey) {
+		this.wtImportKey = wtImportKey;
+	}
+
+	public void setTaxItems(String taxItems) {
+		this.taxItems = taxItems;
+	}
+
+	public void setShippingItems(String shippingItems) {
+		this.shippingItems = shippingItems;
+	}
+
+	public void setFeeItems(String feeItems) {
+		this.feeItems = feeItems;
+	}
+
+	public void setCouponItems(String couponItems) {
+		this.couponItems = couponItems;
+	}
+
+	public void setRefundItems(String refundItems) {
+		this.refundItems = refundItems;
+	}
+
+	public void setOrderNotes(String orderNotes) {
+		this.orderNotes = orderNotes;
+	}
+
+	public void setDownloadPermissions(String downloadPermissions) {
+		this.downloadPermissions = downloadPermissions;
+	}
+
+	public void setMetaWcOrderAttributionDeviceType(String metaWcOrderAttributionDeviceType) {
+		this.metaWcOrderAttributionDeviceType = metaWcOrderAttributionDeviceType;
+	}
+
+	public void setMetaWcOrderAttributionReferrer(String metaWcOrderAttributionReferrer) {
+		this.metaWcOrderAttributionReferrer = metaWcOrderAttributionReferrer;
+	}
+
+	public void setMetaWcOrderAttributionSessionCount(String metaWcOrderAttributionSessionCount) {
+		this.metaWcOrderAttributionSessionCount = metaWcOrderAttributionSessionCount;
+	}
+
+	public void setMetaWcOrderAttributionSessionEntry(String metaWcOrderAttributionSessionEntry) {
+		this.metaWcOrderAttributionSessionEntry = metaWcOrderAttributionSessionEntry;
+	}
+
+	public void setMetaWcOrderAttributionSessionPages(String metaWcOrderAttributionSessionPages) {
+		this.metaWcOrderAttributionSessionPages = metaWcOrderAttributionSessionPages;
+	}
+
+	public void setMetaWcOrderAttributionSessionStartTime(String metaWcOrderAttributionSessionStartTime) {
+		this.metaWcOrderAttributionSessionStartTime = metaWcOrderAttributionSessionStartTime;
+	}
+
+	public void setMetaWcOrderAttributionSourceType(String metaWcOrderAttributionSourceType) {
+		this.metaWcOrderAttributionSourceType = metaWcOrderAttributionSourceType;
+	}
+
+	public void setMetaWcOrderAttributionUserAgent(String metaWcOrderAttributionUserAgent) {
+		this.metaWcOrderAttributionUserAgent = metaWcOrderAttributionUserAgent;
+	}
+
+	public void setMetaWcOrderAttributionUtmSource(String metaWcOrderAttributionUtmSource) {
+		this.metaWcOrderAttributionUtmSource = metaWcOrderAttributionUtmSource;
+	}
+
+	public void setMetaPpcpPaypalFees(double metaPpcpPaypalFees) {
+		this.metaPpcpPaypalFees = metaPpcpPaypalFees;
+	}
+
+	public void setMetaStripeCurrency(String metaStripeCurrency) {
+		this.metaStripeCurrency = metaStripeCurrency;
+	}
+
+	public void setMetaStripeFee(double metaStripeFee) {
+		this.metaStripeFee = metaStripeFee;
+	}
+
+	public void setMetaStripeNet(double metaStripeNet) {
+		this.metaStripeNet = metaStripeNet;
+	}
+
+	public void setLineItem1(String lineItem1) {
+		this.lineItem1 = lineItem1;
+	}
+
+	public void setLineItem2(String lineItem2) {
+		this.lineItem2 = lineItem2;
+	}
+
+	public void setLineItem3(String lineItem3) {
+		this.lineItem3 = lineItem3;
+	}
+
+	public void setLineItem4(String lineItem4) {
+		this.lineItem4 = lineItem4;
+	}
+
+	public void setLineItem5(String lineItem5) {
+		this.lineItem5 = lineItem5;
+	}
+
+	public void setOrderConfirmed(boolean orderConfirmed) {
+		this.orderConfirmed = orderConfirmed;
+	}
+
+	public void setOrderNetTotal(double orderNetTotal) {
+		this.orderNetTotal = orderNetTotal;
+	}
+
+	public void setFirstIssue(int firstIssue) {
+		this.firstIssue = firstIssue;
+	}
+
+	public void setLastIssue(int lastIssue) {
+		this.lastIssue = lastIssue;
+	}
+
 	@Override
 	public String toString() {
 		return "Order [orderId=" + orderId + ", orderDate=" + orderDate + ", customerEmail=" + customerEmail
