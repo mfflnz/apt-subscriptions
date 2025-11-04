@@ -230,5 +230,16 @@ public class FormattedOrder {
 	public String getCustomerNote() {
 		return customerNote;
 	}
+
+	@Override
+	public String toString() {
+		return "FormattedOrder [orderId=" + orderId + ", orderDate=" + orderDate + ", paidDate=" + paidDate
+				+ ", orderTotal=" + orderTotal + ", orderNetTotal=" + orderNetTotal + ", paymentMethodTitle="
+				+ paymentMethodTitle + ", shippingFirstName=" + shippingFirstName + ", shippingLastName="
+				+ shippingLastName + ", shippingAddress1=" + shippingAddress1 + ", shippingPostcode=" + shippingPostcode
+				+ ", shippingCity=" + shippingCity + ", shippingState=" + shippingState + ", customerEmail="
+				+ customerEmail + ", billingPhone=" + billingPhone + ", shippingItems=" + shippingItems
+				+ ", firstIssue=" + firstIssue + ", lastIssue=" + lastIssue + ", customerNote=" + customerNote + "]";
+	}
 	
 }

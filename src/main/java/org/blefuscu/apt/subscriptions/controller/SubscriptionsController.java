@@ -8,18 +8,26 @@ import org.blefuscu.apt.subscriptions.model.FormattedOrder;
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.blefuscu.apt.subscriptions.view.ListView;
+import org.blefuscu.apt.subscriptions.view.MessageView;
 import org.blefuscu.apt.subscriptions.view.OrderView;
 
 public class SubscriptionsController {
 
 	private ListView listView;
 	private OrderView orderView;
+	private MessageView messageView;
 	private OrderRepository orderRepository;
 	private ExportController exportManager;
+	private static final String THE_REQUESTED_ORDER_IS_NOT_AVAILABLE = "The requested order is not available";
+	private static final String START_DATE_SHOULD_BE_EARLIER_OR_EQUAL_TO_END_DATE = "Start date should be earlier or equal to end date";
+	private static final String PLEASE_PROVIDE_END_DATE = "Please provide end date";
+	private static final String PLEASE_PROVIDE_START_DATE = "Please provide start date";
 
-	public SubscriptionsController(ListView listView, OrderView orderView, OrderRepository orderRepository, ExportController exportManager) {
+	public SubscriptionsController(ListView listView, OrderView orderView, MessageView messageView,
+			OrderRepository orderRepository, ExportController exportManager) {
 		this.listView = listView;
 		this.orderView = orderView;
+		this.messageView = messageView;
 		this.orderRepository = orderRepository;
 		this.exportManager = exportManager;
 	}
@@ -29,15 +37,20 @@ public class SubscriptionsController {
 	}
 
 	public void requestOrders(LocalDate fromDate, LocalDate toDate) {
+
 		if (fromDate == null) {
-			throw new IllegalArgumentException("Please provide start date");
+			sendErrorMessage(PLEASE_PROVIDE_START_DATE);
+			throw new IllegalArgumentException(PLEASE_PROVIDE_START_DATE);
 		}
 		if (toDate == null) {
-			throw new IllegalArgumentException("Please provide end date");
+			sendErrorMessage(PLEASE_PROVIDE_END_DATE);
+			throw new IllegalArgumentException(PLEASE_PROVIDE_END_DATE);
 		}
 		if (toDate.isBefore(fromDate)) {
-			throw new IllegalArgumentException("Start date should be earlier or equal to end date");
+			sendErrorMessage(START_DATE_SHOULD_BE_EARLIER_OR_EQUAL_TO_END_DATE);
+			throw new IllegalArgumentException(START_DATE_SHOULD_BE_EARLIER_OR_EQUAL_TO_END_DATE);
 		}
+
 		listView.showOrders(orderRepository.findByDateRange(fromDate, toDate));
 	}
 
@@ -45,33 +58,32 @@ public class SubscriptionsController {
 		Order order = orderRepository.findById(orderId);
 
 		if (order == null) {
-			throw new IllegalArgumentException("The requested order is not available");
+			throw new IllegalArgumentException(THE_REQUESTED_ORDER_IS_NOT_AVAILABLE);
 		}
 		orderView.showOrderDetails(orderRepository.findById(orderId));
 		return orderRepository.findById(orderId);
 	}
-	
+
 	public void updateOrder(int orderId, Order updatedOrder) {
 		Order orderToUpdate = orderRepository.findById(orderId);
 		if (orderToUpdate == null) {
-			throw new IllegalArgumentException("The requested order is not available");
+			throw new IllegalArgumentException(THE_REQUESTED_ORDER_IS_NOT_AVAILABLE);
 		}
 		orderRepository.update(orderId, updatedOrder);
 		orderView.orderUpdated(orderId, updatedOrder);
 		listView.orderUpdated(orderId, updatedOrder);
 	}
-	
+
 	public void deleteOrder(int orderId) {
 		Order orderToDelete = orderRepository.findById(orderId);
 		if (orderToDelete == null) {
-			throw new IllegalArgumentException("The requested order is not available");
+			throw new IllegalArgumentException(THE_REQUESTED_ORDER_IS_NOT_AVAILABLE);
 		}
 		orderView.orderDeleted(orderToDelete);
-		listView.orderDeleted(orderToDelete);
+		listView.orderDeleted(orderId);
 		orderRepository.delete(orderId);
 	}
 
-	// TODO: Spostare nell'ExportController
 	public FormattedOrder formatOrder(Order orderToFormat) {
 
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -142,14 +154,20 @@ public class SubscriptionsController {
 	public void exportOrders(List<FormattedOrder> ordersToExport, String filename) {
 
 		if (ordersToExport == null || ordersToExport.isEmpty()) {
+			sendErrorMessage("Error: no orders to export");
 			throw new IllegalArgumentException("Error: no orders to export");
 		}
 
 		if (filename == null || filename.isEmpty()) {
+			sendErrorMessage("Please provide file name");
 			throw new IllegalArgumentException("Please provide file name");
 		}
 
 		exportManager.saveData(ordersToExport, filename);
+	}
+
+	public void sendErrorMessage(String errorMessage) {
+		messageView.showErrorMessage(errorMessage);
 	}
 
 }

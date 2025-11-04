@@ -6,6 +6,7 @@ import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.SUB
 import org.blefuscu.apt.subscriptions.repository.OrderMongoRepository;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.blefuscu.apt.subscriptions.view.ListView;
+import org.blefuscu.apt.subscriptions.view.MessageView;
 import org.blefuscu.apt.subscriptions.view.OrderView;
 import org.junit.After;
 import org.junit.Before;
@@ -28,11 +29,14 @@ public class SubscriptionsControllerIT {
 	@Mock
 	private OrderView orderView;
 
+	@Mock
+	private MessageView messageView;
+
 	@Before
 	public void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
 		orderRepository = new OrderMongoRepository(new MongoClient("localhost"), SUBSCRIPTIONS_DB_NAME, ORDER_COLLECTION_NAME);
-		subscriptionsController = new SubscriptionsController(listView, orderView, orderRepository, exportManager);
+		subscriptionsController = new SubscriptionsController(listView, orderView, messageView, orderRepository, exportManager);
 	}
 
 	@After

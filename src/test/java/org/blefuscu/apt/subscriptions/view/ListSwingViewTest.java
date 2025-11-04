@@ -2,17 +2,25 @@ package org.blefuscu.apt.subscriptions.view;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
+import org.assertj.swing.timing.Pause;
+import org.blefuscu.apt.subscriptions.controller.ExportController;
 import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 import org.blefuscu.apt.subscriptions.model.Order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.fixture.Containers.showInFrame;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
+import static java.util.Arrays.asList;
 
 import org.junit.After;
 import org.junit.Before;
@@ -22,20 +30,24 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 @RunWith(GUITestRunner.class)
-public class ListSwingViewTest  {
+public class ListSwingViewTest {
 
+	private static final int TIMEOUT = 5000;
 	private ListSwingView listSwingView;
 	private FrameFixture window;
 	private AutoCloseable closeable;
-	
+
 	@Mock
 	private SubscriptionsController subscriptionsController;
 
+	@Mock
+	private ExportController exportController;
+
 	@Before
 	public void setUp() {
-		
+
 		closeable = MockitoAnnotations.openMocks(this);
-		
+
 		GuiActionRunner.execute(() -> {
 			listSwingView = new ListSwingView();
 			listSwingView.setSubscriptionsController(subscriptionsController);
@@ -44,11 +56,11 @@ public class ListSwingViewTest  {
 
 		window = showInFrame(listSwingView);
 	}
-	
+
 	@After
 	public void tearDown() throws Exception {
-		  window.cleanUp();
-		  closeable.close();
+		window.cleanUp();
+		closeable.close();
 	}
 
 	@Test
@@ -57,14 +69,15 @@ public class ListSwingViewTest  {
 
 		window.list("ordersList");
 		window.button(JButtonMatcher.withText("Export")).requireDisabled();
-		
+
 	}
-	
+
 	@Test
 	@GUITest
 	public void testWhenOrdersListIsNotEmptyThenExportButtonShouldBeEnabled() {
-		 
-		listSwingView.getListOrdersModel().addElement(new Order.OrderBuilder(1, LocalDate.of(2025, 10, 27), "customer@email.com").build());
+
+		listSwingView.getListOrdersModel()
+				.addElement(new Order.OrderBuilder(1, LocalDate.of(2025, 10, 27), "customer@email.com").build());
 		window.button(JButtonMatcher.withText("Export")).requireEnabled();
 
 	}
@@ -72,30 +85,36 @@ public class ListSwingViewTest  {
 	@Test
 	@GUITest
 	public void testWhenOrdersListIsEmptyThenExportButtonShouldBeDisabled() {
-		
+
 		// intervalRemoved()
-		listSwingView.getListOrdersModel().addElement(new Order.OrderBuilder(1, LocalDate.of(2025, 10, 27), "customer@email.com").build());
+		listSwingView.getListOrdersModel()
+				.addElement(new Order.OrderBuilder(1, LocalDate.of(2025, 10, 27), "customer@email.com").build());
 		listSwingView.getListOrdersModel().removeAllElements();
 		window.button(JButtonMatcher.withText("Export")).requireDisabled();
 
 		// intervalAdded()
-		listSwingView.getListOrdersModel().addElement(new Order.OrderBuilder(1, LocalDate.of(2025, 10, 27), "customer@email.com").build());
-		listSwingView.getListOrdersModel().addElement(new Order.OrderBuilder(2, LocalDate.of(2025, 10, 28), "customer@email.com").build());
+		listSwingView.getListOrdersModel()
+				.addElement(new Order.OrderBuilder(1, LocalDate.of(2025, 10, 27), "customer@email.com").build());
+		listSwingView.getListOrdersModel()
+				.addElement(new Order.OrderBuilder(2, LocalDate.of(2025, 10, 28), "customer@email.com").build());
 		listSwingView.getListOrdersModel().removeElementAt(0);
 		window.button(JButtonMatcher.withText("Export")).requireEnabled();
-		
+
 		// contentsChanged()
 		listSwingView.getListOrdersModel().removeAllElements();
-		listSwingView.getListOrdersModel().addElement(new Order.OrderBuilder(1, LocalDate.of(2025, 10, 27), "customer@email.com").build());
-		listSwingView.getListOrdersModel().addElement(new Order.OrderBuilder(2, LocalDate.of(2025, 10, 28), "customer@email.com").build());
-		listSwingView.getListOrdersModel().setElementAt(new Order.OrderBuilder(1, LocalDate.of(2025, 10, 29), "new@email.com").build(), 0);
+		listSwingView.getListOrdersModel()
+				.addElement(new Order.OrderBuilder(1, LocalDate.of(2025, 10, 27), "customer@email.com").build());
+		listSwingView.getListOrdersModel()
+				.addElement(new Order.OrderBuilder(2, LocalDate.of(2025, 10, 28), "customer@email.com").build());
+		listSwingView.getListOrdersModel()
+				.setElementAt(new Order.OrderBuilder(1, LocalDate.of(2025, 10, 29), "new@email.com").build(), 0);
 		window.button(JButtonMatcher.withText("Export")).requireEnabled();
-		
+
 	}
-	
+
 	@Test
 	public void testShowOrdersShouldDisplayGivenOrdersInTheList() {
-		
+
 		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), null).build();
 		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 9), null).build();
 		GuiActionRunner.execute(() -> listSwingView.showOrders(Arrays.asList(order1, order2)));
@@ -103,19 +122,117 @@ public class ListSwingViewTest  {
 		assertThat(listContents).containsExactly(order1.toString(), order2.toString());
 
 	}
-	
+
 	@Test
 	public void testOrderUpdatedShouldDisplayTheUpdatedOrderInTheList() {
 
-		// TODO
-		
-		// Inserisci due ordini
-		// modifica il primo ordine
-		
-		// chiama il metodo del SUT
-		listSwingView.orderUpdated(0, null);
-		
-		// verifica che nella lista al posto dell'ordine in questione ci sia l'ordine aggiornato
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com").build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "other@address.com").build();
+		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2025, 10, 10), "third@address.com").build();
+		Order updatedOrder = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "updated@address.com").build();
+
+		GuiActionRunner.execute(() -> {
+			listSwingView.getListOrdersModel().addElement(order1);
+			listSwingView.getListOrdersModel().addElement(order2);
+			listSwingView.getListOrdersModel().addElement(order3);
+			listSwingView.orderUpdated(2, updatedOrder);
+		});
+
+		String[] listContents = window.list().contents();
+
+		assertThat(listContents).containsExactly(order1.toString(), updatedOrder.toString(), order3.toString())
+				.doesNotContain(order2.toString());
+	}
+
+	@Test
+	public void testOrderDeletedShouldRemoveTheDeletedOrderFromTheList() {
+
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com").build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "other@address.com").build();
+		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2025, 10, 10), "third@address.com").build();
+
+		GuiActionRunner.execute(() -> {
+			listSwingView.getListOrdersModel().addElement(order1);
+			listSwingView.getListOrdersModel().addElement(order2);
+			listSwingView.getListOrdersModel().addElement(order3);
+			listSwingView.orderDeleted(2);
+		});
+
+		String[] listContents = window.list().contents();
+
+		assertThat(listContents).containsExactly(order1.toString(), order3.toString())
+				.doesNotContain(order2.toString());
+	}
+
+	@Test
+	public void testExportButtonShouldOpenAFileChooserWindow() {
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com").build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "other@address.com").build();
+		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2025, 10, 10), "third@address.com").build();
+
+		GuiActionRunner.execute(() -> {
+			listSwingView.getListOrdersModel().addElement(order1);
+			listSwingView.getListOrdersModel().addElement(order2);
+			listSwingView.getListOrdersModel().addElement(order3);
+		});
+		window.button(JButtonMatcher.withText("Export")).click();
+		assertThat(listSwingView.getFc().isShowing());
+		Pause.pause(1000);
+	}
+
+	@Test
+	public void testCancelButtonInDialogShouldYieldToNoInteractionsWithExportController() {
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com").build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "other@address.com").build();
+		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2025, 10, 10), "third@address.com").build();
+
+		GuiActionRunner.execute(() -> {
+			listSwingView.getListOrdersModel().addElement(order1);
+			listSwingView.getListOrdersModel().addElement(order2);
+			listSwingView.getListOrdersModel().addElement(order3);
+		});
+		window.button(JButtonMatcher.withText("Export")).click();
+		listSwingView.getFc().setName("export.csv");
+		listSwingView.getFc().cancelSelection();
+	}
+
+	@Test
+	public void testSaveButtonInDialogShouldDelegateToSubscriptionsControllerFormatOrder() {
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com").build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "other@address.com").build();
+		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2025, 10, 10), "third@address.com").build();
+		List<Order> orders = asList(order1, order2, order3);
+
+		GuiActionRunner.execute(() -> {
+			listSwingView.getListOrdersModel().addElement(order1);
+			listSwingView.getListOrdersModel().addElement(order2);
+			listSwingView.getListOrdersModel().addElement(order3);
+		});
+		window.button(JButtonMatcher.withText("Export")).click();
+		listSwingView.getFc().setName("export.csv");
+		listSwingView.getFc().approveSelection();
+
+		orders.forEach(order -> verify(subscriptionsController, timeout(TIMEOUT)).formatOrder(order));
+	}
+
+	@Test
+	public void testSaveButtonInDialogShouldDelegateToSubscriptionsControllerExportOrders() {
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com").build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "other@address.com").build();
+		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2025, 10, 10), "third@address.com").build();
+
+		GuiActionRunner.execute(() -> {
+			listSwingView.getListOrdersModel().addElement(order1);
+			listSwingView.getListOrdersModel().addElement(order2);
+			listSwingView.getListOrdersModel().addElement(order3);
+		});
+
+		window.button(JButtonMatcher.withText("Export")).click();
+
+		listSwingView.getFc().setName("export.csv");
+		listSwingView.getFc().approveSelection();
+
+		verify(subscriptionsController, timeout(TIMEOUT)).exportOrders(anyList(), anyString());
 	}
 
 }

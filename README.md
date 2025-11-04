@@ -243,6 +243,16 @@ Faccio un test:
 
 Configuro il plugin di Pitest in modo da includere i mutator del gruppo STRONGER.
 
+TODO: SISTEMA QUESTO DISCORSO:
+Sorge un problema al momento di dover far girare Pitest sui test delle view, che prevedono le interfacce grafiche. Facendo riferimento ad alcune issue ([qui](https://github.com/hcoles/pitest/issues/581), a cui fa riferimento [questa PR](https://github.com/hcoles/pitest/pull/601); [qui](https://github.com/hcoles/pitest/issues/881), e [qui](https://github.com/hcoles/pitest/issues/1033))
+
+NB: Per mantenere il plugin `pitest-maven` compatibile con Java 8, mantengo la versione cui si fa riferimento nel libro (1.5.2), poiché le successive richiedono almeno Java 11. Per ora mantengo nel POM l'opzione esplicita `-Djava.awt.headless=false` ed evito di attivare il mutation testing nel workflow per macOS.
+
+TODO: qual è il modo più civile di passare 
+						<!--	<jvmArg>-Djava.awt.headless=false</jvmArg> -->
+alla command line su Linux per evitare di inserire l'argomento nel POM?
+
+
 ---
 
 ### Continuous Integration
@@ -329,8 +339,11 @@ La view è scomposta in tre interfacce, come indicato nello schema MVC: `SearchV
 #### SearchView
 - Due campi, "From" e "To", in cui è possibile specificare un intervallo di date entro cui effettuare la ricerca;
 - un pulsante "Search"; se i due campi sono entrambi vuoti, la ricerca restituisce tutti gli ordini presenti nel database; se i campi sono specificati, la ricerca restituisce gli ordini dell'intervallo richiesto. I riferimenti agli ordini vengono visualizzati nella `ListView`;
-- se uno solo dei campi è compilato, il pulsante "Search" si disattiva;
-- se le date specificate non sono formattate correttamente o non sono ordinate in modo coerente, verrà visualizzato un opportuno messaggio di errore nel campo dedicato.
+- il pulsante "Search" è inizialmente attivo; finché uno o entrambi i campi non sono correttamente formattati (`YYYY-MM-DD`), si disattiva; 
+- se il solo campo "From" è compilato, il campo "To" viene impostato automaticamente alla data corrente;
+- se il solo campo "To" è compilato, il campo "From" viene impostato automaticamente alla data del 1970-01-01;
+- se le date specificate non sono ordinate in modo coerente, verrà visualizzato un opportuno messaggio di errore nel campo dedicato (-> Controller).
+
 
 #### ListView
 - Una lista, con eventuale barra di scorrimento, in cui vengono riportati sinteticamente gli ordini individuati con la "Search" (id, data, nome e cognome);
@@ -350,6 +363,8 @@ TODO
 - Include le tre view precedenti, oltre a un campo di testo in cui vengono visualizzati eventuali messaggi informativi o di errore.
 
 N.B.: Per testare le quattro view interne (Search, List, Order e Message), che implementano dei JPanel e non dei JFrame, uso la classe `Containers` di AssertJ-Swing (v. [https://assertj-swing.readthedocs.io/en/latest/assertj-swing-advanced/#support-for-platform-specific-features](https://assertj-swing.readthedocs.io/en/latest/assertj-swing-advanced/#support-for-platform-specific-features)).
+
+(Per evitare instabilità nei test (v. ad esempio gli unit test per la `ListSwingView` che si occupano del comportamento di pulsanti e finestre di dialogo) introduco un timeout di 5 secondi.)
 
 Implemento la DashboardView con una classe `DashboardSwingView` (sottoclasse di `JFrame`), al cui interno collocherò `SearchSwingView`, `ListSwingView` e `OrderSwingView` (sottoclassi di `JPanel`). Traccio un primo scheletro delle View con WindowBuilder.
 
