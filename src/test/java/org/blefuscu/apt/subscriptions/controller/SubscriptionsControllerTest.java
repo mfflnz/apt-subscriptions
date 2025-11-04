@@ -17,6 +17,7 @@ import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.model.FormattedOrder;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.blefuscu.apt.subscriptions.view.ListView;
+import org.blefuscu.apt.subscriptions.view.MessageView;
 import org.blefuscu.apt.subscriptions.view.OrderView;
 import org.junit.After;
 import org.junit.Before;
@@ -37,6 +38,9 @@ public class SubscriptionsControllerTest {
 
 	@Mock
 	private OrderView orderView;
+
+	@Mock
+	private MessageView messageView;
 
 	@Mock
 	private ExportController exportManager;
@@ -397,37 +401,44 @@ public class SubscriptionsControllerTest {
 	}
 
 	@Test
-	public void testExportOrdersWhenFormattedOrdersListIsNullShouldThrow() {
+	public void testExportOrdersWhenFormattedOrdersListIsNullShouldShowAnErrorMessageAndThrow() {
 		List<FormattedOrder> formattedOrders = null;
 		String filename = "filename.csv";
 		assertThatThrownBy(() -> subscriptionsController.exportOrders(formattedOrders, filename))
 				.isInstanceOf(IllegalArgumentException.class).hasMessage("Error: no orders to export");
+		verify(messageView).showErrorMessage("Error: no orders to export");
 	}
 
 	@Test
-	public void testExportOrdersWhenFilenameIsNullShouldThrow() {
+	public void testExportOrdersWhenFilenameIsNullShouldShowAnErrorMessageAndThrow() {
 		FormattedOrder formattedOrder1 = new FormattedOrder.FormattedOrderBuilder("1").build();
 		List<FormattedOrder> formattedOrders = asList(formattedOrder1);
 		String filename = null;
 		assertThatThrownBy(() -> subscriptionsController.exportOrders(formattedOrders, filename))
 				.isInstanceOf(IllegalArgumentException.class).hasMessage("Please provide file name");
+		verify(messageView).showErrorMessage("Please provide file name");
+
 	}
 
 	@Test
-	public void testExportOrdersWhenFormattedOrdersListIsEmptyShouldThrow() {
+	public void testExportOrdersWhenFormattedOrdersListIsEmptyShouldShowAnErrorMessageAndThrow() {
 		List<FormattedOrder> formattedOrders = Collections.<FormattedOrder>emptyList();
 		String filename = "filename.csv";
 		assertThatThrownBy(() -> subscriptionsController.exportOrders(formattedOrders, filename))
 				.isInstanceOf(IllegalArgumentException.class).hasMessage("Error: no orders to export");
+		verify(messageView).showErrorMessage("Error: no orders to export");
+
 	}
 
 	@Test
-	public void testExportOrdersWhenFilenameIsEmptyShouldThrow() {
+	public void testExportOrdersWhenFilenameIsEmptyShouldShowAnErrorMessageAndThrow() {
 		FormattedOrder formattedOrder1 = new FormattedOrder.FormattedOrderBuilder("1").build();
 		List<FormattedOrder> formattedOrders = asList(formattedOrder1);
 		String filename = "";
 		assertThatThrownBy(() -> subscriptionsController.exportOrders(formattedOrders, filename))
 				.isInstanceOf(IllegalArgumentException.class).hasMessage("Please provide file name");
+		verify(messageView).showErrorMessage("Please provide file name");
+
 	}
 
 	@Test
@@ -455,7 +466,7 @@ public class SubscriptionsControllerTest {
 		subscriptionsController.deleteOrder(1);
 		InOrder inOrder = Mockito.inOrder(orderRepository, orderView, listView);
 		inOrder.verify(orderView).orderDeleted(orderInDB);
-		inOrder.verify(listView).orderDeleted(orderInDB);
+		inOrder.verify(listView).orderDeleted(orderInDB.getOrderId());
 		inOrder.verify(orderRepository).delete(1);
 	}
 
@@ -493,4 +504,38 @@ public class SubscriptionsControllerTest {
 
 	}
 
+	@Test
+	public void testRequestOrdersWhenToDateIsEarlierThanFromDateShouldSendErrorMessageToTheMessageView() {
+		LocalDate fromDate = LocalDate.of(2025, 9, 2);
+		LocalDate toDate = LocalDate.of(2025, 9, 1);
+		assertThatThrownBy(() -> subscriptionsController.requestOrders(fromDate, toDate))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Start date should be earlier or equal to end date");
+		verify(messageView).showErrorMessage("Start date should be earlier or equal to end date");
+
+	}
+	
+	@Test
+	public void testRequestOrdersWhenFromDateIsNullShouldSendErrorMessageToTheMessageView() {
+		LocalDate fromDate = null;
+		LocalDate toDate = LocalDate.of(2025, 9, 1);
+		assertThatThrownBy(() -> subscriptionsController.requestOrders(fromDate, toDate))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Please provide start date");
+		verify(messageView).showErrorMessage("Please provide start date");
+
+	}
+
+	@Test
+	public void testRequestOrdersWhenToDateIsNullShouldSendErrorMessageToTheMessageView() {
+		LocalDate fromDate = LocalDate.of(2025, 9, 1);
+		LocalDate toDate = null;
+		assertThatThrownBy(() -> subscriptionsController.requestOrders(fromDate, toDate))
+		.isInstanceOf(IllegalArgumentException.class)
+		.hasMessage("Please provide end date");
+		verify(messageView).showErrorMessage("Please provide end date");
+		
+	}
+
+	
 }

@@ -14,12 +14,12 @@ public class MessageSwingView extends JPanel implements MessageView {
 	 */
 	public MessageSwingView() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0};
-		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[] { 0, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 0 };
+		gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
-		
+
 		JLabel label = new JLabel(" ");
 		label.setName("messageLabel");
 		GridBagConstraints gbc_label = new GridBagConstraints();
@@ -31,9 +31,15 @@ public class MessageSwingView extends JPanel implements MessageView {
 	}
 
 	@Override
-	public void showMessage(String string) {
+	public void showInfoMessage(String string) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void showErrorMessage(String string) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
