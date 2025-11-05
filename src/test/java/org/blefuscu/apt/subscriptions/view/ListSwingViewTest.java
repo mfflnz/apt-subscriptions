@@ -195,6 +195,24 @@ public class ListSwingViewTest {
 		listSwingView.getFc().setName("export.csv");
 		listSwingView.getFc().cancelSelection();
 	}
+	
+	@Test
+	public void testCancelButtonInDialogShouldCloseTheFileChooserDialog() {
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com").build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "other@address.com").build();
+		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2025, 10, 10), "third@address.com").build();
+
+		GuiActionRunner.execute(() -> {
+			listSwingView.getListOrdersModel().addElement(order1);
+			listSwingView.getListOrdersModel().addElement(order2);
+			listSwingView.getListOrdersModel().addElement(order3);
+		});
+		window.button(JButtonMatcher.withText("Export")).click();
+		listSwingView.getFc().setName("export.csv");
+		listSwingView.getFc().cancelSelection();
+		
+		assertThat(!listSwingView.getFc().isShowing());
+	}
 
 	@Test
 	public void testSaveButtonInDialogShouldDelegateToSubscriptionsControllerFormatOrder() {

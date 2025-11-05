@@ -252,6 +252,7 @@ TODO: qual è il modo più civile di passare
 						<!--	<jvmArg>-Djava.awt.headless=false</jvmArg> -->
 alla command line su Linux per evitare di inserire l'argomento nel POM?
 
+Per ovviare allo stesso problema che sorge nell'esecuzione dei mutation test con Swing, modifico la Run Configuration in modo da inserire l'opzione `-Djava.awt.headless=false` (Run Configurations... > PIT Mutation Test > OrderSwingViewTest (1) > Arguments > VM Arguments > -Djava.awt.headless=false)
 
 ---
 
@@ -369,6 +370,42 @@ N.B.: Per testare le quattro view interne (Search, List, Order e Message), che i
 Implemento la DashboardView con una classe `DashboardSwingView` (sottoclasse di `JFrame`), al cui interno collocherò `SearchSwingView`, `ListSwingView` e `OrderSwingView` (sottoclassi di `JPanel`). Traccio un primo scheletro delle View con WindowBuilder.
 
 Faccio un test case per la `DashboardSwingView`, cioè il JFrame che posso testare esplicitamente con AssertJ Swing: il codice degli altri JPanel sarà quindi testato all'interno del test case `DashboardSwingViewTest`.
+
+**TODO**: testare la OrderView
+
+(**TODO: controllare i mutanti superstiti della ListSwingView:**
+
+    removed call to javax/swing/JFileChooser::setVisible → SURVIVED
+    
+che si riferisce a:
+
+    		btnExport.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					fc = new JFileChooser();
+					fc.setDialogTitle("Export orders");
+					if (fc.showSaveDialog(scrollPane_1) == JFileChooser.APPROVE_OPTION {
+    
+    				...
+				
+					} else {
+					fc.setVisible(false);
+    
+				}
+			}
+		});
+
+e:
+
+    removed call to javax/swing/JButton::setEnabled → SURVIVED
+    
+che si riferisce a:
+
+			@Override
+			public void contentsChanged(ListDataEvent e) {
+				btnExport.setEnabled(true);
+			}
+
 
 ---
 

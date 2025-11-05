@@ -20,8 +20,10 @@ public class SubscriptionsController {
 	private ExportController exportManager;
 	private static final String THE_REQUESTED_ORDER_IS_NOT_AVAILABLE = "The requested order is not available";
 	private static final String START_DATE_SHOULD_BE_EARLIER_OR_EQUAL_TO_END_DATE = "Start date should be earlier or equal to end date";
-	private static final String PLEASE_PROVIDE_END_DATE = "Please provide end date";
 	private static final String PLEASE_PROVIDE_START_DATE = "Please provide start date";
+	private static final String PLEASE_PROVIDE_END_DATE = "Please provide end date";
+	private static final String PLEASE_PROVIDE_FILE_NAME = "Please provide file name";
+	private static final String ERROR_NO_ORDERS_TO_EXPORT = "Error: no orders to export";
 
 	public SubscriptionsController(ListView listView, OrderView orderView, MessageView messageView,
 			OrderRepository orderRepository, ExportController exportManager) {
@@ -154,13 +156,13 @@ public class SubscriptionsController {
 	public void exportOrders(List<FormattedOrder> ordersToExport, String filename) {
 
 		if (ordersToExport == null || ordersToExport.isEmpty()) {
-			sendErrorMessage("Error: no orders to export");
-			throw new IllegalArgumentException("Error: no orders to export");
+			sendErrorMessage(ERROR_NO_ORDERS_TO_EXPORT);
+			throw new IllegalArgumentException(ERROR_NO_ORDERS_TO_EXPORT);
 		}
 
 		if (filename == null || filename.isEmpty()) {
-			sendErrorMessage("Please provide file name");
-			throw new IllegalArgumentException("Please provide file name");
+			sendErrorMessage(PLEASE_PROVIDE_FILE_NAME);
+			throw new IllegalArgumentException(PLEASE_PROVIDE_FILE_NAME);
 		}
 
 		exportManager.saveData(ordersToExport, filename);
