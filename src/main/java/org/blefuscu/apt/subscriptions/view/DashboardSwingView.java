@@ -87,10 +87,6 @@ public class DashboardSwingView extends JFrame implements DashboardView {
 
 	}
 
-	@Override
-	public void showMessage(String message) {
-		// TODO Auto-generated method stub
-		
-	}
+
 
 }

@@ -1,6 +1,7 @@
 package org.blefuscu.apt.subscriptions.view;
 
 import static org.assertj.swing.fixture.Containers.showInFrame;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 
 public class SearchSwingViewTest {
 	
+	private static final int TIMEOUT = 5000;
 	private SearchSwingView searchSwingView;
 	private FrameFixture window;
 	private AutoCloseable closeable;
@@ -94,7 +96,7 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").enterText("2025-02-28");
 		window.button(JButtonMatcher.withText("Search")).click();
 		
-		verify(subscriptionsController).requestOrders(LocalDate.parse("2025-02-01"), LocalDate.parse("2025-02-28"));
+		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("2025-02-01"), LocalDate.parse("2025-02-28"));
 		
 	}
 	
@@ -106,7 +108,7 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").enterText("2025-02-28");
 		window.button(JButtonMatcher.withText("Search")).click();
 
-		verify(subscriptionsController).sendErrorMessage("Please check start date format");
+		verify(subscriptionsController, timeout(TIMEOUT)).sendErrorMessage("Please check start date format");
 	}
 	
 	@Test
@@ -117,7 +119,7 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").enterText("2025-02-68");
 		window.button(JButtonMatcher.withText("Search")).click();
 
-		verify(subscriptionsController).sendErrorMessage("Please check end date format");
+		verify(subscriptionsController, timeout(TIMEOUT)).sendErrorMessage("Please check end date format");
 	}
 	
 	@Test
@@ -128,7 +130,7 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").enterText("2025-01-01");
 		window.button(JButtonMatcher.withText("Search")).click();
 
-		verify(subscriptionsController).sendErrorMessage("Start date should be earlier or equal to end date");
+		verify(subscriptionsController, timeout(TIMEOUT)).sendErrorMessage("Start date should be earlier or equal to end date");
 	}
 	
 	@Test
@@ -139,7 +141,7 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").enterText("2025-02-01");
 		window.button(JButtonMatcher.withText("Search")).click();
 
-		verify(subscriptionsController).requestOrders(LocalDate.parse("2025-02-01"), LocalDate.parse("2025-02-01"));
+		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("2025-02-01"), LocalDate.parse("2025-02-01"));
 	}
 	
 	@Test
@@ -149,7 +151,7 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").enterText("2025-01-01");
 		window.button(JButtonMatcher.withText("Search")).click();
 		
-		verify(subscriptionsController).requestOrders(LocalDate.parse("1970-01-01"), LocalDate.parse("2025-01-01"));
+		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("1970-01-01"), LocalDate.parse("2025-01-01"));
 
 
 	}
@@ -162,7 +164,7 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").enterText("2025-01-01");
 		window.button(JButtonMatcher.withText("Search")).click();
 		
-		verify(subscriptionsController).requestOrders(LocalDate.parse("1970-01-01"), LocalDate.parse("2025-01-01"));
+		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("1970-01-01"), LocalDate.parse("2025-01-01"));
 		
 		
 	}
@@ -174,7 +176,7 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").deleteText();
 		window.button(JButtonMatcher.withText("Search")).click();
 		
-		verify(subscriptionsController).requestOrders(LocalDate.parse("2025-01-01"), LocalDate.now());
+		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("2025-01-01"), LocalDate.now());
 	}
 	
 	@Test
@@ -185,7 +187,7 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").enterText("  ");
 		window.button(JButtonMatcher.withText("Search")).click();
 		
-		verify(subscriptionsController).requestOrders(LocalDate.parse("2025-01-01"), LocalDate.now());
+		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("2025-01-01"), LocalDate.now());
 		
 		
 	}
@@ -196,7 +198,7 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").deleteText();
 		window.button(JButtonMatcher.withText("Search")).click();
 		
-		verify(subscriptionsController).requestOrders();
+		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders();
 		
 	}
 
@@ -208,7 +210,7 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").enterText(" ");
 		window.button(JButtonMatcher.withText("Search")).click();
 		
-		verify(subscriptionsController).requestOrders();
+		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders();
 		
 	}
 
