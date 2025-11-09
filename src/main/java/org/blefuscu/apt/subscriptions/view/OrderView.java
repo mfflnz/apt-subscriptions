@@ -5,6 +5,6 @@ import org.blefuscu.apt.subscriptions.model.Order;
 public interface OrderView {
 
 	void showOrderDetails(Order order);
-	void orderUpdated(int orderId, Order orderToUpdate);
-	void orderDeleted(Order orderToDelete);
+	void orderUpdated(int orderId);
+	void orderDeleted(int orderId);
 }

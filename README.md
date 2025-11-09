@@ -371,7 +371,9 @@ Implemento la DashboardView con una classe `DashboardSwingView` (sottoclasse di 
 
 Faccio un test case per la `DashboardSwingView`, cioè il JFrame che posso testare esplicitamente con AssertJ Swing: il codice degli altri JPanel sarà quindi testato all'interno del test case `DashboardSwingViewTest`.
 
-**TODO**: testare la OrderView
+**TODO**: nel test della OrderView attivare il pulsante Delete anche solo con l'orderId compilato?
+
+**TODO**: il campo orderId non deve essere editabile ma deve essere pieno
 
 (**TODO: controllare i mutanti superstiti della ListSwingView:**
 
@@ -416,3 +418,11 @@ Aggiungo al POM le dipendenze di Mongo Java API e di Logback, e aggiungo i plugi
 Sposto fuori dal profilo `docker` l'attivazione del plugin Docker.
 
 **TODO**: Ho cominciato a tracciare uno schema di implementazione del repository e delle view, per le quali ancora però non ho scritto unit test: fino a quel momento le tengo escluse dal conteggio della code coverage. (Osservo che SonarCloud indica un'ora di technical debt relative al codice non raggiunto.)
+
+---
+
+### Code Quality
+
+TODO: spiega questo: Devo parametrare le assertion di AssertJ Swing, che non vengono trattate da SonarLint.
+
+Nell'analisi della SearchSwingView... TODO: spiega che c'è traoppa Cognitive Complexity. Fare un esempio di prima e dopo sul codice della SearchSwingView.
