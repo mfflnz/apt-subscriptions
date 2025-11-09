@@ -43,20 +43,20 @@ public class SearchSwingView extends JPanel implements SearchView {
 		setLayout(gridBagLayout);
 
 		JLabel lblFrom = new JLabel("From");
-		GridBagConstraints gbc_lblFrom = new GridBagConstraints();
-		gbc_lblFrom.anchor = GridBagConstraints.WEST;
-		gbc_lblFrom.insets = new Insets(0, 0, 5, 5);
-		gbc_lblFrom.gridx = 0;
-		gbc_lblFrom.gridy = 0;
-		add(lblFrom, gbc_lblFrom);
+		GridBagConstraints gbcLblFrom = new GridBagConstraints();
+		gbcLblFrom.anchor = GridBagConstraints.WEST;
+		gbcLblFrom.insets = new Insets(0, 0, 5, 5);
+		gbcLblFrom.gridx = 0;
+		gbcLblFrom.gridy = 0;
+		add(lblFrom, gbcLblFrom);
 
 		JLabel lblTo = new JLabel("To");
-		GridBagConstraints gbc_lblTo = new GridBagConstraints();
-		gbc_lblTo.anchor = GridBagConstraints.WEST;
-		gbc_lblTo.insets = new Insets(0, 0, 5, 0);
-		gbc_lblTo.gridx = 2;
-		gbc_lblTo.gridy = 0;
-		add(lblTo, gbc_lblTo);
+		GridBagConstraints gbcLblTo = new GridBagConstraints();
+		gbcLblTo.anchor = GridBagConstraints.WEST;
+		gbcLblTo.insets = new Insets(0, 0, 5, 0);
+		gbcLblTo.gridx = 2;
+		gbcLblTo.gridy = 0;
+		add(lblTo, gbcLblTo);
 
 		fromTextBox = new JTextField();
 
@@ -67,12 +67,12 @@ public class SearchSwingView extends JPanel implements SearchView {
 			}
 		});
 		fromTextBox.setName("fromTextBox");
-		GridBagConstraints gbc_textField = new GridBagConstraints();
-		gbc_textField.insets = new Insets(0, 0, 5, 5);
-		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField.gridx = 0;
-		gbc_textField.gridy = 1;
-		add(fromTextBox, gbc_textField);
+		GridBagConstraints gbcTextField = new GridBagConstraints();
+		gbcTextField.insets = new Insets(0, 0, 5, 5);
+		gbcTextField.fill = GridBagConstraints.HORIZONTAL;
+		gbcTextField.gridx = 0;
+		gbcTextField.gridy = 1;
+		add(fromTextBox, gbcTextField);
 		fromTextBox.setColumns(10);
 
 		toTextBox = new JTextField();
@@ -85,12 +85,12 @@ public class SearchSwingView extends JPanel implements SearchView {
 			}
 		});
 		toTextBox.setName("toTextBox");
-		GridBagConstraints gbc_textField_1 = new GridBagConstraints();
-		gbc_textField_1.insets = new Insets(0, 0, 5, 0);
-		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_1.gridx = 2;
-		gbc_textField_1.gridy = 1;
-		add(toTextBox, gbc_textField_1);
+		GridBagConstraints gbcTextField1 = new GridBagConstraints();
+		gbcTextField1.insets = new Insets(0, 0, 5, 0);
+		gbcTextField1.fill = GridBagConstraints.HORIZONTAL;
+		gbcTextField1.gridx = 2;
+		gbcTextField1.gridy = 1;
+		add(toTextBox, gbcTextField1);
 		toTextBox.setColumns(10);
 
 		btnSearch = new JButton("Search");
@@ -103,13 +103,8 @@ public class SearchSwingView extends JPanel implements SearchView {
 				String fromText = fromTextBox.getText();
 				String toText = toTextBox.getText();
 				
-				if(fromText.matches(WHITESPACES_REGEX)) {
-					fromText = "";
-				}
-				 
-				if(toText.matches(WHITESPACES_REGEX)) {
-					toText = "";
-				}
+				fromText = removeWhitespacesOnly(fromText);
+				toText = removeWhitespacesOnly(toText);
 
 				if ((fromText.isEmpty())) {
 					if (!toText.isEmpty()) {
@@ -140,22 +135,33 @@ public class SearchSwingView extends JPanel implements SearchView {
 					return;
 				}
 				
+				checkIfDatesAreInTheRightOrder(fromDate, toDate);
+
+			}
+
+			private void checkIfDatesAreInTheRightOrder(LocalDate fromDate, LocalDate toDate) {
 				if (fromDate.isBefore(toDate) || fromDate.isEqual(toDate)) {
 					subscriptionsController.requestOrders(fromDate, toDate);
 				} else {
 					subscriptionsController.sendErrorMessage("Start date should be earlier or equal to end date");
 				}
+			}
 
+			private String removeWhitespacesOnly(String text) {
+				if(text.matches(WHITESPACES_REGEX)) {
+					text = "";
+				}
+				return text;
 			}
 
 		});
 
-		GridBagConstraints gbc_btnSearch = new GridBagConstraints();
-		gbc_btnSearch.anchor = GridBagConstraints.WEST;
-		gbc_btnSearch.insets = new Insets(0, 0, 5, 5);
-		gbc_btnSearch.gridx = 0;
-		gbc_btnSearch.gridy = 2;
-		add(btnSearch, gbc_btnSearch);
+		GridBagConstraints gbcBtnSearch = new GridBagConstraints();
+		gbcBtnSearch.anchor = GridBagConstraints.WEST;
+		gbcBtnSearch.insets = new Insets(0, 0, 5, 5);
+		gbcBtnSearch.gridx = 0;
+		gbcBtnSearch.gridy = 2;
+		add(btnSearch, gbcBtnSearch);
 
 	}
 

@@ -465,7 +465,7 @@ public class SubscriptionsControllerTest {
 		when(orderRepository.findById(1)).thenReturn(orderInDB);
 		subscriptionsController.deleteOrder(1);
 		InOrder inOrder = Mockito.inOrder(orderRepository, orderView, listView);
-		inOrder.verify(orderView).orderDeleted(orderInDB);
+		inOrder.verify(orderView).orderDeleted(orderInDB.getOrderId());
 		inOrder.verify(listView).orderDeleted(orderInDB.getOrderId());
 		inOrder.verify(orderRepository).delete(1);
 	}
@@ -487,7 +487,7 @@ public class SubscriptionsControllerTest {
 		subscriptionsController.updateOrder(1, updatedOrder);
 		InOrder inOrder = Mockito.inOrder(orderRepository, orderView, listView);
 		inOrder.verify(orderRepository).update(1, updatedOrder);
-		inOrder.verify(orderView).orderUpdated(1, updatedOrder);
+		inOrder.verify(orderView).orderUpdated(1);
 		inOrder.verify(listView).orderUpdated(1, updatedOrder);
 	}
 
@@ -531,11 +531,25 @@ public class SubscriptionsControllerTest {
 		LocalDate fromDate = LocalDate.of(2025, 9, 1);
 		LocalDate toDate = null;
 		assertThatThrownBy(() -> subscriptionsController.requestOrders(fromDate, toDate))
-		.isInstanceOf(IllegalArgumentException.class)
-		.hasMessage("Please provide end date");
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("Please provide end date");
 		verify(messageView).showErrorMessage("Please provide end date");
-		
+
+	}
+	
+	@Test
+	public void testSendErrorMessageShouldDelegateMessageViewToShowTheErrorMessage() {
+		subscriptionsController.sendErrorMessage("Error Message");
+		verify(messageView).showErrorMessage("Error Message");
+		verifyNoMoreInteractions(messageView);
 	}
 
+	@Test
+	public void testSendInfoMessageShouldDelegateMessageViewToShowTheInfoMessage() {
+		subscriptionsController.sendInfoMessage("Info Message");
+		verify(messageView).showInfoMessage("Info Message");
+		verifyNoMoreInteractions(messageView);
+	}
+
+	
 	
 }

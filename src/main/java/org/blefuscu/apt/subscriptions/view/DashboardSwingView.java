@@ -45,48 +45,51 @@ public class DashboardSwingView extends JFrame implements DashboardView {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPanel);
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[] { 0, 0, 0, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0 };
+		gridBagLayout.columnWeights = new double[] { 1.0, 0.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE };
 		getContentPane().setLayout(gridBagLayout);
-		
+
 		searchPanel = new SearchSwingView();
-		GridBagConstraints gbc_searchPanel = new GridBagConstraints();
-		gbc_searchPanel.insets = new Insets(0, 0, 5, 5);
-		gbc_searchPanel.fill = GridBagConstraints.BOTH;
-		gbc_searchPanel.gridx = 0;
-		gbc_searchPanel.gridy = 0;
-		contentPanel.add(searchPanel, gbc_searchPanel);
-		
+		searchPanel.setName("searchPanel");
+		GridBagConstraints gbcSearchPanel = new GridBagConstraints();
+		gbcSearchPanel.insets = new Insets(0, 0, 5, 5);
+		gbcSearchPanel.fill = GridBagConstraints.BOTH;
+		gbcSearchPanel.gridx = 0;
+		gbcSearchPanel.gridy = 0;
+		contentPanel.add(searchPanel, gbcSearchPanel);
+
 		listPanel = new ListSwingView();
-		GridBagConstraints gbc_listPanel = new GridBagConstraints();
-		gbc_listPanel.insets = new Insets(0, 0, 5, 5);
-		gbc_listPanel.fill = GridBagConstraints.BOTH;
-		gbc_listPanel.gridx = 0;
-		gbc_listPanel.gridy = 1;
-		contentPanel.add(listPanel, gbc_listPanel);
+		listPanel.setName("listPanel");
+		GridBagConstraints gbcListPanel = new GridBagConstraints();
+		gbcListPanel.insets = new Insets(0, 0, 5, 5);
+		gbcListPanel.fill = GridBagConstraints.BOTH;
+		gbcListPanel.gridx = 0;
+		gbcListPanel.gridy = 1;
+		contentPanel.add(listPanel, gbcListPanel);
+
+		orderPanel = new OrderSwingView();
+		orderPanel.setName("orderPanel");
+		GridBagConstraints gbcOrderPanel = new GridBagConstraints();
+		gbcOrderPanel.anchor = GridBagConstraints.NORTH;
+		gbcOrderPanel.gridheight = 3;
+		gbcOrderPanel.insets = new Insets(0, 0, 5, 5);
+		gbcOrderPanel.fill = GridBagConstraints.HORIZONTAL;
+		gbcOrderPanel.gridx = 1;
+		gbcOrderPanel.gridy = 0;
+		contentPanel.add(orderPanel, gbcOrderPanel);
 
 		messagePanel = new MessageSwingView();
-		GridBagConstraints gbc_messagePanel = new GridBagConstraints();
-		gbc_messagePanel.insets = new Insets(0, 0, 5, 5);
-		gbc_messagePanel.fill = GridBagConstraints.BOTH;
-		gbc_messagePanel.gridx = 0;
-		gbc_messagePanel.gridy = 2;
-		contentPanel.add(messagePanel, gbc_messagePanel);
-		
-		orderPanel = new OrderSwingView();
-		GridBagConstraints gbc_orderPanel = new GridBagConstraints();
-		gbc_orderPanel.anchor = GridBagConstraints.NORTH;
-		gbc_orderPanel.gridheight = 3;
-		gbc_orderPanel.insets = new Insets(0, 0, 5, 5);
-		gbc_orderPanel.fill = GridBagConstraints.HORIZONTAL;
-		gbc_orderPanel.gridx = 1;
-		gbc_orderPanel.gridy = 0;
-		contentPanel.add(orderPanel, gbc_orderPanel);
+		messagePanel.setName("messagePanel");
+		GridBagConstraints gbcMessagePanel = new GridBagConstraints();
+		gbcMessagePanel.gridwidth = 2;
+		gbcMessagePanel.insets = new Insets(0, 0, 0, 5);
+		gbcMessagePanel.fill = GridBagConstraints.BOTH;
+		gbcMessagePanel.gridx = 0;
+		gbcMessagePanel.gridy = 3;
+		contentPanel.add(messagePanel, gbcMessagePanel);
 
 	}
-
-
 
 }

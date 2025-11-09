@@ -72,7 +72,7 @@ public class SubscriptionsController {
 			throw new IllegalArgumentException(THE_REQUESTED_ORDER_IS_NOT_AVAILABLE);
 		}
 		orderRepository.update(orderId, updatedOrder);
-		orderView.orderUpdated(orderId, updatedOrder);
+		orderView.orderUpdated(orderId);
 		listView.orderUpdated(orderId, updatedOrder);
 	}
 
@@ -81,13 +81,14 @@ public class SubscriptionsController {
 		if (orderToDelete == null) {
 			throw new IllegalArgumentException(THE_REQUESTED_ORDER_IS_NOT_AVAILABLE);
 		}
-		orderView.orderDeleted(orderToDelete);
+		orderView.orderDeleted(orderId);
 		listView.orderDeleted(orderId);
 		orderRepository.delete(orderId);
 	}
 
 	public FormattedOrder formatOrder(Order orderToFormat) {
 
+		// TODO: controlla questo pattern
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 		String orderDate = dateTimeFormatter.format(orderToFormat.getOrderDate());
@@ -143,6 +144,8 @@ public class SubscriptionsController {
 			// "|"
 			shippingItems = shippingItems.substring(6, shippingItems.indexOf("|"));
 		}
+		
+
 
 		return new FormattedOrder.FormattedOrderBuilder(Integer.toString(orderToFormat.getOrderId()))
 				.setOrderDate(orderDate).setPaidDate(paidDate).setOrderTotal(orderTotal).setOrderNetTotal(orderNetTotal)
@@ -151,6 +154,8 @@ public class SubscriptionsController {
 				.setShippingPostcode(shippingPostcode).setShippingCity(shippingCity).setShippingState(shippingState)
 				.setCustomerEmail(customerEmail).setBillingPhone(billingPhone).setShippingItems(shippingItems)
 				.setFirstIssue(firstIssue).setLastIssue(lastIssue).setCustomerNote(customerNote).build();
+		
+
 	}
 
 	public void exportOrders(List<FormattedOrder> ordersToExport, String filename) {
@@ -170,6 +175,11 @@ public class SubscriptionsController {
 
 	public void sendErrorMessage(String errorMessage) {
 		messageView.showErrorMessage(errorMessage);
+	}
+
+	public void sendInfoMessage(String infoMessage) {
+		messageView.showInfoMessage(infoMessage);
+		
 	}
 
 }
