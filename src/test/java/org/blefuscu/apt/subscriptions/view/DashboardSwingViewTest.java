@@ -23,9 +23,14 @@ public class DashboardSwingViewTest extends AssertJSwingJUnitTestCase {
 			window.show();
 		}
 
+		
+
 
 	@Test
 	public void testAllPanelsAreShown() {
+		
+		
+		
 		window.panel("searchPanel").requireVisible();
 		window.panel("listPanel").requireVisible();
 		window.panel("orderPanel").requireVisible();

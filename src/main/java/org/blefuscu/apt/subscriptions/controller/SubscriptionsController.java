@@ -1,5 +1,6 @@
 package org.blefuscu.apt.subscriptions.controller;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -17,21 +18,22 @@ public class SubscriptionsController {
 	private OrderView orderView;
 	private MessageView messageView;
 	private OrderRepository orderRepository;
-	private ExportController exportManager;
+	private ExportController exportController;
 	private static final String THE_REQUESTED_ORDER_IS_NOT_AVAILABLE = "The requested order is not available";
 	private static final String START_DATE_SHOULD_BE_EARLIER_OR_EQUAL_TO_END_DATE = "Start date should be earlier or equal to end date";
 	private static final String PLEASE_PROVIDE_START_DATE = "Please provide start date";
 	private static final String PLEASE_PROVIDE_END_DATE = "Please provide end date";
 	private static final String PLEASE_PROVIDE_FILE_NAME = "Please provide file name";
 	private static final String ERROR_NO_ORDERS_TO_EXPORT = "Error: no orders to export";
+	private static final String ERROR_EXPORTING_FILE = "Error exporting file";
 
 	public SubscriptionsController(ListView listView, OrderView orderView, MessageView messageView,
-			OrderRepository orderRepository, ExportController exportManager) {
+			OrderRepository orderRepository, ExportController exportController) {
 		this.listView = listView;
 		this.orderView = orderView;
 		this.messageView = messageView;
 		this.orderRepository = orderRepository;
-		this.exportManager = exportManager;
+		this.exportController = exportController;
 	}
 
 	public void requestOrders() {
@@ -72,6 +74,7 @@ public class SubscriptionsController {
 			throw new IllegalArgumentException(THE_REQUESTED_ORDER_IS_NOT_AVAILABLE);
 		}
 		orderRepository.update(orderId, updatedOrder);
+		orderView.showOrderDetails(updatedOrder);
 		orderView.orderUpdated(orderId);
 		listView.orderUpdated(orderId, updatedOrder);
 	}
@@ -170,7 +173,12 @@ public class SubscriptionsController {
 			throw new IllegalArgumentException(PLEASE_PROVIDE_FILE_NAME);
 		}
 
-		exportManager.saveData(ordersToExport, filename);
+		try {
+			exportController.saveData(ordersToExport, filename);
+		} catch (IOException e) {
+			sendErrorMessage(ERROR_EXPORTING_FILE);
+
+		}
 	}
 
 	public void sendErrorMessage(String errorMessage) {
