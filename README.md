@@ -49,12 +49,11 @@ Schema del Model–view–presenter:
     model
         Order
         FormattedOrder
+            - ordini opportunamente formattati con i soli dati rilevanti
 
     repository
         OrderRepository
-            operazioni sugli ordini (-> database)
-        ExportManager
-            operazioni sugli export (-> filesystem)
+            - operazioni di ricerca, aggiornamento ed eliminazione
 
     view
         DashboardView
@@ -67,9 +66,14 @@ Schema del Model–view–presenter:
                 - vista dettagliata dell'ordine selezionato
                 - aggiornamento dell'ordine selezionato
                 - eliminazione dell'ordine selezionato
+            MessageView
+                - un campo che mostra messaggi informativi o di errore
 
     controller
         SubscriptionsController
+            operazioni sugli ordini (-> database)
+        ExportController
+            operazioni sugli export (-> filesystem)
 
 ---
 
@@ -145,6 +149,8 @@ Ripulisco e faccio un push, approfittandone anche per eseguire un workflow di Wi
 **TODO**: capire le [linee guida per lo storage](https://learn.microsoft.com/en-us/virtualization/windowscontainers/manage-containers/persistent-storage) su Microsoft Learn. Nel frattempo modifico il workflow in modo che il trigger avvenga solo [manualmente](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch) (`on: workflow_dispatch`).
 
 Comincio a implementare la View preparando i primi unit test. Aggiorno nel POM la dipendenza di AssertJ Core sostituendola con AssertJ Swing.
+
+Tengo sotto controllo la code coverage. A buon punto della scrittura degli unit test raggiungo il 100% del codice del Controller e del Repository, il 99.4% della View (non è raggiunto il metodo main() della DashboardSwingView)
 
 ---
 
@@ -239,20 +245,21 @@ Faccio un test:
 
     mvn clean test org.pitest:pitest-maven:mutationCoverage
     
-**TODO**: aggiustare Pitclipse per escludere il Model.
+Aggiusto Pitclipse in modo da escludere il Model: ad esempio, al momento di eseguire i mutation test su `SubscriptionsController` innanzitutto prendo nota del "fully qualified name" di `Order.java`, quindi faccio clic col tasto destro su `SubscriptionsControllerTest.java` nel Package Explorer, quindi Run As > Run Configurations... e modifico la Run Configuration sotto PIT Mutation Test > SubscriptionsControllerTest (1) inserendo nel campo Excluded calsses delle Preferences: `*Test, org.blefuscu.apt.subscriptions.model.Order`.
+
+Anzi meglio: nella finestra `Preferences` (Ctrl+3 > Preferences) nelle impostazion idi Pitest inserisco direttamente `*Test, org.blefuscu.apt.subscriptions.model.*` nel campo Excluded classes.
 
 Configuro il plugin di Pitest in modo da includere i mutator del gruppo STRONGER.
 
-TODO: SISTEMA QUESTO DISCORSO:
-Sorge un problema al momento di dover far girare Pitest sui test delle view, che prevedono le interfacce grafiche. Facendo riferimento ad alcune issue ([qui](https://github.com/hcoles/pitest/issues/581), a cui fa riferimento [questa PR](https://github.com/hcoles/pitest/pull/601); [qui](https://github.com/hcoles/pitest/issues/881), e [qui](https://github.com/hcoles/pitest/issues/1033))
+Sorge un problema al momento di dover far girare Pitclipse sui test delle view, che prevedono le interfacce grafiche. Facendo riferimento ad alcune issue ([qui](https://github.com/hcoles/pitest/issues/581), a cui fa riferimento [questa PR](https://github.com/hcoles/pitest/pull/601); [qui](https://github.com/hcoles/pitest/issues/881), e [qui](https://github.com/hcoles/pitest/issues/1033)), modifico la Run Configuration in modo da inserire l'opzione `-Djava.awt.headless=false` (Run Configurations... > PIT Mutation Test > OrderSwingViewTest (1) > Arguments > VM Arguments > -Djava.awt.headless=false).
 
 NB: Per mantenere il plugin `pitest-maven` compatibile con Java 8, mantengo la versione cui si fa riferimento nel libro (1.5.2), poiché le successive richiedono almeno Java 11. Per ora mantengo nel POM l'opzione esplicita `-Djava.awt.headless=false` ed evito di attivare il mutation testing nel workflow per macOS.
 
-TODO: qual è il modo più civile di passare 
-						<!--	<jvmArg>-Djava.awt.headless=false</jvmArg> -->
-alla command line su Linux per evitare di inserire l'argomento nel POM?
+**TODO**: qual è il modo più civile di passare 
 
-Per ovviare allo stesso problema che sorge nell'esecuzione dei mutation test con Swing, modifico la Run Configuration in modo da inserire l'opzione `-Djava.awt.headless=false` (Run Configurations... > PIT Mutation Test > OrderSwingViewTest (1) > Arguments > VM Arguments > -Djava.awt.headless=false)
+    <jvmArg>-Djava.awt.headless=false</jvmArg>
+    
+alla command line su Linux per evitare di inserire l'argomento nel POM?
 
 ---
 
@@ -279,6 +286,23 @@ La build va a buon fine ma, probabilmente per via della formattazione degli `add
 (Infatti anche l'ultimo computo di Coveralls non ha ricevuto i dati dell'ultimo commit.)
 
 Imposto Docker su GitHub Actions. Nel POM configuro il `docker-maven-plugin` in modo da attivarlo con il profilo `docker`. (Faccio un test in locale con `mvn verify -Pdocker`.) Attivo due container di MongoDB, uno dei quali con funzione di server, l'altro per importare da shell (`mongoimport`) alcuni documenti-campione su cui fare i test.
+
+Installo il wrapper `xvfb-run`:
+ 
+    sudo pacman -S xorg-server-xvfb
+
+e provo a lanciare Maven in locale:
+
+    xvfb-run mvn clean test
+
+TODO: Uno dei test per la OrderView ha una failure che sembra legata al timeout per lanciare il Controller, ma non è così... DA CAPIRE:
+
+    [ERROR] org.blefuscu.apt.subscriptions.view.OrderSwingViewTest.testDeleteButtonShouldDelegateToSubscriptionsController -- Time elapsed: 26.06 s <<< FAILURE!
+    Wanted but not invoked:
+    subscriptionsController.deleteOrder(425);
+    -> at     org.blefuscu.apt.subscriptions.view.OrderSwingViewTest.testDeleteButtonShouldDelegateToSubscriptionsController(OrderSwingViewTest.java:188)
+    Actually, there were zero interactions with this mock.
+    
 
 #### Aggiustamenti con macOS
 
@@ -418,6 +442,12 @@ Aggiungo al POM le dipendenze di Mongo Java API e di Logback, e aggiungo i plugi
 Sposto fuori dal profilo `docker` l'attivazione del plugin Docker.
 
 **TODO**: Ho cominciato a tracciare uno schema di implementazione del repository e delle view, per le quali ancora però non ho scritto unit test: fino a quel momento le tengo escluse dal conteggio della code coverage. (Osservo che SonarCloud indica un'ora di technical debt relative al codice non raggiunto.)
+
+Dopo aver scritto il SubscriptionsController e le View, mi concentro su uno dei pezzi mancanti: l'ExportController, che si occupa di scrivere su disco e di cancellare dal disco i file esportati a partire dalla ListView. Considero i relativi test come degli Integration Test.
+
+Restano da fare gli Integration test per il SubscriptionsController.
+
+**TODO** NullPointer in fromDocumentToOrder nell'ordermongorepository
 
 ---
 

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.ORDER_COLLECTION_NAME;
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.SUBSCRIPTIONS_DB_NAME;
-import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.FORMATTER;
+import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.DATE_TIME_FORMATTER;
 
 import java.net.InetSocketAddress;
 import java.time.LocalDate;
@@ -353,7 +353,7 @@ public class OrderMongoRepositoryTest {
 
 		assertThat(StreamSupport.stream(orderCollection.find().spliterator(), false)
 				.map(d -> new Order.OrderBuilder(d.getInteger("order_id"),
-						LocalDate.parse(d.getString("order_date"), FORMATTER), d.getString("customer_email")).build())
+						LocalDate.parse(d.getString("order_date"), DATE_TIME_FORMATTER), d.getString("customer_email")).build())
 				.collect(Collectors.toList()))
 				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2025, 9, 9), "customer@address.com").build());
 
@@ -363,7 +363,7 @@ public class OrderMongoRepositoryTest {
 
 		assertThat(StreamSupport.stream(orderCollection.find().spliterator(), false)
 				.map(d -> new Order.OrderBuilder(d.getInteger("order_id"),
-						LocalDate.parse(d.getString("order_date"), FORMATTER), d.getString("customer_email")).build())
+						LocalDate.parse(d.getString("order_date"), DATE_TIME_FORMATTER), d.getString("customer_email")).build())
 				.collect(Collectors.toList()))
 				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2025, 9, 9), "updated@address.com").build());
 
@@ -393,6 +393,26 @@ public class OrderMongoRepositoryTest {
 		assertThatThrownBy(() -> orderRepository.delete(1)).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Error: Order not found");
 
+	}
+
+	@Test
+	public void testSaveOrderWhenOrderIdIsNotPresent() {
+		Order order = new Order.OrderBuilder(1, LocalDate.of(2025, 11, 11), "customer@email.com").setPaidDate(LocalDate.of(2025, 11, 12)).build();
+		orderRepository.save(order);
+
+		assertThat(StreamSupport.stream(orderCollection.find().spliterator(), false)
+				.map(d -> new Order.OrderBuilder(d.getInteger("order_id"),
+						LocalDate.parse(d.getString("order_date"), DATE_TIME_FORMATTER), d.getString("customer_email")).build())
+				.collect(Collectors.toList()))
+				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2025, 11, 11), "customer@email.com").build());
+
+	}
+
+	@Test
+	public void testSaveOrderWhenOrderIdIsAlreadyPresent() {
+		// ******************
+		// TODO
+		// ******************
 	}
 
 	private void addTestOrderToDatabase(int orderId, String orderDate, String customerEmail) {

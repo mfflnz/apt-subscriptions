@@ -5,16 +5,21 @@ import javax.swing.JPanel;
 import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.GridBagConstraints;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 
 import java.awt.Color;
 import java.awt.Dimension;
 
 public class MessageSwingView extends JPanel implements MessageView {
 
+	private static final int MESSAGE_TIMEOUT = 5000;
 	private static final long serialVersionUID = 1L;
 	private JTextField messageTextBox;
+
 	private SubscriptionsController subscriptionsController;
 
 	/**
@@ -29,7 +34,6 @@ public class MessageSwingView extends JPanel implements MessageView {
 		gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
 		gridBagLayout.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
-		
 
 		messageTextBox = new JTextField();
 		messageTextBox.setName("messageTextBox");
@@ -41,12 +45,22 @@ public class MessageSwingView extends JPanel implements MessageView {
 		messageTextBox.setColumns(10);
 		messageTextBox.setMinimumSize(new Dimension(300, 100));
 
+		int delay = MESSAGE_TIMEOUT;
+		ActionListener taskPerformer = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				messageTextBox.setText("");
+			}
+		};
+		new Timer(delay, taskPerformer).start();
+
 	}
 
 	@Override
 	public void showInfoMessage(String string) {
 		messageTextBox.setForeground(Color.BLACK);
 		messageTextBox.setText(string);
+
 	}
 
 	@Override
@@ -57,6 +71,10 @@ public class MessageSwingView extends JPanel implements MessageView {
 
 	public void setSubscriptionsController(SubscriptionsController subscriptionsController) {
 		this.subscriptionsController = subscriptionsController;
+	}
+
+	public JTextField getMessageTextBox() {
+		return messageTextBox;
 	}
 
 }

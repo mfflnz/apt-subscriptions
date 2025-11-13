@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static java.util.Arrays.asList;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +44,7 @@ public class SubscriptionsControllerTest {
 	private MessageView messageView;
 
 	@Mock
-	private ExportController exportManager;
+	private ExportController exportController;
 
 	@InjectMocks
 	private SubscriptionsController subscriptionsController;
@@ -442,12 +443,23 @@ public class SubscriptionsControllerTest {
 	}
 
 	@Test
-	public void testExportOrdersWhenFormattedOrdersListIsNotEmptyAndFilenameIsNotEmpty() {
+	public void testExportOrdersWhenFormattedOrdersListIsNotEmptyAndFilenameIsNotEmpty() throws IOException {
 		FormattedOrder formattedOrder1 = new FormattedOrder.FormattedOrderBuilder("1").build();
 		List<FormattedOrder> formattedOrders = asList(formattedOrder1);
 		String filename = "export_example.csv";
 		subscriptionsController.exportOrders(formattedOrders, filename);
-		verify(exportManager).saveData(formattedOrders, filename);
+		verify(exportController).saveData(formattedOrders, filename);
+	}
+
+	@Test
+	public void testExportOrdersWhenExportControllerSaveDataThrowsAnIOException() throws IOException {
+		FormattedOrder formattedOrder1 = new FormattedOrder.FormattedOrderBuilder("1").build();
+		List<FormattedOrder> formattedOrders = asList(formattedOrder1);
+		String filename = "export_example.csv";
+		when(exportController.saveData(formattedOrders, filename)).thenThrow(IOException.class);
+		subscriptionsController.exportOrders(formattedOrders, filename);
+		verify(messageView).showErrorMessage("Error exporting file");
+
 	}
 
 	@Test
@@ -514,14 +526,13 @@ public class SubscriptionsControllerTest {
 		verify(messageView).showErrorMessage("Start date should be earlier or equal to end date");
 
 	}
-	
+
 	@Test
 	public void testRequestOrdersWhenFromDateIsNullShouldSendErrorMessageToTheMessageView() {
 		LocalDate fromDate = null;
 		LocalDate toDate = LocalDate.of(2025, 9, 1);
 		assertThatThrownBy(() -> subscriptionsController.requestOrders(fromDate, toDate))
-				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessage("Please provide start date");
+				.isInstanceOf(IllegalArgumentException.class).hasMessage("Please provide start date");
 		verify(messageView).showErrorMessage("Please provide start date");
 
 	}
@@ -535,7 +546,7 @@ public class SubscriptionsControllerTest {
 		verify(messageView).showErrorMessage("Please provide end date");
 
 	}
-	
+
 	@Test
 	public void testSendErrorMessageShouldDelegateMessageViewToShowTheErrorMessage() {
 		subscriptionsController.sendErrorMessage("Error Message");
@@ -550,6 +561,4 @@ public class SubscriptionsControllerTest {
 		verifyNoMoreInteractions(messageView);
 	}
 
-	
-	
 }

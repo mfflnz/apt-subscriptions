@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
+import org.assertj.swing.timing.Pause;
 import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 import org.junit.After;
 import org.junit.Before;
@@ -56,8 +57,25 @@ public class MessageSwingViewTest {
 
 	@Test
 	@GUITest
-	public void testShowErrorMessageShouldDisplayARedInfoMessage() {
+	public void testShowErrorMessageShouldDisplayAnErrorMessage() {
 		messageSwingView.showErrorMessage("Sample error message");
 		assertEquals("Sample error message", window.textBox("messageTextBox").text());
 	}
+
+	@Test
+	@GUITest
+	public void testMessageTextBoxShouldBeResetAfterAFewSeconds() {
+		messageSwingView.showErrorMessage("Sample error message");
+		assertEquals("Sample error message", window.textBox("messageTextBox").text());
+		Pause.pause(8000);
+		assertEquals("", window.textBox("messageTextBox").text());
+	}
+	
+	@Test
+	public void testGetMessage() {
+		messageSwingView.showErrorMessage("Sample error message");
+		assertEquals("Sample error message", messageSwingView.getMessageTextBox().getText());
+
+	}
+	
 }

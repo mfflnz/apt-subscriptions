@@ -9,10 +9,10 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 
 import org.assertj.swing.annotation.GUITest;
+import org.assertj.swing.core.EmergencyAbortListener;
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
-import org.assertj.swing.timing.Pause;
 import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 import org.blefuscu.apt.subscriptions.model.FormattedOrder;
 import org.blefuscu.apt.subscriptions.model.Order;
@@ -24,10 +24,13 @@ import org.mockito.MockitoAnnotations;
 
 public class OrderSwingViewTest {
 
-	private static final int TIMEOUT = 5000;
+	private static final int TIMEOUT = 20000;
 	private OrderSwingView orderSwingView;
 	private FrameFixture window;
 	private AutoCloseable closeable;
+
+	// https://joel-costigliola.github.io/assertj/assertj-swing-running.html
+	private EmergencyAbortListener listener;
 
 	@Mock
 	private SubscriptionsController subscriptionsController;
@@ -35,6 +38,7 @@ public class OrderSwingViewTest {
 	@Before
 	public void setUp() throws Exception {
 		closeable = MockitoAnnotations.openMocks(this);
+		listener = EmergencyAbortListener.registerInToolkit();
 
 		GuiActionRunner.execute(() -> {
 			orderSwingView = new OrderSwingView();
@@ -47,6 +51,7 @@ public class OrderSwingViewTest {
 
 	@After
 	public void tearDown() throws Exception {
+		listener.unregister();
 		window.cleanUp();
 		closeable.close();
 	}
@@ -228,11 +233,9 @@ public class OrderSwingViewTest {
 		assertThat(window.textBox("firstIssueTextBox").text()).isEqualTo("106");
 		assertThat(window.textBox("lastIssueTextBox").text()).isEqualTo("111");
 		assertThat(window.textBox("notesTextBox").text()).isEqualTo("Abbonamento regalato da Gianluca Boarelli");
-		
+
 		window.button(JButtonMatcher.withText("Update")).requireEnabled();
 		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
-
-		Pause.pause(2000);
 
 	}
 
