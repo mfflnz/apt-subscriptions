@@ -353,7 +353,8 @@ public class OrderMongoRepositoryTest {
 
 		assertThat(StreamSupport.stream(orderCollection.find().spliterator(), false)
 				.map(d -> new Order.OrderBuilder(d.getInteger("order_id"),
-						LocalDate.parse(d.getString("order_date"), DATE_TIME_FORMATTER), d.getString("customer_email")).build())
+						LocalDate.parse(d.getString("order_date"), DATE_TIME_FORMATTER), d.getString("customer_email"))
+						.build())
 				.collect(Collectors.toList()))
 				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2025, 9, 9), "customer@address.com").build());
 
@@ -363,7 +364,8 @@ public class OrderMongoRepositoryTest {
 
 		assertThat(StreamSupport.stream(orderCollection.find().spliterator(), false)
 				.map(d -> new Order.OrderBuilder(d.getInteger("order_id"),
-						LocalDate.parse(d.getString("order_date"), DATE_TIME_FORMATTER), d.getString("customer_email")).build())
+						LocalDate.parse(d.getString("order_date"), DATE_TIME_FORMATTER), d.getString("customer_email"))
+						.build())
 				.collect(Collectors.toList()))
 				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2025, 9, 9), "updated@address.com").build());
 
@@ -397,12 +399,14 @@ public class OrderMongoRepositoryTest {
 
 	@Test
 	public void testSaveOrderWhenOrderIdIsNotPresent() {
-		Order order = new Order.OrderBuilder(1, LocalDate.of(2025, 11, 11), "customer@email.com").setPaidDate(LocalDate.of(2025, 11, 12)).build();
+		Order order = new Order.OrderBuilder(1, LocalDate.of(2025, 11, 11), "customer@email.com")
+				.setPaidDate(LocalDate.of(2025, 11, 12)).build();
 		orderRepository.save(order);
 
 		assertThat(StreamSupport.stream(orderCollection.find().spliterator(), false)
 				.map(d -> new Order.OrderBuilder(d.getInteger("order_id"),
-						LocalDate.parse(d.getString("order_date"), DATE_TIME_FORMATTER), d.getString("customer_email")).build())
+						LocalDate.parse(d.getString("order_date"), DATE_TIME_FORMATTER), d.getString("customer_email"))
+						.build())
 				.collect(Collectors.toList()))
 				.containsExactly(new Order.OrderBuilder(1, LocalDate.of(2025, 11, 11), "customer@email.com").build());
 
@@ -410,9 +414,21 @@ public class OrderMongoRepositoryTest {
 
 	@Test
 	public void testSaveOrderWhenOrderIdIsAlreadyPresent() {
-		// ******************
-		// TODO
-		// ******************
+		Order order1 = new Order.OrderBuilder(31, LocalDate.of(2025, 11, 11), "customer@email.com")
+				.setPaidDate(LocalDate.of(2025, 11, 12)).build();
+		Order order2 = new Order.OrderBuilder(31, LocalDate.of(2025, 11, 15), "other@email.com")
+				.setPaidDate(LocalDate.of(2025, 11, 15)).build();
+		orderRepository.save(order1);
+
+		assertThat(StreamSupport.stream(orderCollection.find().spliterator(), false)
+				.map(d -> new Order.OrderBuilder(d.getInteger("order_id"),
+						LocalDate.parse(d.getString("order_date"), DATE_TIME_FORMATTER), d.getString("customer_email"))
+						.build())
+				.collect(Collectors.toList()))
+				.containsExactly(new Order.OrderBuilder(31, LocalDate.of(2025, 11, 11), "customer@email.com").build());
+
+		assertThatThrownBy(() -> orderRepository.save(order2)).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Error: Order with id 31 already in database");
 	}
 
 	private void addTestOrderToDatabase(int orderId, String orderDate, String customerEmail) {
