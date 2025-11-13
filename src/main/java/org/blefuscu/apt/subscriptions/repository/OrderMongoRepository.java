@@ -55,6 +55,14 @@ public class OrderMongoRepository implements OrderRepository {
 	}
 
 	@Override
+	public void save(Order order) {
+		if (findById(order.getOrderId()) != null) {
+			throw new IllegalArgumentException("Error: Order with id " + order.getOrderId() + " already in database");
+		}
+		orderCollection.insertOne(fromOrderToDocument(order));
+	}
+
+	@Override
 	public void update(int id, Order updatedOrder) throws IllegalArgumentException {
 
 		if (findById(id) == null) {
@@ -135,16 +143,15 @@ public class OrderMongoRepository implements OrderRepository {
 	}
 
 	private Document fromOrderToDocument(Order order) {
-		
-		String paidDate = ""; 
+
+		String paidDate = "";
 		if (order.getPaidDate() != null) {
 			paidDate = order.getPaidDate().toString();
 		}
 
-		return new Document().append(ORDER_ID, order.getOrderId())
-				.append(ORDER_DATE, order.getOrderDate().toString()).append("customer_email", order.getCustomerEmail())
-				.append("order_number", order.getOrderNumber()).append("status", order.getStatus())
-				.append("shipping_total", order.getShippingTotal())
+		return new Document().append(ORDER_ID, order.getOrderId()).append(ORDER_DATE, order.getOrderDate().toString())
+				.append("customer_email", order.getCustomerEmail()).append("order_number", order.getOrderNumber())
+				.append("status", order.getStatus()).append("shipping_total", order.getShippingTotal())
 				.append("shipping_tax_total", order.getShippingTaxTotal()).append("fee_total", order.getFeeTotal())
 				.append("fee_tax_total", order.getFeeTaxTotal()).append("tax_total", order.getTaxTotal())
 				.append("cart_discount", order.getCartDiscount()).append("order_discount", order.getOrderDiscount())
@@ -156,8 +163,7 @@ public class OrderMongoRepository implements OrderRepository {
 				.append("customer_ip_address", order.getCustomerIpAddress())
 				.append("customer_user_agent", order.getCustomerUserAgent())
 				.append("shipping_method", order.getShippingMethod()).append("customer_id", order.getCustomerId())
-				.append("customer_user", order.getCustomerUser())
-				.append(PAID_DATE, paidDate)
+				.append("customer_user", order.getCustomerUser()).append(PAID_DATE, paidDate)
 				.append("billing_first_name", order.getBillingFirstName())
 				.append("billing_last_name", order.getBillingLastName())
 				.append("billing_company", order.getBillingCompany()).append("billing_email", order.getBillingEmail())
@@ -198,11 +204,6 @@ public class OrderMongoRepository implements OrderRepository {
 				.append("line_item_4", order.getLineItem4()).append("line_item_5", order.getLineItem5())
 				.append("order_confirmed", true).append("order_net_total", order.getOrderNetTotal())
 				.append("first_issue", order.getFirstIssue()).append("last_issue", order.getLastIssue());
-	}
-
-	@Override
-	public void save(Order order) {
-		orderCollection.insertOne(fromOrderToDocument(order));
 	}
 
 }

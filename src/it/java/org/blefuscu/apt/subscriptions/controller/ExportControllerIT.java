@@ -103,8 +103,8 @@ public class ExportControllerIT {
 				.setShippingState("BO").setCustomerEmail("customer@emailaddress.com")
 				.setBillingPhone("+39 321 456 7890").setShippingItems("Abbonamento cartaceo").setFirstIssue("106")
 				.setLastIssue("111").setCustomerNote("Abbonamento regalato da Gianluca Boarelli").build();
-		List<FormattedOrder> formattedOrders = asList(formattedOrder1, formattedOrder2);
-		return formattedOrders;
+	
+		return asList(formattedOrder1, formattedOrder2);
 	}
 
 
