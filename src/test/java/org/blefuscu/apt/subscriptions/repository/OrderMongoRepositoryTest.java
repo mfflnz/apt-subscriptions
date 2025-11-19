@@ -414,6 +414,7 @@ public class OrderMongoRepositoryTest {
 
 	@Test
 	public void testSaveOrderWhenOrderIdIsAlreadyPresent() {
+		
 		Order order1 = new Order.OrderBuilder(31, LocalDate.of(2025, 11, 11), "customer@email.com")
 				.setPaidDate(LocalDate.of(2025, 11, 12)).build();
 		Order order2 = new Order.OrderBuilder(31, LocalDate.of(2025, 11, 15), "other@email.com")
@@ -426,7 +427,7 @@ public class OrderMongoRepositoryTest {
 						.build())
 				.collect(Collectors.toList()))
 				.containsExactly(new Order.OrderBuilder(31, LocalDate.of(2025, 11, 11), "customer@email.com").build());
-
+		
 		assertThatThrownBy(() -> orderRepository.save(order2)).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Error: Order with id 31 already in database");
 	}

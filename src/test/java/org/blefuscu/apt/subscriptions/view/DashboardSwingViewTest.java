@@ -12,11 +12,16 @@ public class DashboardSwingViewTest extends AssertJSwingJUnitTestCase {
 	
 	 private FrameFixture window;
 	 private DashboardSwingView dashboardSwingView;
+	 private SearchSwingView searchSwingView;
+	 private ListSwingView listSwingView;
+	 private OrderSwingView orderSwingView;
+	 private MessageSwingView messageSwingView;
 	 
 		@Override
 		protected void onSetUp() {
 			GuiActionRunner.execute(() -> {
-				dashboardSwingView = new DashboardSwingView();
+				
+				dashboardSwingView = new DashboardSwingView(searchSwingView, listSwingView, orderSwingView, messageSwingView);
 				return dashboardSwingView;
 			});
 			window = new FrameFixture(robot(), dashboardSwingView);
@@ -28,8 +33,6 @@ public class DashboardSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testAllPanelsAreShown() {
-		
-		
 		
 		window.panel("searchPanel").requireVisible();
 		window.panel("listPanel").requireVisible();

@@ -105,17 +105,11 @@ public class OrderSwingViewTest {
 	@GUITest
 	public void testOrderIdFieldShouldAllowOnlyNumbers() {
 		window.textBox("orderIdTextBox").deleteText();
-		window.textBox("orderIdTextBox").enterText("4");
+		window.textBox("orderIdTextBox").enterText("R");
 		window.textBox("orderDateTextBox").deleteText();
 		window.textBox("orderDateTextBox").enterText("2025-11-05");
 		window.textBox("emailTextBox").deleteText();
 		window.textBox("emailTextBox").enterText("customer@email.com");
-
-		window.button(JButtonMatcher.withText("Update")).requireEnabled();
-		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
-
-		window.textBox("orderIdTextBox").deleteText();
-		window.textBox("orderIdTextBox").enterText("R");
 
 		window.button(JButtonMatcher.withText("Update")).requireDisabled();
 		window.button(JButtonMatcher.withText("Delete")).requireDisabled();

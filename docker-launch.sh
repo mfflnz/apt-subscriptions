@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Fermo il container, qualora l'avessi già lanciato:
-docker stop my-mongo
+docker stop subscriptions
 
 # Rimuovo la rete apt-network, qualora l'avessi già creata
 docker network rm apt-network
