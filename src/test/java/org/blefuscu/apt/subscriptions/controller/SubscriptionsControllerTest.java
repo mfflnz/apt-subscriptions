@@ -164,7 +164,7 @@ public class SubscriptionsControllerTest {
 	public void testFormatOrderShouldFormatOrderDate() {
 		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
-		assertThat(formattedOrder.getOrderDate()).isEqualTo("02/09/2025");
+		assertThat(formattedOrder.getOrderDate()).isEqualTo("2025-09-02");
 	}
 
 	@Test
@@ -180,7 +180,7 @@ public class SubscriptionsControllerTest {
 		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
 				.setPaidDate(LocalDate.of(2025, 9, 5)).build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
-		assertThat(formattedOrder.getPaidDate()).isEqualTo("05/09/2025");
+		assertThat(formattedOrder.getPaidDate()).isEqualTo("2025-09-05");
 	}
 
 	@Test
@@ -200,7 +200,7 @@ public class SubscriptionsControllerTest {
 	}
 
 	@Test
-	public void testFormatOrderShouldCopyShippingFirstNameWhenItsNotEmpty() {
+	public void testFormatOrderShouldCopyShippiungFirstNameWhenItsNotEmpty() {
 		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
 				.setShippingFirstName("Anna").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
@@ -370,6 +370,17 @@ public class SubscriptionsControllerTest {
 	}
 
 	@Test
+	public void testFormatOrderShouldNotFormatShippingItemsIfItsAlreadyFormatted() {
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingItems(
+						"Gli asini – nuova serie · 121 · luglio-agosto 2025 &times; 1, Gli asini – nuova serie · 120 · maggio-giugno 2025 &times; 1")
+				.build();
+		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
+		assertThat(formattedOrder.getShippingItems()).isEqualTo(
+				"Gli asini – nuova serie · 121 · luglio-agosto 2025 &times; 1, Gli asini – nuova serie · 120 · maggio-giugno 2025 &times; 1");
+	}
+
+	@Test
 	public void testFormatOrderShouldCopyFirstIssue() {
 		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
 				.setFirstIssue(114).build();
@@ -400,6 +411,7 @@ public class SubscriptionsControllerTest {
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getPaymentMethodTitle()).isEqualTo("Carta di credito");
 	}
+
 
 	@Test
 	public void testExportOrdersWhenFormattedOrdersListIsNullShouldShowAnErrorMessageAndThrow() {

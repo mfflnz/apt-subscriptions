@@ -1,10 +1,11 @@
 package org.blefuscu.apt.subscriptions.view;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -13,31 +14,20 @@ public class DashboardSwingView extends JFrame implements DashboardView {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPanel;
-	private SearchSwingView searchPanel;
-	private ListSwingView listPanel;
-	private MessageSwingView messagePanel;
-	private OrderSwingView orderPanel;
+	private SubscriptionsController subscriptionsController;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					DashboardSwingView frame = new DashboardSwingView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+	public SubscriptionsController getSubscriptionsController() {
+		return subscriptionsController;
+	}
+
+	public void setSubscriptionsController(SubscriptionsController subscriptionsController) {
+		this.subscriptionsController = subscriptionsController;
 	}
 
 	/**
 	 * Create the frame.
 	 */
-	public DashboardSwingView() {
+	public DashboardSwingView(SearchSwingView searchPanel, ListSwingView listPanel, OrderSwingView orderPanel, MessageSwingView messagePanel) {
 		setTitle("Dashboard");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
@@ -51,7 +41,6 @@ public class DashboardSwingView extends JFrame implements DashboardView {
 		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE };
 		getContentPane().setLayout(gridBagLayout);
 
-		searchPanel = new SearchSwingView();
 		searchPanel.setName("searchPanel");
 		GridBagConstraints gbcSearchPanel = new GridBagConstraints();
 		gbcSearchPanel.insets = new Insets(0, 0, 5, 5);
@@ -60,7 +49,6 @@ public class DashboardSwingView extends JFrame implements DashboardView {
 		gbcSearchPanel.gridy = 0;
 		contentPanel.add(searchPanel, gbcSearchPanel);
 
-		listPanel = new ListSwingView();
 		listPanel.setName("listPanel");
 		GridBagConstraints gbcListPanel = new GridBagConstraints();
 		gbcListPanel.insets = new Insets(0, 0, 5, 5);
@@ -69,7 +57,6 @@ public class DashboardSwingView extends JFrame implements DashboardView {
 		gbcListPanel.gridy = 1;
 		contentPanel.add(listPanel, gbcListPanel);
 
-		orderPanel = new OrderSwingView();
 		orderPanel.setName("orderPanel");
 		GridBagConstraints gbcOrderPanel = new GridBagConstraints();
 		gbcOrderPanel.anchor = GridBagConstraints.NORTH;
@@ -80,7 +67,6 @@ public class DashboardSwingView extends JFrame implements DashboardView {
 		gbcOrderPanel.gridy = 0;
 		contentPanel.add(orderPanel, gbcOrderPanel);
 
-		messagePanel = new MessageSwingView();
 		messagePanel.setName("messagePanel");
 		GridBagConstraints gbcMessagePanel = new GridBagConstraints();
 		gbcMessagePanel.gridwidth = 2;

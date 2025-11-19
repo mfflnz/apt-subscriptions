@@ -451,6 +451,16 @@ Restano da fare gli Integration test per il SubscriptionsController.
 
 ---
 
+### E2E Test
+
+**TODO**: timeout dei messaggi deve partire dal momento in cui viene mostrato il messaggio, non sempre
+
+**TODO**: export non legge nome file
+
+**TODO**: leggi E2E
+
+---
+
 ### Code Quality
 
 TODO: spiega questo: Devo parametrare le assertion di AssertJ Swing, che non vengono trattate da SonarLint.

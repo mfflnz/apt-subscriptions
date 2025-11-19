@@ -92,7 +92,7 @@ public class SubscriptionsController {
 	public FormattedOrder formatOrder(Order orderToFormat) {
 
 		// TODO: controlla questo pattern
-		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 		String orderDate = dateTimeFormatter.format(orderToFormat.getOrderDate());
 		String paidDate;
@@ -142,14 +142,13 @@ public class SubscriptionsController {
 			shippingState = orderToFormat.getBillingState();
 		}
 
-		if (shippingItems != null) {
-			// Toglie il prefisso "items:" e il suffisso a partire dalla prima occorrenza di
-			// "|"
+		// Se la stringa non è già formattata (cioè se non contiene occorrenze di '|',
+		// '{' o '}', toglie il prefisso "items:" e il suffisso a partire dalla prima
+		// occorrenza di '|'
+		if ((shippingItems != null) && (shippingItems.matches(".*[|{}].*"))) {
 			shippingItems = shippingItems.substring(6, shippingItems.indexOf("|"));
 		}
 		
-
-
 		return new FormattedOrder.FormattedOrderBuilder(Integer.toString(orderToFormat.getOrderId()))
 				.setOrderDate(orderDate).setPaidDate(paidDate).setOrderTotal(orderTotal).setOrderNetTotal(orderNetTotal)
 				.setPaymentMethodTitle(paymentMethodTitle).setShippingFirstName(shippingFirstName)

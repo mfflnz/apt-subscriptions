@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.fixture.Containers.showInFrame;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static java.util.Arrays.asList;
@@ -36,6 +37,9 @@ public class ListSwingViewTest {
 	private ListSwingView listSwingView;
 	private FrameFixture window;
 	private AutoCloseable closeable;
+	
+	@Mock
+	private OrderSwingView orderView;
 
 	@Mock
 	private SubscriptionsController subscriptionsController;
@@ -252,5 +256,16 @@ public class ListSwingViewTest {
 
 		verify(subscriptionsController, timeout(TIMEOUT)).exportOrders(anyList(), anyString());
 	}
+	
+	@Test
+	public void testSelectingAnElementInTheListShouldShowOrderDetailsInTheOrderView() {
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com").build();
 
+		GuiActionRunner.execute(() -> {
+			listSwingView.getListOrdersModel().addElement(order1);
+		});
+		
+		window.list("ordersList").selectItem(0);
+		verify(subscriptionsController, atLeastOnce()).orderDetails(1); // TODO: controlla 
+	}
 }

@@ -446,7 +446,23 @@ public class OrderSwingView extends JPanel implements OrderView {
 					public void actionPerformed(ActionEvent arg0) {
 						subscriptionsController.updateOrder(Integer.parseInt(orderIdTextBox.getText()),
 								new Order.OrderBuilder(Integer.parseInt(orderIdTextBox.getText()),
-										LocalDate.parse(orderDateTextBox.getText()), emailTextBox.getText()).build());
+										LocalDate.parse(orderDateTextBox.getText()), emailTextBox.getText())
+								// toglie tutti i caratteri che non sono numeri o il punto
+								.setOrderTotal(Double.parseDouble(orderTotalTextBox.getText().replaceAll("[^\\d.]", "")))
+								.setOrderNetTotal(Double.parseDouble(netTotalTextBox.getText().replaceAll("[^\\d.]", "")))
+								.setPaymentMethod(paymentMethodTextBox.getText())
+								.setShippingFirstName(firstNameTextBox.getText())
+								.setShippingLastName(lastNameTextBox.getText())
+								.setShippingAddress1(addressTextBox.getText())
+								.setShippingPostcode(postcodeTextBox.getText())
+								.setShippingState(stateTextBox.getText())
+								.setShippingCity(cityTextBox.getText())
+								.setBillingPhone(phoneTextBox.getText())
+								.setShippingItems(productTextBox.getText())
+								.setFirstIssue(Integer.parseInt(firstIssueTextBox.getText()))
+								.setLastIssue(Integer.parseInt(lastIssueTextBox.getText()))
+								.setCustomerNote(notesTextBox.getText())
+								.build());
 					}
 				});
 				btnUpdate.setEnabled(false);

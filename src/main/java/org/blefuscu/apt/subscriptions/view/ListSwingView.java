@@ -21,6 +21,8 @@ import org.blefuscu.apt.subscriptions.model.Order;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 public class ListSwingView extends JPanel implements ListView {
 
@@ -65,6 +67,13 @@ public class ListSwingView extends JPanel implements ListView {
 		add(scrollPane_1, gbc_scrollPane_1);
 
 		JList<Order> list = new JList<Order>(listOrdersModel);
+		list.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent arg0) {
+				
+// TODO: getSelectedValue non trova più l'elemento della lista
+				subscriptionsController.orderDetails(list.getSelectedValue().getOrderId());
+			}
+		});
 		scrollPane_1.setViewportView(list);
 		list.setName("ordersList");
 
@@ -129,8 +138,10 @@ public class ListSwingView extends JPanel implements ListView {
 
 		for (int i = 0; i < listOrdersModel.getSize(); i++) {
 			if (listOrdersModel.elementAt(i).getOrderId() == orderId) {
-				listOrdersModel.remove(i);
-				listOrdersModel.add(i, order);
+				System.out.println("********************************");
+				System.out.println(i);
+				System.out.println("********************************");
+				listOrdersModel.set(i, order);
 			}
 		}
 	}
