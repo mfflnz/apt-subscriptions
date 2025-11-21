@@ -13,6 +13,7 @@ import java.util.stream.StreamSupport;
 
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -23,6 +24,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
@@ -480,5 +482,27 @@ public class OrderMongoRepositoryTest {
 				.append("last_issue", 117));
 
 	}
+	
+	@Test
+	public void testCountOrdersShouldReturnZeroWhenNoFilterIsSet() {
+		Bson filter = null;
+		assertThat(orderRepository.countOrders(filter)).isEqualTo(0);
+
+	}
+	
+	@Test
+	public void testCountOrdersShouldReturnTheNumberOfDocumentsFoundWhenAFilterIsSet() {
+		
+		addTestOrderToDatabase(1, "2025-11-01",	"test@address.com");
+		addTestOrderToDatabase(2, "2025-11-15",	"customer@address.com");
+		addTestOrderToDatabase(3, "2025-11-16",	"sample@address.com");
+		
+		Bson filter = Filters.and(Filters.gte("order_date", "2025-11-10"),
+				Filters.lte("order_date", "2025-11-20"));
+		
+		assertThat(orderRepository.countOrders(filter)).isEqualTo(2);
+	}
+	
+
 
 }

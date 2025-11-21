@@ -130,6 +130,7 @@ public class ListSwingView extends JPanel implements ListView {
 
 	@Override
 	public void showOrders(List<Order> orders) {
+		listOrdersModel.clear();
 		orders.stream().forEach(listOrdersModel::addElement);
 	}
 
@@ -138,9 +139,6 @@ public class ListSwingView extends JPanel implements ListView {
 
 		for (int i = 0; i < listOrdersModel.getSize(); i++) {
 			if (listOrdersModel.elementAt(i).getOrderId() == orderId) {
-				System.out.println("********************************");
-				System.out.println(i);
-				System.out.println("********************************");
 				listOrdersModel.set(i, order);
 			}
 		}

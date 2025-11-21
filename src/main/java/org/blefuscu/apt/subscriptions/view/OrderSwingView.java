@@ -444,12 +444,29 @@ public class OrderSwingView extends JPanel implements OrderView {
 				btnUpdate = new JButton("Update");
 				btnUpdate.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
+						System.out.println("*************************************************");
+						System.out.println(orderIdTextBox.getText());
+						System.out.println(orderTotalTextBox.getText().replaceAll("[^\\d.]", ""));
+						System.out.println("*************************************************");
+						
+						// toglie tutti i caratteri che non sono numeri o il punto
+						double orderTotal;
+						orderTotal = (orderTotalTextBox.getText().isEmpty()) ? 0.0 : Double.parseDouble(orderTotalTextBox.getText().replaceAll("[^\\d.]", ""));
+
+						double orderNetTotal;
+						orderNetTotal = (netTotalTextBox.getText().isEmpty()) ? 0.0 : Double.parseDouble(netTotalTextBox.getText().replaceAll("[^\\d.]", ""));
+						
+						int firstIssue;
+						firstIssue = (firstIssueTextBox.getText().isEmpty()) ? 0 : Integer.parseInt(firstIssueTextBox.getText());
+						
+						int lastIssue;
+						lastIssue = (lastIssueTextBox.getText().isEmpty()) ? 0 : Integer.parseInt(firstIssueTextBox.getText());
+						
 						subscriptionsController.updateOrder(Integer.parseInt(orderIdTextBox.getText()),
 								new Order.OrderBuilder(Integer.parseInt(orderIdTextBox.getText()),
 										LocalDate.parse(orderDateTextBox.getText()), emailTextBox.getText())
-								// toglie tutti i caratteri che non sono numeri o il punto
-								.setOrderTotal(Double.parseDouble(orderTotalTextBox.getText().replaceAll("[^\\d.]", "")))
-								.setOrderNetTotal(Double.parseDouble(netTotalTextBox.getText().replaceAll("[^\\d.]", "")))
+								.setOrderTotal(orderTotal)
+								.setOrderNetTotal(orderNetTotal)
 								.setPaymentMethod(paymentMethodTextBox.getText())
 								.setShippingFirstName(firstNameTextBox.getText())
 								.setShippingLastName(lastNameTextBox.getText())
@@ -459,8 +476,8 @@ public class OrderSwingView extends JPanel implements OrderView {
 								.setShippingCity(cityTextBox.getText())
 								.setBillingPhone(phoneTextBox.getText())
 								.setShippingItems(productTextBox.getText())
-								.setFirstIssue(Integer.parseInt(firstIssueTextBox.getText()))
-								.setLastIssue(Integer.parseInt(lastIssueTextBox.getText()))
+								.setFirstIssue(firstIssue)
+								.setLastIssue(lastIssue)
 								.setCustomerNote(notesTextBox.getText())
 								.build());
 					}

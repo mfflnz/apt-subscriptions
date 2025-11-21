@@ -21,6 +21,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static java.util.Arrays.asList;
 
 import org.junit.After;
@@ -117,13 +118,21 @@ public class ListSwingViewTest {
 	}
 
 	@Test
-	public void testShowOrdersShouldDisplayGivenOrdersInTheList() {
+	public void testShowOrdersShouldClearTheListAndThenDisplayGivenOrdersInTheList() {
 
 		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), null).build();
 		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 9), null).build();
+		
 		GuiActionRunner.execute(() -> listSwingView.showOrders(Arrays.asList(order1, order2)));
+		
 		String[] listContents = window.list().contents();
 		assertThat(listContents).containsExactly(order1.toString(), order2.toString());
+		
+		GuiActionRunner.execute(() -> listSwingView.showOrders(Arrays.asList(order1)));
+		
+		listContents = window.list().contents();
+		assertThat(listContents).containsExactly(order1.toString());
+
 
 	}
 
@@ -196,8 +205,14 @@ public class ListSwingViewTest {
 			listSwingView.getListOrdersModel().addElement(order3);
 		});
 		window.button(JButtonMatcher.withText("Export")).click();
+		GuiActionRunner.execute(() -> {
+			
 		listSwingView.getFc().setName("export.csv");
 		listSwingView.getFc().cancelSelection();
+			}
+		);
+		
+		verifyNoInteractions(exportController);
 	}
 	
 	@Test

@@ -273,6 +273,10 @@
 						<targetTests>
 							<param>org.blefuscu.apt.subscriptions.*</param>
 						</targetTests>
+						<excludedTestClasses>
+							<excludedTestClass>**/*IT.java</excludedTestClass>
+							<excludedTestClass>**/*E2E.java</excludedTestClass>
+						</excludedTestClasses>
 						<mutators>
 							<mutator>STRONGER</mutator>
 						</mutators>

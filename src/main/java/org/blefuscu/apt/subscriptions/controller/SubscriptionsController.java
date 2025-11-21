@@ -11,6 +11,9 @@ import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.blefuscu.apt.subscriptions.view.ListView;
 import org.blefuscu.apt.subscriptions.view.MessageView;
 import org.blefuscu.apt.subscriptions.view.OrderView;
+import org.bson.conversions.Bson;
+
+import com.mongodb.client.model.Filters;
 
 public class SubscriptionsController {
 
@@ -37,7 +40,9 @@ public class SubscriptionsController {
 	}
 
 	public void requestOrders() {
+		Bson filter = null;
 		listView.showOrders(orderRepository.findAll());
+		messageView.showInfoMessage("" + orderRepository.countOrders(filter) + " orders found");
 	}
 
 	public void requestOrders(LocalDate fromDate, LocalDate toDate) {
@@ -55,7 +60,10 @@ public class SubscriptionsController {
 			throw new IllegalArgumentException(START_DATE_SHOULD_BE_EARLIER_OR_EQUAL_TO_END_DATE);
 		}
 
+		Bson filter = Filters.and(Filters.gte("order_date", fromDate), Filters.lte("order_date", toDate));
+		
 		listView.showOrders(orderRepository.findByDateRange(fromDate, toDate));
+		messageView.showInfoMessage("" + orderRepository.countOrders(filter) + " orders found");
 	}
 
 	public Order orderDetails(int orderId) {
