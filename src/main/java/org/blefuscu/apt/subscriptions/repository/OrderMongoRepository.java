@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -18,6 +20,8 @@ import com.mongodb.client.model.Updates;
 
 public class OrderMongoRepository implements OrderRepository {
 
+	private static final String DATE_REGEX = "\\b(\\d{4}-\\d{2}-\\d{2})\\b";
+	private static final String TRIMMED_DATE_REGEX = "(?<!\\d)(\\d{4}-\\d{2}-\\d{2})(?!\\d)";
 	private static final String LINE_ITEM_5 = "line_item_5";
 	private static final String LINE_ITEM_4 = "line_item_4";
 	private static final String LINE_ITEM_3 = "line_item_3";
@@ -404,16 +408,29 @@ public class OrderMongoRepository implements OrderRepository {
 		boolean orderConfirmed = (d.getBoolean(ORDER_CONFIRMED) == null) ? false : d.getBoolean(ORDER_CONFIRMED);
 		
 		//TODO: gestire i campi vuoti ('')
-		LocalDate orderDate =  (!d.get(ORDER_DATE).getClass().equals(String.class)) ? d.getDate(ORDER_DATE).toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : LocalDate.parse(d.getString(ORDER_DATE));
+		LocalDate orderDate;
 		LocalDate paidDate;
 		
+
+
+		
+		if (!d.get(ORDER_DATE).getClass().equals(String.class)) {
+			orderDate = d.getDate(ORDER_DATE).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		} else {
+			if (d.getString(ORDER_DATE).isEmpty()) {
+				orderDate = null;
+			} else {
+				orderDate = LocalDate.parse(cleanupDate(d.getString(ORDER_DATE)));
+			}
+		}
+
 		if (!d.get(PAID_DATE).getClass().equals(String.class)) {
 			paidDate = d.getDate(PAID_DATE).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		} else {
 			if (d.getString(PAID_DATE).isEmpty()) {
 				paidDate = null;
 			} else {
-				paidDate = LocalDate.parse(d.getString(PAID_DATE));
+				paidDate = LocalDate.parse(cleanupDate(d.getString(PAID_DATE)));
 			}
 		}
 
@@ -424,7 +441,6 @@ public class OrderMongoRepository implements OrderRepository {
 				.setStatus(d.getString(STATUS))
 				.setShippingTotal(shippingTotal)
 				.setShippingTaxTotal(shippingTaxTotal)
-				// TODO: tutti questi Double.class vanno gestiti come gli shippingTotal
 				.setFeeTotal(feeTotal)
 				.setFeeTaxTotal(feeTaxTotal)
 				.setTaxTotal(taxTotal)
@@ -585,4 +601,15 @@ public class OrderMongoRepository implements OrderRepository {
 				.append(LAST_ISSUE, order.getLastIssue());
 	}
 
+	@Override
+	public long countOrders(Bson filter) {
+		return orderCollection.countDocuments(filter);
+	}
+
+	private String cleanupDate(String dateToClean) {
+		Pattern pattern = Pattern.compile(DATE_REGEX);
+		Matcher matcher = pattern.matcher(dateToClean);
+		matcher.find();
+		return matcher.group(1);
+	}
 }

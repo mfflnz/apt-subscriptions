@@ -29,6 +29,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import com.mongodb.client.model.Filters;
+
+import org.bson.conversions.Bson;
+
 public class SubscriptionsControllerTest {
 
 	@Mock
@@ -571,6 +575,19 @@ public class SubscriptionsControllerTest {
 		subscriptionsController.sendInfoMessage("Info Message");
 		verify(messageView).showInfoMessage("Info Message");
 		verifyNoMoreInteractions(messageView);
+	}
+	
+	@Test
+	public void testRequestOrdersShouldDelegateMessageViewToShowNumberOfOrders() {
+		LocalDate fromDate = LocalDate.of(2025, 8, 25);
+		LocalDate toDate = LocalDate.of(2025, 8, 26);
+		Bson filter = Filters.and(Filters.gte("order_date", fromDate), Filters.lte("order_date", toDate));
+		
+		when(orderRepository.countOrders(filter)).thenReturn((long) 2);
+		
+		subscriptionsController.requestOrders(fromDate, toDate);
+		
+		verify(messageView).showInfoMessage("2 orders found");
 	}
 
 }

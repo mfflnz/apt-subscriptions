@@ -20,7 +20,10 @@ public class DashboardSwingViewTest extends AssertJSwingJUnitTestCase {
 		@Override
 		protected void onSetUp() {
 			GuiActionRunner.execute(() -> {
-				
+				searchSwingView = new SearchSwingView();
+				listSwingView = new ListSwingView();
+				orderSwingView = new OrderSwingView();
+				messageSwingView = new MessageSwingView();
 				dashboardSwingView = new DashboardSwingView(searchSwingView, listSwingView, orderSwingView, messageSwingView);
 				return dashboardSwingView;
 			});

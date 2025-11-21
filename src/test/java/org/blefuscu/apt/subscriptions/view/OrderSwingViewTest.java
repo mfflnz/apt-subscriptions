@@ -24,7 +24,7 @@ import org.mockito.MockitoAnnotations;
 
 public class OrderSwingViewTest {
 
-	private static final int TIMEOUT = 20000;
+	private static final int TIMEOUT = 3000;
 	private OrderSwingView orderSwingView;
 	private FrameFixture window;
 	private AutoCloseable closeable;
@@ -167,7 +167,7 @@ public class OrderSwingViewTest {
 		window.button(JButtonMatcher.withText("Update")).click();
 
 		Order updatedOrder = new Order.OrderBuilder(4, LocalDate.of(2025, 11, 05), "customer@email.com").build();
-		verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(4, updatedOrder);
+		GuiActionRunner.execute(() -> verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(4, updatedOrder));
 		assertThat(window.textBox("orderIdTextBox").text()).isEqualTo("4");
 		assertThat(window.textBox("orderDateTextBox").text()).isEqualTo("2025-11-05");
 		assertThat(window.textBox("emailTextBox").text()).isEqualTo("customer@email.com");

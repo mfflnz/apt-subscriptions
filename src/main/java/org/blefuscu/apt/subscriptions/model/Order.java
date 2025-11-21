@@ -260,6 +260,17 @@ public class Order {
 			this.orderId = orderId;
 			this.orderDate = orderDate;
 			this.customerEmail = customerEmail;
+			// TODO: Default per gli altri valori
+			this.billingPhone = "";
+			this.paymentMethod = "";
+			this.shippingFirstName = "";
+			this.shippingLastName = "";
+			this.shippingAddress1 = "";
+			this.shippingPostcode = "";
+			this.shippingCity = "";
+			this.shippingState = "";
+			this.customerNote = "";
+			this.shippingItems = "";
 		}
 
 		public OrderBuilder setOrderNumber(int orderNumber) {
