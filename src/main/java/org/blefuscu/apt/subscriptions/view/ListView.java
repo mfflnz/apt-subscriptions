@@ -9,5 +9,6 @@ public interface ListView {
 	void showOrders(List<Order> orders);
 	void orderUpdated(int orderId, Order order);
 	void orderDeleted(int orderId);
+	void clearList();
 	
 }

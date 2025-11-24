@@ -40,12 +40,17 @@ public class SubscriptionsController {
 	}
 
 	public void requestOrders() {
+		listView.clearList();
+		orderView.clearAll();
 		Bson filter = null;
 		listView.showOrders(orderRepository.findAll());
-		messageView.showInfoMessage("" + orderRepository.countOrders(filter) + " orders found");
+		messageView.showInfoMessage(displayNumberOfOrders(filter));
 	}
 
 	public void requestOrders(LocalDate fromDate, LocalDate toDate) {
+
+		listView.clearList();
+		orderView.clearAll();
 
 		if (fromDate == null) {
 			sendErrorMessage(PLEASE_PROVIDE_START_DATE);
@@ -60,11 +65,13 @@ public class SubscriptionsController {
 			throw new IllegalArgumentException(START_DATE_SHOULD_BE_EARLIER_OR_EQUAL_TO_END_DATE);
 		}
 
-		Bson filter = Filters.and(Filters.gte("order_date", fromDate), Filters.lte("order_date", toDate));
+		Bson filter = Filters.and(Filters.gte("order_date", fromDate.toString()), Filters.lte("order_date", toDate.toString()));
 		
+		messageView.showInfoMessage(displayNumberOfOrders(filter));
 		listView.showOrders(orderRepository.findByDateRange(fromDate, toDate));
-		messageView.showInfoMessage("" + orderRepository.countOrders(filter) + " orders found");
 	}
+
+
 
 	public Order orderDetails(int orderId) {
 		Order order = orderRepository.findById(orderId);
@@ -195,6 +202,18 @@ public class SubscriptionsController {
 	public void sendInfoMessage(String infoMessage) {
 		messageView.showInfoMessage(infoMessage);
 		
+	}
+	
+	private String displayNumberOfOrders(Bson filter) {
+		long numberOfOrders = orderRepository.countOrders(filter);
+		String numberOfOrdersMessage = "";
+		
+		if (numberOfOrders == 1) {
+			numberOfOrdersMessage = "1 order found";
+		} else {
+			numberOfOrdersMessage = numberOfOrders + " orders found";
+		}
+		return numberOfOrdersMessage;
 	}
 
 }

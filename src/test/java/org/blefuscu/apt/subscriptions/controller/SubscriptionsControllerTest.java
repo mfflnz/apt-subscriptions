@@ -581,13 +581,54 @@ public class SubscriptionsControllerTest {
 	public void testRequestOrdersShouldDelegateMessageViewToShowNumberOfOrders() {
 		LocalDate fromDate = LocalDate.of(2025, 8, 25);
 		LocalDate toDate = LocalDate.of(2025, 8, 26);
-		Bson filter = Filters.and(Filters.gte("order_date", fromDate), Filters.lte("order_date", toDate));
+		Bson filter = Filters.and(Filters.gte("order_date", fromDate.toString()), Filters.lte("order_date", toDate.toString()));
 		
 		when(orderRepository.countOrders(filter)).thenReturn((long) 2);
 		
 		subscriptionsController.requestOrders(fromDate, toDate);
 		
 		verify(messageView).showInfoMessage("2 orders found");
+	}
+	
+	@Test
+	public void testRequestOrdersWhenExactlyOneOrderIsFoundShouldDelegateMessageViewToShowNumberOfOrders() {
+		LocalDate fromDate = LocalDate.of(2025, 8, 25);
+		LocalDate toDate = LocalDate.of(2025, 8, 26);
+		Bson filter = Filters.and(Filters.gte("order_date", fromDate.toString()), Filters.lte("order_date", toDate.toString()));
+		
+		when(orderRepository.countOrders(filter)).thenReturn((long) 1);
+		
+		subscriptionsController.requestOrders(fromDate, toDate);
+		
+		verify(messageView).showInfoMessage("1 order found");
+	}
+
+	@Test
+	public void testRequestOrdersWhenCollectionContainsExactlyOneOrderShouldDelegateMessageViewToShowNumberOfOrders() {
+		
+		when(orderRepository.countOrders(null)).thenReturn((long) 1);
+		
+		subscriptionsController.requestOrders();
+		
+		verify(messageView).showInfoMessage("1 order found");
+	}
+	
+	@Test
+	public void testRequestOrdersShouldDelegateTheListViewToClearTheListBeforeDisplayingResults() {
+		subscriptionsController.requestOrders();
+		verify(orderView).clearAll();
+		verify(listView).clearList();
+
+	}
+
+	@Test
+	public void testRequestOrdersWhenDatesAreProvidedShouldDelegateTheListViewToClearTheListBeforeDisplayingResults() {
+		LocalDate fromDate = LocalDate.of(2025, 8, 25);
+		LocalDate toDate = LocalDate.of(2025, 8, 26);
+		subscriptionsController.requestOrders(fromDate, toDate);
+		verify(orderView).clearAll();
+		verify(listView).clearList();
+		
 	}
 
 }
