@@ -32,6 +32,8 @@ public class ListSwingView extends JPanel implements ListView {
 	private SubscriptionsController subscriptionsController;
 	private JFileChooser fc;
 
+	private JList<Order> list;
+
 	public void setSubscriptionsController(SubscriptionsController subscriptionsController) {
 		this.subscriptionsController = subscriptionsController;
 	}
@@ -66,12 +68,18 @@ public class ListSwingView extends JPanel implements ListView {
 		gbc_scrollPane_1.gridy = 0;
 		add(scrollPane_1, gbc_scrollPane_1);
 
-		JList<Order> list = new JList<Order>(listOrdersModel);
+		list = new JList<Order>(listOrdersModel);
 		list.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
 				
 // TODO: getSelectedValue non trova più l'elemento della lista
-				subscriptionsController.orderDetails(list.getSelectedValue().getOrderId());
+				if(!list.isSelectionEmpty()) {
+					
+					subscriptionsController.orderDetails(list.getSelectedValue().getOrderId());
+					System.out.println("*************************");
+					System.out.println(list.getSelectedValue().getOrderId());
+					System.out.println("*************************");
+				}
 			}
 		});
 		scrollPane_1.setViewportView(list);
@@ -96,7 +104,7 @@ public class ListSwingView extends JPanel implements ListView {
 					for (int i = 0; i < listOrdersModel.getSize(); i++) {
 						formattedOrders.add(subscriptionsController.formatOrder(listOrdersModel.elementAt(i)));
 					}
-					subscriptionsController.exportOrders(formattedOrders, fc.getName());
+					subscriptionsController.exportOrders(formattedOrders, fc.getSelectedFile().getAbsolutePath());
 				} else {
 					fc.setVisible(false);
 				}
@@ -153,6 +161,12 @@ public class ListSwingView extends JPanel implements ListView {
 			}
 		}
 
+	}
+
+	@Override
+	public void clearList() {
+		list.clearSelection();
+		listOrdersModel.clear();
 	}
 
 

@@ -283,4 +283,20 @@ public class ListSwingViewTest {
 		window.list("ordersList").selectItem(0);
 		verify(subscriptionsController, atLeastOnce()).orderDetails(1); // TODO: controlla 
 	}
+	
+	@Test
+	public void testClearListShouldRemoveAllElementsInTheList() {
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com").build();
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "second@address.com").build();
+
+		GuiActionRunner.execute(() -> {
+			listSwingView.getListOrdersModel().addElement(order1);
+			listSwingView.getListOrdersModel().addElement(order2);
+		});
+
+		listSwingView.clearList();
+		
+		String[] listContents = window.list("ordersList").contents();
+		assertThat(listContents).isEmpty();
+	}
 }

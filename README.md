@@ -455,9 +455,10 @@ Restano da fare gli Integration test per il SubscriptionsController.
 
 **TODO**: timeout dei messaggi deve partire dal momento in cui viene mostrato il messaggio, non sempre
 
-**TODO**: export non legge nome file
-
 **TODO**: leggi E2E
+
+**TODO**: controlla il filtro Bson (lte/gte)
+
 
 ---
 

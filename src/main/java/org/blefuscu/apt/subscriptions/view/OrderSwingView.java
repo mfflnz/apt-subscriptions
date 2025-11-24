@@ -7,6 +7,7 @@ import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.model.FormattedOrder;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
+
 import java.awt.GridBagConstraints;
 import javax.swing.JTextField;
 import java.awt.Insets;
@@ -541,6 +542,89 @@ public class OrderSwingView extends JPanel implements OrderView {
 			btnUpdate.setEnabled(false);
 			btnDelete.setEnabled(false);
 		}
+	}
+
+	@Override
+	public void clearAll() {
+		this.getOrderIdTextBox().setText("");
+		this.getOrderDateTextBox().setText("");
+		this.getPaidDateTextBox().setText("");
+		this.getOrderTotalTextBox().setText("");
+		// TODO: tutti i campi
+		
+
+	}
+
+	public JTextField getOrderIdTextBox() {
+		return orderIdTextBox;
+	}
+
+	public JTextField getOrderDateTextBox() {
+		return orderDateTextBox;
+	}
+
+	public JTextField getPaidDateTextBox() {
+		return paidDateTextBox;
+	}
+
+	public JTextField getOrderTotalTextBox() {
+		return orderTotalTextBox;
+	}
+
+	public JTextField getNetTotalTextBox() {
+		return netTotalTextBox;
+	}
+
+	public JTextField getPaymentMethodTextBox() {
+		return paymentMethodTextBox;
+	}
+
+	public JTextField getFirstNameTextBox() {
+		return firstNameTextBox;
+	}
+
+	public JTextField getLastNameTextBox() {
+		return lastNameTextBox;
+	}
+
+	public JTextField getAddressTextBox() {
+		return addressTextBox;
+	}
+
+	public JTextField getPostcodeTextBox() {
+		return postcodeTextBox;
+	}
+
+	public JTextField getStateTextBox() {
+		return stateTextBox;
+	}
+
+	public JTextField getCityTextBox() {
+		return cityTextBox;
+	}
+
+	public JTextField getEmailTextBox() {
+		return emailTextBox;
+	}
+
+	public JTextField getPhoneTextBox() {
+		return phoneTextBox;
+	}
+
+	public JTextField getProductTextBox() {
+		return productTextBox;
+	}
+
+	public JTextField getFirstIssueTextBox() {
+		return firstIssueTextBox;
+	}
+
+	public JTextField getLastIssueTextBox() {
+		return lastIssueTextBox;
+	}
+
+	public JTextField getNotesTextBox() {
+		return notesTextBox;
 	}
 
 }

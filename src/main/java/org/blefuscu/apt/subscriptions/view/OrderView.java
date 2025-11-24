@@ -7,4 +7,5 @@ public interface OrderView {
 	void showOrderDetails(Order order);
 	void orderUpdated(int orderId);
 	void orderDeleted(int orderId);
+	void clearAll();
 }

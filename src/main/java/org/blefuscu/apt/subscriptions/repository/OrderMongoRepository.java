@@ -603,6 +603,7 @@ public class OrderMongoRepository implements OrderRepository {
 
 	@Override
 	public long countOrders(Bson filter) {
+
 		return orderCollection.countDocuments(filter);
 	}
 

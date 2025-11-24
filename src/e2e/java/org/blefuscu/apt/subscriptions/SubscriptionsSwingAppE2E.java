@@ -87,4 +87,22 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		assertThat(window.textBox("orderIdTextBox").text()).isEqualTo("12345");
 		assertThat(window.textBox("paidDateTextBox").text()).isEqualTo("2025-08-05");
 	}
+
+	@Test
+	@GUITest
+	public void testNewSearchesShouldResetBothOrdersListAndOrderDetails() {
+		window.button(JButtonMatcher.withText("Search")).click();
+		window.list().selectItem(0);
+		assertThat(window.textBox("orderIdTextBox").text()).isEqualTo("12345");
+		assertThat(window.textBox("paidDateTextBox").text()).isEqualTo("2025-08-05");
+		window.button(JButtonMatcher.withText("Search")).click();
+		assertThat(window.list().selection()).isEmpty();
+		assertThat(window.textBox("orderIdTextBox").text()).isEmpty();
+		assertThat(window.textBox("orderDateTextBox").text()).isEmpty();
+		assertThat(window.textBox("paidDateTextBox").text()).isEmpty();
+		assertThat(window.textBox("orderTotalTextBox").text()).isEmpty();
+		// TODO: tutti gli altri campi
+
+
+	}
 }
