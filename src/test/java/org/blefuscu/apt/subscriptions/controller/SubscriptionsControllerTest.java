@@ -89,6 +89,19 @@ public class SubscriptionsControllerTest {
 	}
 
 	@Test
+	public void testRequestOrdersWhenDatesAreProvidedAndAreTheSame() {
+		List<Order> orders = asList(
+				new Order.OrderBuilder(1, LocalDate.of(2025, 8, 25), "customer_1@address.com").build(),
+				new Order.OrderBuilder(2, LocalDate.of(2025, 8, 26), "customer_2@address.com").build(),
+				new Order.OrderBuilder(3, LocalDate.of(2025, 8, 27), "customer_3@address.com").build());
+		LocalDate fromDate = LocalDate.of(2025, 8, 26);
+		LocalDate toDate = LocalDate.of(2025, 8, 26);
+		when(orderRepository.findByDateRange(fromDate, toDate)).thenReturn(asList(orders.get(1)));
+		subscriptionsController.requestOrders(fromDate, toDate);
+		verify(listView).showOrders(asList(orders.get(1)));
+	}
+
+	@Test
 	public void testRequestOrdersWhenStartDateIsNullShouldThrow() {
 		LocalDate fromDate = null;
 		LocalDate toDate = LocalDate.now();
@@ -204,7 +217,7 @@ public class SubscriptionsControllerTest {
 	}
 
 	@Test
-	public void testFormatOrderShouldCopyShippiungFirstNameWhenItsNotEmpty() {
+	public void testFormatOrderShouldCopyShippingFirstNameWhenItsNotEmpty() {
 		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
 				.setShippingFirstName("Anna").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
@@ -246,7 +259,7 @@ public class SubscriptionsControllerTest {
 	@Test
 	public void testFormatOrderShouldFormatShippingLastNameWhenItsNull() {
 		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
-				.setShippingFirstName(null).setBillingLastName("Bianchi").build();
+				.setShippingLastName(null).setBillingLastName("Bianchi").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingLastName()).isEqualTo("Bianchi");
 	}
@@ -416,6 +429,23 @@ public class SubscriptionsControllerTest {
 		assertThat(formattedOrder.getPaymentMethodTitle()).isEqualTo("Carta di credito");
 	}
 
+	@Test
+	public void testFormatOrderWhenShippingItemsIsNullShouldFormatFieldToAnEmptyString() {
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingItems(null).build();
+		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
+		assertThat(formattedOrder.getShippingItems()).isEmpty();
+
+	}
+
+	@Test
+	public void testFormatOrderWhenShippingItemsIsEmptyShouldFormatFieldToAnEmptyString() {
+		Order orderToFormat = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 2), "customer@address.com")
+				.setShippingItems("").build();
+		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
+		assertThat(formattedOrder.getShippingItems()).isEmpty();
+		
+	}
 
 	@Test
 	public void testExportOrdersWhenFormattedOrdersListIsNullShouldShowAnErrorMessageAndThrow() {
@@ -515,6 +545,7 @@ public class SubscriptionsControllerTest {
 		subscriptionsController.updateOrder(1, updatedOrder);
 		InOrder inOrder = Mockito.inOrder(orderRepository, orderView, listView);
 		inOrder.verify(orderRepository).update(1, updatedOrder);
+		inOrder.verify(orderView).showOrderDetails(updatedOrder);
 		inOrder.verify(orderView).orderUpdated(1);
 		inOrder.verify(listView).orderUpdated(1, updatedOrder);
 	}

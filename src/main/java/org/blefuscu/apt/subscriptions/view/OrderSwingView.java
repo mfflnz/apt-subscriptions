@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.time.LocalDate;
+import java.awt.Dimension;
 
 public class OrderSwingView extends JPanel implements OrderView {
 
@@ -33,7 +34,7 @@ public class OrderSwingView extends JPanel implements OrderView {
 	private JLabel lblPaymentMethod;
 	private JTextField orderTotalTextBox;
 	private JTextField netTotalTextBox;
-	private JTextField paymentMethodTextBox;
+	private JTextField paymentMethodTitleTextBox;
 	private JLabel lblFirstName;
 	private JLabel lblLastName;
 	private JLabel lblAddress;
@@ -86,6 +87,7 @@ public class OrderSwingView extends JPanel implements OrderView {
 		add(lblOrderId, gbcLblOrderId);
 
 		orderIdTextBox = new JTextField();
+		orderIdTextBox.setMinimumSize(new Dimension(200, 21));
 		orderIdTextBox.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) {
@@ -188,15 +190,15 @@ public class OrderSwingView extends JPanel implements OrderView {
 		gbcLblPaymentMethod.gridy = 3;
 		add(lblPaymentMethod, gbcLblPaymentMethod);
 
-		paymentMethodTextBox = new JTextField();
-		paymentMethodTextBox.setName("paymentMethodTextBox");
+		paymentMethodTitleTextBox = new JTextField();
+		paymentMethodTitleTextBox.setName("paymentMethodTextBox");
 		GridBagConstraints gbcPaymentMethodTextField = new GridBagConstraints();
 		gbcPaymentMethodTextField.insets = new Insets(0, 0, 5, 5);
 		gbcPaymentMethodTextField.fill = GridBagConstraints.HORIZONTAL;
 		gbcPaymentMethodTextField.gridx = 4;
 		gbcPaymentMethodTextField.gridy = 3;
-		add(paymentMethodTextBox, gbcPaymentMethodTextField);
-		paymentMethodTextBox.setColumns(10);
+		add(paymentMethodTitleTextBox, gbcPaymentMethodTextField);
+		paymentMethodTitleTextBox.setColumns(10);
 
 		lblFirstName = new JLabel("First Name");
 		GridBagConstraints gbcLblFirstName = new GridBagConstraints();
@@ -429,11 +431,9 @@ public class OrderSwingView extends JPanel implements OrderView {
 		notesTextBox.setColumns(10);
 
 		btnDelete = new JButton("Delete");
-		btnDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				subscriptionsController.deleteOrder(Integer.parseInt(orderIdTextBox.getText()));
-			}
-		});
+		btnDelete.addActionListener(e -> new Thread(() -> 
+			subscriptionsController.deleteOrder(Integer.parseInt(orderIdTextBox.getText()))
+		).start());
 		btnDelete.setEnabled(false);
 		GridBagConstraints gbcBtnDelete = new GridBagConstraints();
 		gbcBtnDelete.anchor = GridBagConstraints.EAST;
@@ -442,54 +442,56 @@ public class OrderSwingView extends JPanel implements OrderView {
 		gbcBtnDelete.gridy = 15;
 		add(btnDelete, gbcBtnDelete);
 		
-				btnUpdate = new JButton("Update");
-				btnUpdate.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						System.out.println("*************************************************");
-						System.out.println(orderIdTextBox.getText());
-						System.out.println(orderTotalTextBox.getText().replaceAll("[^\\d.]", ""));
-						System.out.println("*************************************************");
-						
-						// toglie tutti i caratteri che non sono numeri o il punto
-						double orderTotal;
-						orderTotal = (orderTotalTextBox.getText().isEmpty()) ? 0.0 : Double.parseDouble(orderTotalTextBox.getText().replaceAll("[^\\d.]", ""));
+		btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(
 
-						double orderNetTotal;
-						orderNetTotal = (netTotalTextBox.getText().isEmpty()) ? 0.0 : Double.parseDouble(netTotalTextBox.getText().replaceAll("[^\\d.]", ""));
-						
-						int firstIssue;
-						firstIssue = (firstIssueTextBox.getText().isEmpty()) ? 0 : Integer.parseInt(firstIssueTextBox.getText());
-						
-						int lastIssue;
-						lastIssue = (lastIssueTextBox.getText().isEmpty()) ? 0 : Integer.parseInt(firstIssueTextBox.getText());
-						
-						subscriptionsController.updateOrder(Integer.parseInt(orderIdTextBox.getText()),
-								new Order.OrderBuilder(Integer.parseInt(orderIdTextBox.getText()),
-										LocalDate.parse(orderDateTextBox.getText()), emailTextBox.getText())
-								.setOrderTotal(orderTotal)
-								.setOrderNetTotal(orderNetTotal)
-								.setPaymentMethod(paymentMethodTextBox.getText())
-								.setShippingFirstName(firstNameTextBox.getText())
-								.setShippingLastName(lastNameTextBox.getText())
-								.setShippingAddress1(addressTextBox.getText())
-								.setShippingPostcode(postcodeTextBox.getText())
-								.setShippingState(stateTextBox.getText())
-								.setShippingCity(cityTextBox.getText())
-								.setBillingPhone(phoneTextBox.getText())
-								.setShippingItems(productTextBox.getText())
-								.setFirstIssue(firstIssue)
-								.setLastIssue(lastIssue)
-								.setCustomerNote(notesTextBox.getText())
-								.build());
-					}
-				});
-				btnUpdate.setEnabled(false);
-				GridBagConstraints gbcBtnUpdate = new GridBagConstraints();
-				gbcBtnUpdate.anchor = GridBagConstraints.EAST;
-				gbcBtnUpdate.insets = new Insets(0, 0, 5, 5);
-				gbcBtnUpdate.gridx = 4;
-				gbcBtnUpdate.gridy = 15;
-				add(btnUpdate, gbcBtnUpdate);
+				e -> new Thread(() -> {
+					
+					// toglie tutti i caratteri che non sono numeri o il punto
+					double orderTotal;
+					orderTotal = (orderTotalTextBox.getText().isEmpty()) ? 0.0
+							: Double.parseDouble(orderTotalTextBox.getText().replaceAll("[^0-9.]", ""));
+
+					double orderNetTotal;
+					orderNetTotal = (netTotalTextBox.getText().isEmpty()) ? 0.0
+							: Double.parseDouble(netTotalTextBox.getText().replaceAll("[^0-9.]", ""));
+
+					int firstIssue;
+					firstIssue = (firstIssueTextBox.getText().isEmpty()) ? 0
+							: Integer.parseInt(firstIssueTextBox.getText());
+
+					int lastIssue;
+					lastIssue = (lastIssueTextBox.getText().isEmpty()) ? 0
+							: Integer.parseInt(lastIssueTextBox.getText());
+
+					LocalDate paidDate;
+					paidDate = (paidDateTextBox.getText().isEmpty() ? null
+							: LocalDate.parse(paidDateTextBox.getText()));
+
+					subscriptionsController.updateOrder(Integer.parseInt(orderIdTextBox.getText()),
+							new Order.OrderBuilder(Integer.parseInt(orderIdTextBox.getText()),
+									LocalDate.parse(orderDateTextBox.getText()), emailTextBox.getText())
+									.setPaidDate(paidDate).setOrderTotal(orderTotal).setOrderNetTotal(orderNetTotal)
+									.setPaymentMethodTitle(paymentMethodTitleTextBox.getText())
+									.setShippingFirstName(firstNameTextBox.getText())
+									.setShippingLastName(lastNameTextBox.getText())
+									.setShippingAddress1(addressTextBox.getText())
+									.setShippingPostcode(postcodeTextBox.getText())
+									.setShippingState(stateTextBox.getText()).setShippingCity(cityTextBox.getText())
+									.setBillingPhone(phoneTextBox.getText()).setShippingItems(productTextBox.getText())
+									.setFirstIssue(firstIssue).setLastIssue(lastIssue)
+									.setCustomerNote(notesTextBox.getText()).build());
+				}).start()
+
+		);
+		
+		btnUpdate.setEnabled(false);
+		GridBagConstraints gbcBtnUpdate = new GridBagConstraints();
+		gbcBtnUpdate.anchor = GridBagConstraints.EAST;
+		gbcBtnUpdate.insets = new Insets(0, 0, 5, 5);
+		gbcBtnUpdate.gridx = 4;
+		gbcBtnUpdate.gridy = 15;
+		add(btnUpdate, gbcBtnUpdate);
 
 	}
 
@@ -502,7 +504,7 @@ public class OrderSwingView extends JPanel implements OrderView {
 		paidDateTextBox.setText(formattedOrder.getPaidDate());
 		orderTotalTextBox.setText(formattedOrder.getOrderTotal());
 		netTotalTextBox.setText(formattedOrder.getOrderNetTotal());
-		paymentMethodTextBox.setText(formattedOrder.getPaymentMethodTitle());
+		paymentMethodTitleTextBox.setText(formattedOrder.getPaymentMethodTitle());
 		firstNameTextBox.setText(formattedOrder.getShippingFirstName());
 		lastNameTextBox.setText(formattedOrder.getShippingLastName());
 		addressTextBox.setText(formattedOrder.getShippingAddress1());
@@ -515,6 +517,8 @@ public class OrderSwingView extends JPanel implements OrderView {
 		firstIssueTextBox.setText(formattedOrder.getFirstIssue());
 		lastIssueTextBox.setText(formattedOrder.getLastIssue());
 		notesTextBox.setText(formattedOrder.getCustomerNote());
+		
+		orderIdTextBox.setEnabled(false);
 		
 		validateRequiredFieldsAndManageButtons();
 
@@ -550,8 +554,22 @@ public class OrderSwingView extends JPanel implements OrderView {
 		this.getOrderDateTextBox().setText("");
 		this.getPaidDateTextBox().setText("");
 		this.getOrderTotalTextBox().setText("");
-		// TODO: tutti i campi
-		
+		this.getNetTotalTextBox().setText("");
+		this.getPaymentMethodTextBox().setText("");
+		this.getFirstNameTextBox().setText("");
+		this.getLastNameTextBox().setText("");
+		this.getAddressTextBox().setText("");
+		this.getPostcodeTextBox().setText("");
+		this.getStateTextBox().setText("");
+		this.getCityTextBox().setText("");
+		this.getEmailTextBox().setText("");
+		this.getPhoneTextBox().setText("");
+		this.getProductTextBox().setText("");
+		this.getFirstIssueTextBox().setText("");
+		this.getLastIssueTextBox().setText("");
+		this.getNotesTextBox().setText("");
+		btnUpdate.setEnabled(false);
+		btnDelete.setEnabled(false);
 
 	}
 
@@ -576,7 +594,7 @@ public class OrderSwingView extends JPanel implements OrderView {
 	}
 
 	public JTextField getPaymentMethodTextBox() {
-		return paymentMethodTextBox;
+		return paymentMethodTitleTextBox;
 	}
 
 	public JTextField getFirstNameTextBox() {

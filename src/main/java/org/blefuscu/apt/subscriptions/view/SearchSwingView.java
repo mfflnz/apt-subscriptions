@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Dimension;
 
 public class SearchSwingView extends JPanel implements SearchView {
 
@@ -59,6 +60,7 @@ public class SearchSwingView extends JPanel implements SearchView {
 		add(lblTo, gbcLblTo);
 
 		fromTextBox = new JTextField();
+		fromTextBox.setMinimumSize(new Dimension(200, 21));
 
 		fromTextBox.addKeyListener(new KeyAdapter() {
 			@Override
@@ -76,6 +78,7 @@ public class SearchSwingView extends JPanel implements SearchView {
 		fromTextBox.setColumns(10);
 
 		toTextBox = new JTextField();
+		toTextBox.setMinimumSize(new Dimension(200, 21));
 
 		toTextBox.addKeyListener(new KeyAdapter() {
 			@Override

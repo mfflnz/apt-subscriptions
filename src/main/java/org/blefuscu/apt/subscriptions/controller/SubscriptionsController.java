@@ -79,7 +79,7 @@ public class SubscriptionsController {
 		if (order == null) {
 			throw new IllegalArgumentException(THE_REQUESTED_ORDER_IS_NOT_AVAILABLE);
 		}
-		orderView.showOrderDetails(orderRepository.findById(orderId));
+		orderView.showOrderDetails(order);
 		return orderRepository.findById(orderId);
 	}
 
@@ -156,11 +156,15 @@ public class SubscriptionsController {
 		if (("".equals(shippingState)) || (shippingState == null)) {
 			shippingState = orderToFormat.getBillingState();
 		}
-
+		
+		if (("".equals(shippingItems)) || (shippingItems == null)) {
+			shippingItems = "";
+		}
+		
 		// Se la stringa non è già formattata (cioè se non contiene occorrenze di '|',
 		// '{' o '}', toglie il prefisso "items:" e il suffisso a partire dalla prima
 		// occorrenza di '|'
-		if ((shippingItems != null) && (shippingItems.matches(".*[|{}].*"))) {
+		if (shippingItems.matches(".*[|{}].*")) {
 			shippingItems = shippingItems.substring(6, shippingItems.indexOf("|"));
 		}
 		

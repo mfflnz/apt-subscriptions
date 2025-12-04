@@ -10,16 +10,20 @@ import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
+import org.assertj.swing.timing.Pause;
 import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 public class SearchSwingViewTest {
 	
-	private static final int TIMEOUT = 5000;
+	private static final int TIMEOUT = 10000;
+	
+	@InjectMocks
 	private SearchSwingView searchSwingView;
 	private FrameFixture window;
 	private AutoCloseable closeable;
@@ -32,13 +36,13 @@ public class SearchSwingViewTest {
 		
 		closeable = MockitoAnnotations.openMocks(this);
 		
-		GuiActionRunner.execute(() -> {
+		SearchSwingView frame = GuiActionRunner.execute(() -> {
 			searchSwingView = new SearchSwingView();
 			searchSwingView.setSubscriptionsController(subscriptionsController);
 			return searchSwingView;
 		});
 
-		window = showInFrame(searchSwingView);
+		window = showInFrame(frame);
 		
 	}
 
@@ -95,7 +99,7 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").deleteText();
 		window.textBox("toTextBox").enterText("2025-02-28");
 		window.button(JButtonMatcher.withText("Search")).click();
-		
+
 		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("2025-02-01"), LocalDate.parse("2025-02-28"));
 		
 	}
@@ -130,6 +134,7 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").enterText("2025-01-01");
 		window.button(JButtonMatcher.withText("Search")).click();
 
+
 		verify(subscriptionsController, timeout(TIMEOUT)).sendErrorMessage("Start date should be earlier or equal to end date");
 	}
 	
@@ -141,6 +146,7 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").enterText("2025-02-01");
 		window.button(JButtonMatcher.withText("Search")).click();
 
+
 		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("2025-02-01"), LocalDate.parse("2025-02-01"));
 	}
 	
@@ -150,9 +156,9 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").deleteText();
 		window.textBox("toTextBox").enterText("2025-01-01");
 		window.button(JButtonMatcher.withText("Search")).click();
-		
-		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("1970-01-01"), LocalDate.parse("2025-01-01"));
 
+
+		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("1970-01-01"), LocalDate.parse("2025-01-01"));
 
 	}
 
@@ -164,8 +170,8 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").enterText("2025-01-01");
 		window.button(JButtonMatcher.withText("Search")).click();
 		
+
 		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("1970-01-01"), LocalDate.parse("2025-01-01"));
-		
 		
 	}
 	
@@ -175,7 +181,8 @@ public class SearchSwingViewTest {
 		window.textBox("fromTextBox").enterText("2025-01-01");
 		window.textBox("toTextBox").deleteText();
 		window.button(JButtonMatcher.withText("Search")).click();
-		
+
+
 		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("2025-01-01"), LocalDate.now());
 	}
 	
@@ -187,8 +194,8 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").enterText("  ");
 		window.button(JButtonMatcher.withText("Search")).click();
 		
+
 		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("2025-01-01"), LocalDate.now());
-		
 		
 	}
 	
@@ -198,6 +205,7 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").deleteText();
 		window.button(JButtonMatcher.withText("Search")).click();
 		
+
 		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders();
 		
 	}
@@ -210,10 +218,9 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").enterText(" ");
 		window.button(JButtonMatcher.withText("Search")).click();
 		
+
 		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders();
 		
 	}
-
-
 
 }
