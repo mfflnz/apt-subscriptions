@@ -72,13 +72,8 @@ public class ListSwingView extends JPanel implements ListView {
 		list.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
 				
-// TODO: getSelectedValue non trova più l'elemento della lista
 				if(!list.isSelectionEmpty()) {
-					
 					subscriptionsController.orderDetails(list.getSelectedValue().getOrderId());
-					System.out.println("*************************");
-					System.out.println(list.getSelectedValue().getOrderId());
-					System.out.println("*************************");
 				}
 			}
 		});
@@ -97,10 +92,11 @@ public class ListSwingView extends JPanel implements ListView {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				fc = new JFileChooser();
+				fc.setVisible(true);
 				fc.setDialogTitle("Export orders");
 
 				if (fc.showSaveDialog(scrollPane_1) == JFileChooser.APPROVE_OPTION) {
-					List<FormattedOrder> formattedOrders = new ArrayList<FormattedOrder>();
+					List<FormattedOrder> formattedOrders = new ArrayList<>();
 					for (int i = 0; i < listOrdersModel.getSize(); i++) {
 						formattedOrders.add(subscriptionsController.formatOrder(listOrdersModel.elementAt(i)));
 					}
@@ -167,6 +163,10 @@ public class ListSwingView extends JPanel implements ListView {
 	public void clearList() {
 		list.clearSelection();
 		listOrdersModel.clear();
+	}
+
+	public void setFc(JFileChooser fc) {
+		this.fc = fc;
 	}
 
 

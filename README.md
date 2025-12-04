@@ -152,6 +152,8 @@ Comincio a implementare la View preparando i primi unit test. Aggiorno nel POM l
 
 Tengo sotto controllo la code coverage. A buon punto della scrittura degli unit test raggiungo il 100% del codice del Controller e del Repository, il 99.4% della View (non è raggiunto il metodo main() della DashboardSwingView)
 
+TODO: Problema: esecuzione di test con xvfb-run, che falliscono in modo imperscrutabile. Da studiare: https://joel-costigliola.github.io/assertj/assertj-swing-running.html
+
 ---
 
 ### Docker
@@ -260,6 +262,13 @@ NB: Per mantenere il plugin `pitest-maven` compatibile con Java 8, mantengo la v
     <jvmArg>-Djava.awt.headless=false</jvmArg>
     
 alla command line su Linux per evitare di inserire l'argomento nel POM?
+
+Escludo dal Mutation Testing il codice relativo alle View, in quanto generato in massima parte dal WindowBuilder e soggetto a XXXXXX decine di mutanti superstiti, ad esempio:
+
+    ...
+    1. removed call to org/blefuscu/apt/subscriptions/view/DashboardSwingView::setTitle → SURVIVED
+    1. removed call to org/blefuscu/apt/subscriptions/view/DashboardSwingView::setBounds → SURVIVED
+    ...
 
 ---
 
@@ -458,6 +467,10 @@ Restano da fare gli Integration test per il SubscriptionsController.
 **TODO**: leggi E2E
 
 **TODO**: controlla il filtro Bson (lte/gte)
+
+**TODO**: orderNetTotal si azzera sempre (solo nella view, non nel DB)
+
+**TODO**: Delete nella orderview svuota tutti i campi
 
 
 ---

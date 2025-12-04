@@ -31,6 +31,8 @@ public class SubscriptionsControllerIT {
 	
 	@Mock
 	private OrderView orderView;
+	
+	@Mock
 	private MessageView messageView;
 	private OrderRepository orderRepository;
 	private ExportController exportController;
@@ -140,7 +142,8 @@ public class SubscriptionsControllerIT {
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
 				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
 				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build();
-		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 11, 10), "customer@email.com").setOrderNumber(12345)
+	
+		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 11, 2), "customer@email.com").setOrderNumber(12345)
 				.setPaidDate(LocalDate.of(2025, 9, 10)).setStatus("processing").setShippingTotal(3.0)
 				.setShippingTotal(3.0).setShippingTaxTotal(0.0).setFeeTotal(0.0).setFeeTaxTotal(0.0).setTaxTotal(0.0)
 				.setCartDiscount(0.0).setOrderDiscount(0.0).setDiscountTotal(0.0).setOrderTotal(16.0)
@@ -180,9 +183,10 @@ public class SubscriptionsControllerIT {
 		
 		orderRepository.save(order1);
 		orderRepository.save(order2);
-		subscriptionsController.requestOrders(LocalDate.of(2025, 9, 1), LocalDate.of(2025, 11, 2));
+		subscriptionsController.requestOrders(LocalDate.of(2025, 9, 1), LocalDate.of(2025, 11, 1));
 
 		verify(listView).showOrders(asList(order1));
+		verify(messageView).showInfoMessage("1 order found");
 	}
 	
 	@Test

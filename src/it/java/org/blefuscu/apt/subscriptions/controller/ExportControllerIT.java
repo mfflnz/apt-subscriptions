@@ -34,7 +34,8 @@ public class ExportControllerIT {
 
 	@After
 	public void tearDown() throws Exception {
-	}
+   // TODO document why this method is empty
+ }
 
 	@Test
 	public void testSaveDataIfFileDoesNotExistWritesFileOnDiskAndSendsAnInfoMessageToTheMessageViewAndReturnsZero() throws IOException {

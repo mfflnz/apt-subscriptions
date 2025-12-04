@@ -263,6 +263,7 @@ public class Order {
 			// TODO: Default per gli altri valori
 			this.billingPhone = "";
 			this.paymentMethod = "";
+			this.paymentMethodTitle = "";
 			this.shippingFirstName = "";
 			this.shippingLastName = "";
 			this.shippingAddress1 = "";

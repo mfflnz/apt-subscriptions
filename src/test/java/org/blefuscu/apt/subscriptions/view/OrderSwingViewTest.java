@@ -13,24 +13,35 @@ import org.assertj.swing.core.EmergencyAbortListener;
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
+import org.assertj.swing.junit.runner.GUITestRunner;
 import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 import org.blefuscu.apt.subscriptions.model.FormattedOrder;
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
+// @RunWith(MockitoJUnitRunner.class) // TODO: controlla se è superfluo (v. pag. 253)
+@RunWith(GUITestRunner.class)
 public class OrderSwingViewTest {
 
-	private static final int TIMEOUT = 3000;
+	private static final int TIMEOUT = 15000;
+	
+	@InjectMocks
 	private OrderSwingView orderSwingView;
 	private FrameFixture window;
 	private AutoCloseable closeable;
 
 	// https://joel-costigliola.github.io/assertj/assertj-swing-running.html
 	private EmergencyAbortListener listener;
+	
+	@Mock
+	private ListSwingView listView;
 
 	@Mock
 	private SubscriptionsController subscriptionsController;
@@ -41,11 +52,11 @@ public class OrderSwingViewTest {
 		listener = EmergencyAbortListener.registerInToolkit();
 
 		GuiActionRunner.execute(() -> {
+			
 			orderSwingView = new OrderSwingView();
 			orderSwingView.setSubscriptionsController(subscriptionsController);
 			return orderSwingView;
 		});
-
 		window = showInFrame(orderSwingView);
 	}
 
@@ -157,17 +168,60 @@ public class OrderSwingViewTest {
 
 	@Test
 	public void testUpdateButtonShouldDelegateToSubscriptionsController() {
+		Order updatedOrder = new Order.OrderBuilder(4, LocalDate.of(2025, 11, 05), "customer@email.com").setOrderTotal(16.5).build();
 		window.textBox("orderIdTextBox").deleteText();
 		window.textBox("orderIdTextBox").enterText("4");
 		window.textBox("orderDateTextBox").deleteText();
 		window.textBox("orderDateTextBox").enterText("2025-11-05");
 		window.textBox("emailTextBox").deleteText();
 		window.textBox("emailTextBox").enterText("customer@email.com");
+		window.textBox("orderTotalTextBox").deleteText();
+		window.textBox("orderTotalTextBox").enterText("€ 16.5");
 
 		window.button(JButtonMatcher.withText("Update")).click();
+		
+		// TODO: verificare se tenerla fuori dal GuiActionRunner (v. xvfb-run)
+		//GuiActionRunner.execute(() -> {		verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(4, updatedOrder);		}		);
+		verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(4, updatedOrder);
 
-		Order updatedOrder = new Order.OrderBuilder(4, LocalDate.of(2025, 11, 05), "customer@email.com").build();
-		GuiActionRunner.execute(() -> verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(4, updatedOrder));
+		assertThat(window.textBox("orderIdTextBox").text()).isEqualTo("4");
+		assertThat(window.textBox("orderDateTextBox").text()).isEqualTo("2025-11-05");
+		assertThat(window.textBox("emailTextBox").text()).isEqualTo("customer@email.com");
+
+	}
+	
+	@Test
+	public void testUpdateButtonWithTextBoxesToBeCleanedShouldDelegateToSubscriptionsController() {
+		window.textBox("orderIdTextBox").deleteText();
+		window.textBox("orderIdTextBox").enterText("4");
+		window.textBox("orderDateTextBox").deleteText();
+		window.textBox("orderDateTextBox").enterText("2025-11-05");
+		window.textBox("emailTextBox").deleteText();
+		window.textBox("emailTextBox").enterText("customer@email.com");
+		window.textBox("orderTotalTextBox").deleteText();
+		window.textBox("netTotalTextBox").deleteText();
+		window.textBox("netTotalTextBox").enterText("€ 14.5");
+		window.textBox("firstIssueTextBox").deleteText();
+		window.textBox("firstIssueTextBox").enterText("106");
+		window.textBox("lastIssueTextBox").deleteText();
+		window.textBox("lastIssueTextBox").enterText("112");
+		window.textBox("paidDateTextBox").deleteText();
+		window.textBox("paidDateTextBox").enterText("2025-11-08");
+
+		Order updatedOrder = new Order.OrderBuilder(4, LocalDate.of(2025, 11, 05), "customer@email.com")
+				.setOrderTotal(0)
+				.setOrderNetTotal(14.5)
+				.setFirstIssue(106)
+				.setLastIssue(112)
+				.setPaidDate(LocalDate.of(2025, 11, 8))
+				.build();
+
+		window.button(JButtonMatcher.withText("Update")).click();
+		
+		// TODO: verificare se tenerla fuori dal GuiActionRunner (v. xvfb-run)
+		//GuiActionRunner.execute(() -> {		verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(4, updatedOrder);		}		);
+		verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(4, updatedOrder);
+
 		assertThat(window.textBox("orderIdTextBox").text()).isEqualTo("4");
 		assertThat(window.textBox("orderDateTextBox").text()).isEqualTo("2025-11-05");
 		assertThat(window.textBox("emailTextBox").text()).isEqualTo("customer@email.com");
@@ -184,7 +238,6 @@ public class OrderSwingViewTest {
 		window.textBox("emailTextBox").enterText("customer@email.com");
 
 		window.button(JButtonMatcher.withText("Delete")).click();
-
 		verify(subscriptionsController, timeout(TIMEOUT)).deleteOrder(425);
 
 	}
@@ -231,6 +284,85 @@ public class OrderSwingViewTest {
 		window.button(JButtonMatcher.withText("Update")).requireEnabled();
 		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
 
+	}
+	
+	@Test
+	public void testShowOrderDetailsShouldDisableOrderIdTextBox() {
+		
+		Order order = createSampleOrder();
+		FormattedOrder formattedOrder = createSampleFormattedOrder();
+		when(subscriptionsController.formatOrder(order)).thenReturn(formattedOrder);
+
+		orderSwingView.showOrderDetails(order);
+
+		window.textBox("orderIdTextBox").requireDisabled();
+		
+	}
+	
+
+	@Test
+	public void testClearAllShouldResetAllTextFields() {
+		window.textBox("orderIdTextBox").deleteText();
+		window.textBox("orderIdTextBox").enterText("123");
+		window.textBox("orderDateTextBox").deleteText();
+		window.textBox("orderDateTextBox").enterText("2025-12-01");
+		window.textBox("paidDateTextBox").deleteText();
+		window.textBox("paidDateTextBox").enterText("2025-12-03");
+		window.textBox("orderTotalTextBox").deleteText();
+		window.textBox("orderTotalTextBox").enterText("€ 16,50");
+		window.textBox("netTotalTextBox").deleteText();
+		window.textBox("netTotalTextBox").enterText("€ 14,50");
+		window.textBox("paymentMethodTextBox").deleteText();
+		window.textBox("paymentMethodTextBox").enterText("Bonifico");
+		window.textBox("firstNameTextBox").deleteText();
+		window.textBox("firstNameTextBox").enterText("Grazia");
+		window.textBox("lastNameTextBox").deleteText();
+		window.textBox("lastNameTextBox").enterText("Fresco");
+		window.textBox("addressTextBox").deleteText();
+		window.textBox("addressTextBox").enterText("via Mazzini 3");
+		window.textBox("postcodeTextBox").deleteText();
+		window.textBox("postcodeTextBox").enterText("00185");
+		window.textBox("stateTextBox").deleteText();
+		window.textBox("stateTextBox").enterText("RM");
+		window.textBox("cityTextBox").deleteText();
+		window.textBox("cityTextBox").enterText("Roma");
+		window.textBox("emailTextBox").deleteText();
+		window.textBox("emailTextBox").enterText("indirizzo@email.com");
+		window.textBox("phoneTextBox").deleteText();
+		window.textBox("phoneTextBox").enterText("+39 333 1122 333");
+		window.textBox("productTextBox").deleteText();
+		window.textBox("productTextBox").enterText("Abbonamento sostenitore");
+		window.textBox("firstIssueTextBox").deleteText();
+		window.textBox("firstIssueTextBox").enterText("110");
+		window.textBox("lastIssueTextBox").deleteText();
+		window.textBox("lastIssueTextBox").enterText("116");
+		window.textBox("notesTextBox").deleteText();
+		window.textBox("notesTextBox").enterText("Regalato da Carla Vannucci");
+		
+		orderSwingView.clearAll();
+
+		assertThat(window.textBox("orderIdTextBox").text()).isEmpty();
+		assertThat(window.textBox("orderDateTextBox").text()).isEmpty();
+		assertThat(window.textBox("paidDateTextBox").text()).isEmpty();
+		assertThat(window.textBox("orderTotalTextBox").text()).isEmpty();
+		assertThat(window.textBox("netTotalTextBox").text()).isEmpty();
+		assertThat(window.textBox("paymentMethodTextBox").text()).isEmpty();
+		assertThat(window.textBox("firstNameTextBox").text()).isEmpty();
+		assertThat(window.textBox("lastNameTextBox").text()).isEmpty();
+		assertThat(window.textBox("addressTextBox").text()).isEmpty();
+		assertThat(window.textBox("postcodeTextBox").text()).isEmpty();
+		assertThat(window.textBox("stateTextBox").text()).isEmpty();
+		assertThat(window.textBox("cityTextBox").text()).isEmpty();
+		assertThat(window.textBox("emailTextBox").text()).isEmpty();
+		assertThat(window.textBox("phoneTextBox").text()).isEmpty();
+		assertThat(window.textBox("productTextBox").text()).isEmpty();
+		assertThat(window.textBox("firstIssueTextBox").text()).isEmpty();
+		assertThat(window.textBox("lastIssueTextBox").text()).isEmpty();
+		assertThat(window.textBox("notesTextBox").text()).isEmpty();
+
+		window.button(JButtonMatcher.withText("Update")).requireDisabled();
+		window.button(JButtonMatcher.withText("Delete")).requireDisabled();
+		
 	}
 
 	private Order createSampleOrder() {

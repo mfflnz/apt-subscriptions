@@ -101,8 +101,20 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		assertThat(window.textBox("orderDateTextBox").text()).isEmpty();
 		assertThat(window.textBox("paidDateTextBox").text()).isEmpty();
 		assertThat(window.textBox("orderTotalTextBox").text()).isEmpty();
-		// TODO: tutti gli altri campi
-
+		assertThat(window.textBox("netTotalTextBox").text()).isEmpty();
+		assertThat(window.textBox("paymentMethodTextBox").text()).isEmpty();
+		assertThat(window.textBox("lastNameTextBox").text()).isEmpty();
+		assertThat(window.textBox("addressTextBox").text()).isEmpty();
+		assertThat(window.textBox("postcodeTextBox").text()).isEmpty();
+		assertThat(window.textBox("cityTextBox").text()).isEmpty();
+		assertThat(window.textBox("emailTextBox").text()).isEmpty();
+		assertThat(window.textBox("phoneTextBox").text()).isEmpty();
+		assertThat(window.textBox("productTextBox").text()).isEmpty();
+		assertThat(window.textBox("firstIssueTextBox").text()).isEmpty();
+		assertThat(window.textBox("lastIssueTextBox").text()).isEmpty();
+		assertThat(window.textBox("notesTextBox").text()).isEmpty();
+		window.button(JButtonMatcher.withText("Delete")).requireDisabled();
+		window.button(JButtonMatcher.withText("Update")).requireDisabled();
 
 	}
 }

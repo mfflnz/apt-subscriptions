@@ -138,6 +138,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			
 			<!-- Docker -->
 			<plugin>
 				<groupId>io.fabric8</groupId>
@@ -217,6 +218,7 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
+			
 				<!-- JaCoCo -->
 				<plugin>
 					<groupId>org.jacoco</groupId>
@@ -259,6 +261,7 @@
 						</execution>
 					</executions>
 				</plugin>
+				
 				<!-- Pitest -->
 				<plugin>
 					<groupId>org.pitest</groupId>
@@ -266,16 +269,23 @@
 					<version>${pitest-maven.version}</version>
 					<configuration>
 						<targetClasses>
-							<param>org.blefuscu.apt.subscriptions.view.*</param>
+							<!-- <param>org.blefuscu.apt.subscriptions.view.*</param> -->
 							<param>org.blefuscu.apt.subscriptions.controller.*</param>
 							<param>org.blefuscu.apt.subscriptions.repository.*</param>
 						</targetClasses>
 						<targetTests>
-							<param>org.blefuscu.apt.subscriptions.*</param>
+							<param>org.blefuscu.apt.subscriptions.controller.ExportControllerTest</param>
+							<param>org.blefuscu.apt.subscriptions.controller.SubscriptionsControllerTest</param>
+							<param>org.blefuscu.apt.subscriptions.repository.OrderMongoRepositoryTest</param>
+<!--							<param>org.blefuscu.apt.subscriptions.view.DashBoardSwingViewTest</param>-->
+<!--							<param>org.blefuscu.apt.subscriptions.view.ListSwingViewTest</param>-->
+<!--							<param>org.blefuscu.apt.subscriptions.view.MessageSwingViewTest</param>-->
+<!--							<param>org.blefuscu.apt.subscriptions.view.OrderSwingViewTest</param>-->
+<!--							<param>org.blefuscu.apt.subscriptions.view.SearchSwingViewTest</param>-->
 						</targetTests>
 						<excludedTestClasses>
-							<excludedTestClass>**/*IT.java</excludedTestClass>
-							<excludedTestClass>**/*E2E.java</excludedTestClass>
+							<excludedTestClass>org.blefuscu.apt.subscriptions.controller.SubscriptionsControllerIT.java</excludedTestClass>
+							<excludedTestClass>org.blefuscu.apt.subscriptions.SubscriptionsSwingAppE2E.java</excludedTestClass>
 						</excludedTestClasses>
 						<mutators>
 							<mutator>STRONGER</mutator>

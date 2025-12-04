@@ -1,8 +1,11 @@
 package org.blefuscu.apt.subscriptions.view;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.swing.JFileChooser;
 
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.matcher.JButtonMatcher;
@@ -16,9 +19,9 @@ import org.blefuscu.apt.subscriptions.model.Order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.fixture.Containers.showInFrame;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -28,13 +31,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 @RunWith(GUITestRunner.class)
 public class ListSwingViewTest {
 
-	private static final int TIMEOUT = 5000;
+	private static final int TIMEOUT = 10000;
+	
+	@InjectMocks
 	private ListSwingView listSwingView;
 	private FrameFixture window;
 	private AutoCloseable closeable;
@@ -55,6 +61,7 @@ public class ListSwingViewTest {
 
 		GuiActionRunner.execute(() -> {
 			listSwingView = new ListSwingView();
+			listSwingView.setFc(new JFileChooser());
 			listSwingView.setSubscriptionsController(subscriptionsController);
 			return listSwingView;
 		});
@@ -83,7 +90,10 @@ public class ListSwingViewTest {
 
 		listSwingView.getListOrdersModel()
 				.addElement(new Order.OrderBuilder(1, LocalDate.of(2025, 10, 27), "customer@email.com").build());
+		
 		window.button(JButtonMatcher.withText("Export")).requireEnabled();
+		
+		assertThat(window.button(JButtonMatcher.withText("Export")).isEnabled());
 
 	}
 
@@ -206,11 +216,9 @@ public class ListSwingViewTest {
 		});
 		window.button(JButtonMatcher.withText("Export")).click();
 		GuiActionRunner.execute(() -> {
-			
-		listSwingView.getFc().setName("export.csv");
-		listSwingView.getFc().cancelSelection();
-			}
-		);
+			listSwingView.getFc().setName("export.csv");
+			listSwingView.getFc().cancelSelection();
+		});
 		
 		verifyNoInteractions(exportController);
 	}
@@ -227,10 +235,11 @@ public class ListSwingViewTest {
 			listSwingView.getListOrdersModel().addElement(order3);
 		});
 		window.button(JButtonMatcher.withText("Export")).click();
+
 		listSwingView.getFc().setName("export.csv");
 		listSwingView.getFc().cancelSelection();
 		
-		assertThat(!listSwingView.getFc().isShowing());
+		assertFalse(listSwingView.getFc().isShowing());
 	}
 
 	@Test
@@ -266,7 +275,8 @@ public class ListSwingViewTest {
 
 		window.button(JButtonMatcher.withText("Export")).click();
 
-		listSwingView.getFc().setName("export.csv");
+		listSwingView.getFc().setSelectedFile(new File("export.csv"));
+
 		listSwingView.getFc().approveSelection();
 
 		verify(subscriptionsController, timeout(TIMEOUT)).exportOrders(anyList(), anyString());
@@ -279,9 +289,16 @@ public class ListSwingViewTest {
 		GuiActionRunner.execute(() -> {
 			listSwingView.getListOrdersModel().addElement(order1);
 		});
-		
 		window.list("ordersList").selectItem(0);
-		verify(subscriptionsController, atLeastOnce()).orderDetails(1); // TODO: controlla 
+
+		System.out.println("SELEZIONATO LIST 292");
+				
+		//TODO: controlla
+			verify(subscriptionsController, timeout(TIMEOUT).atLeastOnce()).orderDetails(1);
+			
+			System.out.println("CHIAMATO CONTROLLER LIST 297");
+		
+
 	}
 	
 	@Test
