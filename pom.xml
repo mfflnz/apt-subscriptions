@@ -22,7 +22,7 @@
 		<pitest-maven.version>1.5.2</pitest-maven.version>
 		<coveralls-maven-plugin.version>4.5.0-M6</coveralls-maven-plugin.version>
 		<sonar.organization>mfflnz</sonar.organization>
-		<docker-maven-plugin.version>0.45.1</docker-maven-plugin.version>
+		<docker-maven-plugin.version>0.48.0</docker-maven-plugin.version>
 		<mongo-java-driver.version>3.12.10</mongo-java-driver.version>
 		<logback-classic.version>1.2.13</logback-classic.version>
 		<mongo-java-server.version>1.34.0</mongo-java-server.version>
@@ -186,9 +186,7 @@
 										<volume>${assetshost}:/assets:rw</volume>
 									</bind>
 								</volumes>
-								<cmd>mongoimport --host mongod
-									--collection='orders' --headerline
-									--file=assets/sample-orders.csv --type=csv</cmd>
+								<cmd>mongoimport --host mongod --db='subscriptions' --collection='orders' --headerline --file=assets/sample-orders.csv --type=csv</cmd>
 								<log>
 									<prefix>%a</prefix>
 									<date>default</date>
@@ -227,6 +225,7 @@
 					<configuration>
 						<excludes>
 							<exclude>**/model/*.*</exclude>
+							<exclude>**/SubscriptionsSwingApp.class</exclude>
 						</excludes>
 					</configuration>
 					<executions>

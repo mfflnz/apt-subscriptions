@@ -117,4 +117,6 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Update")).requireDisabled();
 
 	}
+
+
 }
