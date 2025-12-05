@@ -24,7 +24,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 
 // @RunWith(MockitoJUnitRunner.class) // TODO: controlla se è superfluo (v. pag. 253)
 @RunWith(GUITestRunner.class)

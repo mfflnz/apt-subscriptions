@@ -4,8 +4,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
-
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -14,15 +12,6 @@ public class DashboardSwingView extends JFrame implements DashboardView {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPanel;
-	private SubscriptionsController subscriptionsController;
-
-	public SubscriptionsController getSubscriptionsController() {
-		return subscriptionsController;
-	}
-
-	public void setSubscriptionsController(SubscriptionsController subscriptionsController) {
-		this.subscriptionsController = subscriptionsController;
-	}
 
 	/**
 	 * Create the frame.

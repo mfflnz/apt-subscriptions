@@ -10,7 +10,6 @@ import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
-import org.assertj.swing.timing.Pause;
 import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 import org.junit.After;
 import org.junit.Before;

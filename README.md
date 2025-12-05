@@ -458,6 +458,13 @@ Restano da fare gli Integration test per il SubscriptionsController.
 
 **TODO** NullPointer in fromDocumentToOrder nell'ordermongorepository
 
+Gli Integration Test sono svolti a partire dai due controller (export e subscriptions). Lanciati da Eclipse, dopo aver lanciato i container Docker di MongoDB (`./setup.sh`), danno buon esito. Provo con Maven da linea di comando ma ottengo errore: 
+
+    [ERROR] Failed to execute goal io.fabric8:docker-maven-plugin:0.45.1:start (docker-start) on project apt-subscriptions: Execution docker-start of goal io.fabric8:docker-maven-plugin:0.45.1:start failed.: NullPointerException -> [Help 1]
+    org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal io.fabric8:docker-maven-plugin:0.45.1:start (docker-start) on project apt-subscriptions: Execution docker-start of goal io.fabric8:docker-maven-plugin:0.45.1:start failed.
+    
+Aggiorno la versione di `docker-maven-plugin` (da 0.45.1 a 0.48.0) e riprovo: funziona.
+
 ---
 
 ### E2E Test
@@ -468,10 +475,13 @@ Restano da fare gli Integration test per il SubscriptionsController.
 
 **TODO**: controlla il filtro Bson (lte/gte)
 
-**TODO**: orderNetTotal si azzera sempre (solo nella view, non nel DB)
+Provo a questo punto a fare `mvn clean verify -Pjacoco,mutation-testing` ma ottengo due warning da JaCoCo:
 
-**TODO**: Delete nella orderview svuota tutti i campi
-
+    [WARNING] Rule violated for package org.blefuscu.apt.subscriptions.view: lines covered ratio is 0.99, but expected minimum is 1.00
+    [WARNING] Rule violated for package org.blefuscu.apt.subscriptions: lines covered ratio is 0.92, but expected minimum is 1.00
+    
+Porto al 100% la code coverage della View e aggiungo tra gli `<excludes>` di JaCoCo la classe `SubscriptionsSwingApp` (l'unica porzione di codice non raggiunta dai test è il ramo `catch` che lancia l'eccezione nella lambda della classe `call()`).
+    
 
 ---
 
