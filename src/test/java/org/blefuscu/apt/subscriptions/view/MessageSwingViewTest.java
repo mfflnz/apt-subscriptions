@@ -11,13 +11,11 @@ import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 public class MessageSwingViewTest {
 
-	@InjectMocks
 	private MessageSwingView messageSwingView;
 	private FrameFixture window;
 	private AutoCloseable closeable;
@@ -77,7 +75,6 @@ public class MessageSwingViewTest {
 	public void testGetMessage() {
 		messageSwingView.showErrorMessage("Sample error message");
 		assertEquals("Sample error message", messageSwingView.getMessageTextBox().getText());
-
 	}
 	
 }

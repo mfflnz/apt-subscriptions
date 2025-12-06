@@ -1,6 +1,7 @@
 name: Java CI with Maven in Windows
 
 on:
+  push:
   workflow_dispatch:
 
 jobs:

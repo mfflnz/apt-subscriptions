@@ -31,7 +31,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -40,7 +39,6 @@ public class ListSwingViewTest {
 
 	private static final int TIMEOUT = 10000;
 	
-	@InjectMocks
 	private ListSwingView listSwingView;
 	private FrameFixture window;
 	private AutoCloseable closeable;
@@ -291,13 +289,8 @@ public class ListSwingViewTest {
 		});
 		window.list("ordersList").selectItem(0);
 
-		System.out.println("SELEZIONATO LIST 292");
-				
 		//TODO: controlla
 			verify(subscriptionsController, timeout(TIMEOUT).atLeastOnce()).orderDetails(1);
-			
-			System.out.println("CHIAMATO CONTROLLER LIST 297");
-		
 
 	}
 	

@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 
 import org.assertj.swing.annotation.GUITest;
-import org.assertj.swing.core.EmergencyAbortListener;
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
@@ -21,24 +20,18 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-// @RunWith(MockitoJUnitRunner.class) // TODO: controlla se è superfluo (v. pag. 253)
 @RunWith(GUITestRunner.class)
 public class OrderSwingViewTest {
 
-	private static final int TIMEOUT = 15000;
+	private static final int TIMEOUT = 10000;
 	
-	@InjectMocks
 	private OrderSwingView orderSwingView;
 	private FrameFixture window;
 	private AutoCloseable closeable;
 
-	// https://joel-costigliola.github.io/assertj/assertj-swing-running.html
-	private EmergencyAbortListener listener;
-	
 	@Mock
 	private ListSwingView listView;
 
@@ -46,9 +39,8 @@ public class OrderSwingViewTest {
 	private SubscriptionsController subscriptionsController;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
-		listener = EmergencyAbortListener.registerInToolkit();
 
 		GuiActionRunner.execute(() -> {
 			
@@ -61,7 +53,6 @@ public class OrderSwingViewTest {
 
 	@After
 	public void tearDown() throws Exception {
-		listener.unregister();
 		window.cleanUp();
 		closeable.close();
 	}
@@ -191,6 +182,7 @@ public class OrderSwingViewTest {
 	
 	@Test
 	public void testUpdateButtonWithTextBoxesToBeCleanedShouldDelegateToSubscriptionsController() {
+		
 		window.textBox("orderIdTextBox").deleteText();
 		window.textBox("orderIdTextBox").enterText("4");
 		window.textBox("orderDateTextBox").deleteText();
@@ -217,8 +209,6 @@ public class OrderSwingViewTest {
 
 		window.button(JButtonMatcher.withText("Update")).click();
 		
-		// TODO: verificare se tenerla fuori dal GuiActionRunner (v. xvfb-run)
-		//GuiActionRunner.execute(() -> {		verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(4, updatedOrder);		}		);
 		verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(4, updatedOrder);
 
 		assertThat(window.textBox("orderIdTextBox").text()).isEqualTo("4");
