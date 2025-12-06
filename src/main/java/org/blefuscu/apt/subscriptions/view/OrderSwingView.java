@@ -59,7 +59,7 @@ public class OrderSwingView extends JPanel implements OrderView {
 	private JTextField notesTextBox;
 	private JButton btnUpdate;
 	private JButton btnDelete;
-	private SubscriptionsController subscriptionsController;
+	private transient SubscriptionsController subscriptionsController; //TODO
 
 	public void setSubscriptionsController(SubscriptionsController subscriptionsController) {
 		this.subscriptionsController = subscriptionsController;

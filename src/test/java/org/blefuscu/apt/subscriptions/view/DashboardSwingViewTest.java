@@ -40,5 +40,4 @@ public class DashboardSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.panel("messagePanel").requireVisible();
 	}
 
-	//TODO testare set e get controller
 }
