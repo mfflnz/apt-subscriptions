@@ -31,8 +31,10 @@ public class ListSwingView extends JPanel implements ListView {
 	private DefaultListModel<Order> listOrdersModel;
 	private SubscriptionsController subscriptionsController;
 	private JFileChooser fc;
+	private JButton btnExport;
 
 	private JList<Order> list;
+
 
 	public void setSubscriptionsController(SubscriptionsController subscriptionsController) {
 		this.subscriptionsController = subscriptionsController;
@@ -45,6 +47,8 @@ public class ListSwingView extends JPanel implements ListView {
 	public JFileChooser getFc() {
 		return fc;
 	}
+	
+
 	
 	/**
 	 * Create the panel.
@@ -59,14 +63,14 @@ public class ListSwingView extends JPanel implements ListView {
 		gridBagLayout.rowWeights = new double[] { 1.0, 0.0, 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 
-		JScrollPane scrollPane_1 = new JScrollPane();
+		JScrollPane scrollPane1 = new JScrollPane();
 		GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
 		gbc_scrollPane_1.gridheight = 2;
 		gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
 		gbc_scrollPane_1.insets = new Insets(0, 0, 5, 0);
 		gbc_scrollPane_1.gridx = 0;
 		gbc_scrollPane_1.gridy = 0;
-		add(scrollPane_1, gbc_scrollPane_1);
+		add(scrollPane1, gbc_scrollPane_1);
 
 		list = new JList<Order>(listOrdersModel);
 		list.addListSelectionListener(new ListSelectionListener() {
@@ -77,16 +81,17 @@ public class ListSwingView extends JPanel implements ListView {
 				}
 			}
 		});
-		scrollPane_1.setViewportView(list);
+		scrollPane1.setViewportView(list);
 		list.setName("ordersList");
 
-		JButton btnExport = new JButton("Export");
+		btnExport = new JButton("Export");
 		btnExport.setEnabled(false);
-		GridBagConstraints gbc_btnExport = new GridBagConstraints();
-		gbc_btnExport.anchor = GridBagConstraints.NORTHWEST;
-		gbc_btnExport.gridx = 0;
-		gbc_btnExport.gridy = 2;
-		add(btnExport, gbc_btnExport);
+		
+		GridBagConstraints gbcBtnExport = new GridBagConstraints();
+		gbcBtnExport.anchor = GridBagConstraints.NORTHWEST;
+		gbcBtnExport.gridx = 0;
+		gbcBtnExport.gridy = 2;
+		add(btnExport, gbcBtnExport);
 		btnExport.addActionListener(new ActionListener() {
 
 			@Override
@@ -95,7 +100,7 @@ public class ListSwingView extends JPanel implements ListView {
 				fc.setVisible(true);
 				fc.setDialogTitle("Export orders");
 
-				if (fc.showSaveDialog(scrollPane_1) == JFileChooser.APPROVE_OPTION) {
+				if (fc.showSaveDialog(scrollPane1) == JFileChooser.APPROVE_OPTION) {
 					List<FormattedOrder> formattedOrders = new ArrayList<>();
 					for (int i = 0; i < listOrdersModel.getSize(); i++) {
 						formattedOrders.add(subscriptionsController.formatOrder(listOrdersModel.elementAt(i)));
@@ -168,6 +173,5 @@ public class ListSwingView extends JPanel implements ListView {
 	public void setFc(JFileChooser fc) {
 		this.fc = fc;
 	}
-
 
 }

@@ -312,6 +312,18 @@ TODO: Uno dei test per la OrderView ha una failure che sembra legata al timeout 
     -> at     org.blefuscu.apt.subscriptions.view.OrderSwingViewTest.testDeleteButtonShouldDelegateToSubscriptionsController(OrderSwingViewTest.java:188)
     Actually, there were zero interactions with this mock.
     
+I test flaky sono quelli che prevedono il clic su un pulsante individuato da una JButtonFixture in AssertJ-Swing:
+    
+    window.button(JButtonMatcher.withText("Update")).click();
+    
+Osservo che raggiungo una stabilità migliore utilizzando il metodo `doClick()` di JButton (che pure prevede una forzatura rispetto alla lettura diretta del campo `btnUpdate`):
+
+    orderSwingView.getBtnUpdate().doClick();
+
+Passo l'opzione `-a` a `xvfb-run` e verifico:
+
+    xvfb-run -a mvn clean verify
+   
 
 #### Aggiustamenti con macOS
 

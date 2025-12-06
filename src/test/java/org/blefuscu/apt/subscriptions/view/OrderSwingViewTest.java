@@ -5,11 +5,14 @@ import static org.assertj.swing.fixture.Containers.showInFrame;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.awaitility.Awaitility.*;
 
 import java.time.LocalDate;
+import java.util.concurrent.TimeUnit;
 
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.matcher.JButtonMatcher;
+import org.assertj.swing.edt.FailOnThreadViolationRepaintManager;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
@@ -18,6 +21,7 @@ import org.blefuscu.apt.subscriptions.model.FormattedOrder;
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -27,7 +31,7 @@ import org.mockito.MockitoAnnotations;
 public class OrderSwingViewTest {
 
 	private static final int TIMEOUT = 10000;
-	
+
 	private OrderSwingView orderSwingView;
 	private FrameFixture window;
 	private AutoCloseable closeable;
@@ -38,21 +42,34 @@ public class OrderSwingViewTest {
 	@Mock
 	private SubscriptionsController subscriptionsController;
 
+	public Order updatedOrder1 = new Order.OrderBuilder(4, LocalDate.of(2025, 11, 05), "customer@email.com")
+			.setOrderTotal(16.5).build();
+	public Order updatedOrder2 = new Order.OrderBuilder(4, LocalDate.of(2025, 11, 05), "customer@email.com")
+			.setOrderTotal(0).setOrderNetTotal(14.5).setFirstIssue(106).setLastIssue(112)
+			.setPaidDate(LocalDate.of(2025, 11, 8)).build();
+
+	// https://joel-costigliola.github.io/assertj/assertj-swing-edt.html#testing-violations
+	@BeforeClass
+	public static void setUpOnce() {
+		FailOnThreadViolationRepaintManager.install();
+	}
+
 	@Before
 	public void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
 
 		GuiActionRunner.execute(() -> {
-			
 			orderSwingView = new OrderSwingView();
 			orderSwingView.setSubscriptionsController(subscriptionsController);
 			return orderSwingView;
 		});
+
 		window = showInFrame(orderSwingView);
 	}
 
 	@After
 	public void tearDown() throws Exception {
+
 		window.cleanUp();
 		closeable.close();
 	}
@@ -85,7 +102,7 @@ public class OrderSwingViewTest {
 
 	@Test
 	@GUITest
-	public void testIfAndOnlyIfAllOfOrderIdOrderDateAndEmailAreNotEmptyThenTheUpdateAndDeleteButtonsShouldBeEnabled() {
+	public void testIfAllOfOrderIdOrderDateAndEmailAreNotEmptyThenTheUpdateAndDeleteButtonsShouldBeEnabled() {
 		window.textBox("orderIdTextBox").deleteText();
 		window.textBox("orderIdTextBox").enterText("4");
 		window.textBox("orderDateTextBox").deleteText();
@@ -158,7 +175,6 @@ public class OrderSwingViewTest {
 
 	@Test
 	public void testUpdateButtonShouldDelegateToSubscriptionsController() {
-		Order updatedOrder = new Order.OrderBuilder(4, LocalDate.of(2025, 11, 05), "customer@email.com").setOrderTotal(16.5).build();
 		window.textBox("orderIdTextBox").deleteText();
 		window.textBox("orderIdTextBox").enterText("4");
 		window.textBox("orderDateTextBox").deleteText();
@@ -168,21 +184,24 @@ public class OrderSwingViewTest {
 		window.textBox("orderTotalTextBox").deleteText();
 		window.textBox("orderTotalTextBox").enterText("€ 16.5");
 
-		window.button(JButtonMatcher.withText("Update")).click();
-		
-		// TODO: verificare se tenerla fuori dal GuiActionRunner (v. xvfb-run)
-		//GuiActionRunner.execute(() -> {		verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(4, updatedOrder);		}		);
-		verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(4, updatedOrder);
+		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Update")).isEnabled());
+
+		GuiActionRunner.execute(() -> {
+			orderSwingView.getBtnUpdate().doClick();
+		});
+
+		await().atMost(5, TimeUnit.SECONDS)
+				.untilAsserted(() -> verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(4, updatedOrder1));
 
 		assertThat(window.textBox("orderIdTextBox").text()).isEqualTo("4");
 		assertThat(window.textBox("orderDateTextBox").text()).isEqualTo("2025-11-05");
 		assertThat(window.textBox("emailTextBox").text()).isEqualTo("customer@email.com");
 
 	}
-	
+
 	@Test
 	public void testUpdateButtonWithTextBoxesToBeCleanedShouldDelegateToSubscriptionsController() {
-		
+
 		window.textBox("orderIdTextBox").deleteText();
 		window.textBox("orderIdTextBox").enterText("4");
 		window.textBox("orderDateTextBox").deleteText();
@@ -199,17 +218,14 @@ public class OrderSwingViewTest {
 		window.textBox("paidDateTextBox").deleteText();
 		window.textBox("paidDateTextBox").enterText("2025-11-08");
 
-		Order updatedOrder = new Order.OrderBuilder(4, LocalDate.of(2025, 11, 05), "customer@email.com")
-				.setOrderTotal(0)
-				.setOrderNetTotal(14.5)
-				.setFirstIssue(106)
-				.setLastIssue(112)
-				.setPaidDate(LocalDate.of(2025, 11, 8))
-				.build();
+		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Update")).isEnabled());
 
-		window.button(JButtonMatcher.withText("Update")).click();
-		
-		verify(subscriptionsController, timeout(TIMEOUT)).updateOrder(4, updatedOrder);
+		GuiActionRunner.execute(() -> {
+			orderSwingView.getBtnUpdate().doClick();
+		});
+
+		await().atMost(5, TimeUnit.SECONDS)
+				.untilAsserted(() -> verify(subscriptionsController).updateOrder(4, updatedOrder2));
 
 		assertThat(window.textBox("orderIdTextBox").text()).isEqualTo("4");
 		assertThat(window.textBox("orderDateTextBox").text()).isEqualTo("2025-11-05");
@@ -226,7 +242,12 @@ public class OrderSwingViewTest {
 		window.textBox("emailTextBox").deleteText();
 		window.textBox("emailTextBox").enterText("customer@email.com");
 
-		window.button(JButtonMatcher.withText("Delete")).click();
+		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Delete")).isEnabled());
+
+		GuiActionRunner.execute(() -> {
+			orderSwingView.getBtnDelete().doClick();
+		});
+
 		verify(subscriptionsController, timeout(TIMEOUT)).deleteOrder(425);
 
 	}
@@ -249,7 +270,9 @@ public class OrderSwingViewTest {
 		FormattedOrder formattedOrder = createSampleFormattedOrder();
 		when(subscriptionsController.formatOrder(order)).thenReturn(formattedOrder);
 
-		orderSwingView.showOrderDetails(order);
+		GuiActionRunner.execute(() -> {
+			orderSwingView.showOrderDetails(order);
+		});
 
 		assertThat(window.textBox("orderIdTextBox").text()).isEqualTo("1");
 		assertThat(window.textBox("orderDateTextBox").text()).isEqualTo("2025-10-09");
@@ -274,20 +297,21 @@ public class OrderSwingViewTest {
 		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
 
 	}
-	
+
 	@Test
 	public void testShowOrderDetailsShouldDisableOrderIdTextBox() {
-		
+
 		Order order = createSampleOrder();
 		FormattedOrder formattedOrder = createSampleFormattedOrder();
 		when(subscriptionsController.formatOrder(order)).thenReturn(formattedOrder);
 
-		orderSwingView.showOrderDetails(order);
+		GuiActionRunner.execute(() -> {
+			orderSwingView.showOrderDetails(order);
+		});
 
 		window.textBox("orderIdTextBox").requireDisabled();
-		
+
 	}
-	
 
 	@Test
 	public void testClearAllShouldResetAllTextFields() {
@@ -327,8 +351,10 @@ public class OrderSwingViewTest {
 		window.textBox("lastIssueTextBox").enterText("116");
 		window.textBox("notesTextBox").deleteText();
 		window.textBox("notesTextBox").enterText("Regalato da Carla Vannucci");
-		
-		orderSwingView.clearAll();
+
+		GuiActionRunner.execute(() -> {
+			orderSwingView.clearAll();
+		});
 
 		assertThat(window.textBox("orderIdTextBox").text()).isEmpty();
 		assertThat(window.textBox("orderDateTextBox").text()).isEmpty();
@@ -351,7 +377,7 @@ public class OrderSwingViewTest {
 
 		window.button(JButtonMatcher.withText("Update")).requireDisabled();
 		window.button(JButtonMatcher.withText("Delete")).requireDisabled();
-		
+
 	}
 
 	private Order createSampleOrder() {

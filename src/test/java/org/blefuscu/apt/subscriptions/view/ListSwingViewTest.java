@@ -4,6 +4,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFileChooser;
 
@@ -15,16 +16,19 @@ import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.timing.Pause;
 import org.blefuscu.apt.subscriptions.controller.ExportController;
 import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
+import org.blefuscu.apt.subscriptions.model.FormattedOrder;
 import org.blefuscu.apt.subscriptions.model.Order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.fixture.Containers.showInFrame;
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static java.util.Arrays.asList;
 
 import org.junit.After;
@@ -61,9 +65,11 @@ public class ListSwingViewTest {
 			listSwingView = new ListSwingView();
 			listSwingView.setFc(new JFileChooser());
 			listSwingView.setSubscriptionsController(subscriptionsController);
+			listSwingView.getListOrdersModel().clear();
 			return listSwingView;
 		});
 
+		
 		window = showInFrame(listSwingView);
 	}
 
@@ -152,12 +158,10 @@ public class ListSwingViewTest {
 		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2025, 10, 10), "third@address.com").build();
 		Order updatedOrder = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "updated@address.com").build();
 
-		GuiActionRunner.execute(() -> {
 			listSwingView.getListOrdersModel().addElement(order1);
 			listSwingView.getListOrdersModel().addElement(order2);
 			listSwingView.getListOrdersModel().addElement(order3);
 			listSwingView.orderUpdated(2, updatedOrder);
-		});
 
 		String[] listContents = window.list().contents();
 
@@ -172,12 +176,10 @@ public class ListSwingViewTest {
 		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "other@address.com").build();
 		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2025, 10, 10), "third@address.com").build();
 
-		GuiActionRunner.execute(() -> {
 			listSwingView.getListOrdersModel().addElement(order1);
 			listSwingView.getListOrdersModel().addElement(order2);
 			listSwingView.getListOrdersModel().addElement(order3);
 			listSwingView.orderDeleted(2);
-		});
 
 		String[] listContents = window.list().contents();
 
@@ -191,11 +193,9 @@ public class ListSwingViewTest {
 		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "other@address.com").build();
 		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2025, 10, 10), "third@address.com").build();
 
-		GuiActionRunner.execute(() -> {
 			listSwingView.getListOrdersModel().addElement(order1);
 			listSwingView.getListOrdersModel().addElement(order2);
 			listSwingView.getListOrdersModel().addElement(order3);
-		});
 		window.button(JButtonMatcher.withText("Export")).click();
 		assertThat(listSwingView.getFc().isShowing());
 		Pause.pause(1000);
@@ -207,11 +207,9 @@ public class ListSwingViewTest {
 		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "other@address.com").build();
 		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2025, 10, 10), "third@address.com").build();
 
-		GuiActionRunner.execute(() -> {
 			listSwingView.getListOrdersModel().addElement(order1);
 			listSwingView.getListOrdersModel().addElement(order2);
 			listSwingView.getListOrdersModel().addElement(order3);
-		});
 		window.button(JButtonMatcher.withText("Export")).click();
 		GuiActionRunner.execute(() -> {
 			listSwingView.getFc().setName("export.csv");
@@ -227,11 +225,9 @@ public class ListSwingViewTest {
 		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "other@address.com").build();
 		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2025, 10, 10), "third@address.com").build();
 
-		GuiActionRunner.execute(() -> {
 			listSwingView.getListOrdersModel().addElement(order1);
 			listSwingView.getListOrdersModel().addElement(order2);
 			listSwingView.getListOrdersModel().addElement(order3);
-		});
 		window.button(JButtonMatcher.withText("Export")).click();
 
 		listSwingView.getFc().setName("export.csv");
@@ -241,22 +237,35 @@ public class ListSwingViewTest {
 	}
 
 	@Test
-	public void testSaveButtonInDialogShouldDelegateToSubscriptionsControllerFormatOrder() {
+	public void testSaveButtonInDialogShouldDelegateToSubscriptionsControllerFormatOrder() { //TODO
 		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com").build();
 		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "other@address.com").build();
 		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2025, 10, 10), "third@address.com").build();
 		List<Order> orders = asList(order1, order2, order3);
+		
+		FormattedOrder formattedOrder1 = new FormattedOrder.FormattedOrderBuilder("1").build();
+		FormattedOrder formattedOrder2 = new FormattedOrder.FormattedOrderBuilder("2").build();
+		FormattedOrder formattedOrder3 = new FormattedOrder.FormattedOrderBuilder("3").build();
+		
+		when(subscriptionsController.formatOrder(order1)).thenReturn(formattedOrder1);
+		when(subscriptionsController.formatOrder(order2)).thenReturn(formattedOrder2);
+		when(subscriptionsController.formatOrder(order3)).thenReturn(formattedOrder3);
+		
 
-		GuiActionRunner.execute(() -> {
 			listSwingView.getListOrdersModel().addElement(order1);
 			listSwingView.getListOrdersModel().addElement(order2);
 			listSwingView.getListOrdersModel().addElement(order3);
-		});
+		
 		window.button(JButtonMatcher.withText("Export")).click();
-		listSwingView.getFc().setName("export.csv");
-		listSwingView.getFc().approveSelection();
+		
+		GuiActionRunner.execute(() -> {
+			listSwingView.getFc().setSelectedFile(new File("export.csv"));
+			listSwingView.getFc().approveSelection();
+		});
 
-		orders.forEach(order -> verify(subscriptionsController, timeout(TIMEOUT)).formatOrder(order));
+		orders.forEach(order -> {
+			verify(subscriptionsController, timeout(TIMEOUT)).formatOrder(order);
+		});
 	}
 
 	@Test
@@ -265,17 +274,21 @@ public class ListSwingViewTest {
 		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "other@address.com").build();
 		Order order3 = new Order.OrderBuilder(3, LocalDate.of(2025, 10, 10), "third@address.com").build();
 
-		GuiActionRunner.execute(() -> {
 			listSwingView.getListOrdersModel().addElement(order1);
 			listSwingView.getListOrdersModel().addElement(order2);
 			listSwingView.getListOrdersModel().addElement(order3);
+
+		//
+			window.button(JButtonMatcher.withText("Export")).click();
+			//listSwingView.getBtnExport().doClick();
+		
+			await().atMost(5, TimeUnit.SECONDS).until(() -> listSwingView.getFc().isShowing());
+		GuiActionRunner.execute(() -> {
+			 listSwingView.getFc().setSelectedFile(new File("export.csv"));
+			//listSwingView.getFc().setName("export.csv");
+			listSwingView.getFc().approveSelection();
 		});
 
-		window.button(JButtonMatcher.withText("Export")).click();
-
-		listSwingView.getFc().setSelectedFile(new File("export.csv"));
-
-		listSwingView.getFc().approveSelection();
 
 		verify(subscriptionsController, timeout(TIMEOUT)).exportOrders(anyList(), anyString());
 	}
@@ -284,14 +297,23 @@ public class ListSwingViewTest {
 	public void testSelectingAnElementInTheListShouldShowOrderDetailsInTheOrderView() {
 		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com").build();
 
-		GuiActionRunner.execute(() -> {
-			listSwingView.getListOrdersModel().addElement(order1);
-		});
+		listSwingView.getListOrdersModel().addElement(order1);
 		window.list("ordersList").selectItem(0);
 
 		//TODO: controlla
 			verify(subscriptionsController, timeout(TIMEOUT).atLeastOnce()).orderDetails(1);
 
+	}
+
+	@Test
+	public void testIfNoElementInTheListIsSelectedThenTherShouldBeNoInteractionWithTheController() {
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com").build();
+		
+		listSwingView.getListOrdersModel().addElement(order1);
+		window.list("ordersList").clearSelection();
+		
+		verifyNoInteractions(subscriptionsController);
+		
 	}
 	
 	@Test
@@ -299,10 +321,8 @@ public class ListSwingViewTest {
 		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com").build();
 		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 10, 10), "second@address.com").build();
 
-		GuiActionRunner.execute(() -> {
 			listSwingView.getListOrdersModel().addElement(order1);
 			listSwingView.getListOrdersModel().addElement(order2);
-		});
 
 		listSwingView.clearList();
 		

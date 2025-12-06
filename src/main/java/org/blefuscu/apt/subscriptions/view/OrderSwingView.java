@@ -12,10 +12,15 @@ import java.awt.GridBagConstraints;
 import javax.swing.JTextField;
 import java.awt.Insets;
 import javax.swing.JButton;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.time.LocalDate;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class OrderSwingView extends JPanel implements OrderView {
 
@@ -59,7 +64,7 @@ public class OrderSwingView extends JPanel implements OrderView {
 	private JTextField notesTextBox;
 	private JButton btnUpdate;
 	private JButton btnDelete;
-	private transient SubscriptionsController subscriptionsController; //TODO
+	private SubscriptionsController subscriptionsController; //TODO
 
 	public void setSubscriptionsController(SubscriptionsController subscriptionsController) {
 		this.subscriptionsController = subscriptionsController;
@@ -429,9 +434,9 @@ public class OrderSwingView extends JPanel implements OrderView {
 		notesTextBox.setColumns(10);
 
 		btnDelete = new JButton("Delete");
-		btnDelete.addActionListener(e -> new Thread(() -> 
+		btnDelete.addActionListener(e ->  
 			subscriptionsController.deleteOrder(Integer.parseInt(orderIdTextBox.getText()))
-		).start());
+		);
 		btnDelete.setEnabled(false);
 		GridBagConstraints gbcBtnDelete = new GridBagConstraints();
 		gbcBtnDelete.anchor = GridBagConstraints.EAST;
@@ -441,47 +446,42 @@ public class OrderSwingView extends JPanel implements OrderView {
 		add(btnDelete, gbcBtnDelete);
 		
 		btnUpdate = new JButton("Update");
-		btnUpdate.addActionListener(
+		btnUpdate.addActionListener(e -> {
+			
+				 // toglie tutti i caratteri che non sono numeri o il punto
+				 double orderTotal = (orderTotalTextBox.getText().isEmpty()) ? 0.0
+						 : Double.parseDouble(orderTotalTextBox.getText().replaceAll("[^0-9.]", ""));
+				 
+				 double orderNetTotal = (netTotalTextBox.getText().isEmpty()) ? 0.0
+						 : Double.parseDouble(netTotalTextBox.getText().replaceAll("[^0-9.]", ""));
+				 
+				 int firstIssue = (firstIssueTextBox.getText().isEmpty()) ? 0
+						 : Integer.parseInt(firstIssueTextBox.getText());
+				 
+				 int lastIssue = (lastIssueTextBox.getText().isEmpty()) ? 0
+						 : Integer.parseInt(lastIssueTextBox.getText());
+				 
+				 LocalDate paidDate = (paidDateTextBox.getText().isEmpty() ? null
+						 : LocalDate.parse(paidDateTextBox.getText()));
+				 
+				 subscriptionsController.updateOrder(Integer.parseInt(orderIdTextBox.getText()),
+						 new Order.OrderBuilder(Integer.parseInt(orderIdTextBox.getText()),
+								 LocalDate.parse(orderDateTextBox.getText()), emailTextBox.getText())
+						 .setPaidDate(paidDate).setOrderTotal(orderTotal).setOrderNetTotal(orderNetTotal)
+						 .setPaymentMethodTitle(paymentMethodTitleTextBox.getText())
+						 .setShippingFirstName(firstNameTextBox.getText())
+						 .setShippingLastName(lastNameTextBox.getText())
+						 .setShippingAddress1(addressTextBox.getText())
+						 .setShippingPostcode(postcodeTextBox.getText())
+						 .setShippingState(stateTextBox.getText()).setShippingCity(cityTextBox.getText())
+						 .setBillingPhone(phoneTextBox.getText()).setShippingItems(productTextBox.getText())
+						 .setFirstIssue(firstIssue).setLastIssue(lastIssue)
+						 .setCustomerNote(notesTextBox.getText()).build());
+				 
+		
 
-				e -> new Thread(() -> {
-					
-					// toglie tutti i caratteri che non sono numeri o il punto
-					double orderTotal;
-					orderTotal = (orderTotalTextBox.getText().isEmpty()) ? 0.0
-							: Double.parseDouble(orderTotalTextBox.getText().replaceAll("[^0-9.]", ""));
+		});
 
-					double orderNetTotal;
-					orderNetTotal = (netTotalTextBox.getText().isEmpty()) ? 0.0
-							: Double.parseDouble(netTotalTextBox.getText().replaceAll("[^0-9.]", ""));
-
-					int firstIssue;
-					firstIssue = (firstIssueTextBox.getText().isEmpty()) ? 0
-							: Integer.parseInt(firstIssueTextBox.getText());
-
-					int lastIssue;
-					lastIssue = (lastIssueTextBox.getText().isEmpty()) ? 0
-							: Integer.parseInt(lastIssueTextBox.getText());
-
-					LocalDate paidDate;
-					paidDate = (paidDateTextBox.getText().isEmpty() ? null
-							: LocalDate.parse(paidDateTextBox.getText()));
-
-					subscriptionsController.updateOrder(Integer.parseInt(orderIdTextBox.getText()),
-							new Order.OrderBuilder(Integer.parseInt(orderIdTextBox.getText()),
-									LocalDate.parse(orderDateTextBox.getText()), emailTextBox.getText())
-									.setPaidDate(paidDate).setOrderTotal(orderTotal).setOrderNetTotal(orderNetTotal)
-									.setPaymentMethodTitle(paymentMethodTitleTextBox.getText())
-									.setShippingFirstName(firstNameTextBox.getText())
-									.setShippingLastName(lastNameTextBox.getText())
-									.setShippingAddress1(addressTextBox.getText())
-									.setShippingPostcode(postcodeTextBox.getText())
-									.setShippingState(stateTextBox.getText()).setShippingCity(cityTextBox.getText())
-									.setBillingPhone(phoneTextBox.getText()).setShippingItems(productTextBox.getText())
-									.setFirstIssue(firstIssue).setLastIssue(lastIssue)
-									.setCustomerNote(notesTextBox.getText()).build());
-				}).start()
-
-		);
 		
 		btnUpdate.setEnabled(false);
 		GridBagConstraints gbcBtnUpdate = new GridBagConstraints();
@@ -641,6 +641,14 @@ public class OrderSwingView extends JPanel implements OrderView {
 
 	public JTextField getNotesTextBox() {
 		return notesTextBox;
+	}
+
+	public JButton getBtnUpdate() {
+		return btnUpdate;
+	}
+
+	public JButton getBtnDelete() {
+		return btnDelete;
 	}
 
 }
