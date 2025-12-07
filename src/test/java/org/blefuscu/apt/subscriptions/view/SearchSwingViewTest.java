@@ -2,6 +2,8 @@ package org.blefuscu.apt.subscriptions.view;
 
 import static org.assertj.swing.fixture.Containers.showInFrame;
 import static org.awaitility.Awaitility.await;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 
 import java.time.LocalDate;
@@ -55,6 +57,11 @@ public class SearchSwingViewTest {
 		window.textBox("fromTextBox").requireEditable();
 		window.textBox("toTextBox").requireEditable();
 		window.button(JButtonMatcher.withText("Search")).requireEnabled();
+		
+		// SonarQube
+		assertTrue(window.textBox("fromTextBox").isEnabled());
+		assertTrue(window.textBox("toTextBox").isEnabled());
+		assertTrue(window.button(JButtonMatcher.withText("Search")).isEnabled());
 
 	}
 
@@ -62,7 +69,11 @@ public class SearchSwingViewTest {
 	public void testIfFromTextBoxIsNotEmptyAndIsNotCorrectlyFormattedThenTheSearchButtonShouldBeDisabled() {
 		window.textBox("fromTextBox").deleteText();
 		window.textBox("fromTextBox").enterText("2025-01-0");
+		
 		window.button(JButtonMatcher.withText("Search")).requireDisabled();
+		
+		// SonarQube
+		assertFalse(window.button(JButtonMatcher.withText("Search")).isEnabled());
 
 	}
 	
@@ -70,14 +81,22 @@ public class SearchSwingViewTest {
 	public void testIfToTextBoxIsNotEmptyAndIsNotCorrectlyFormattedThenTheSearchButtonShouldBeDisabled() {
 		window.textBox("toTextBox").deleteText();
 		window.textBox("toTextBox").enterText("2025-01-0");
+		
 		window.button(JButtonMatcher.withText("Search")).requireDisabled();
+
+		// SonarQube
+		assertFalse(window.button(JButtonMatcher.withText("Search")).isEnabled());
 	}
 	
 	@Test
 	public void testIfFromTextBoxIsNotEmptyAndIsCorrectlyFormattedThenTheSearchButtonShouldBeEnabled() {
 		window.textBox("fromTextBox").deleteText();
 		window.textBox("fromTextBox").enterText("2025-10-23");
+
 		window.button(JButtonMatcher.withText("Search")).requireEnabled();
+		
+		// SonarQube
+		assertTrue(window.button(JButtonMatcher.withText("Search")).isEnabled());
 
 	}
 	
@@ -86,6 +105,9 @@ public class SearchSwingViewTest {
 		window.textBox("toTextBox").deleteText();
 		window.textBox("toTextBox").enterText("2025-01-23");
 		window.button(JButtonMatcher.withText("Search")).requireEnabled();
+		
+		// SonarQube
+		assertTrue(window.button(JButtonMatcher.withText("Search")).isEnabled());
 	}
 	
 	@Test
@@ -121,7 +143,6 @@ public class SearchSwingViewTest {
 		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(subscriptionsController)
 				.sendErrorMessage("Please check start date format"));
 	}
-
 	
 	@Test
 	public void testIfToDateCannotBeParsedThenTheControllerShouldSendAnErrorMessage() {

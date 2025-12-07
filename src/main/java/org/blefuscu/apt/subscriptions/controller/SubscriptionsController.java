@@ -106,7 +106,6 @@ public class SubscriptionsController {
 
 	public FormattedOrder formatOrder(Order orderToFormat) {
 
-		// TODO: controlla questo pattern
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 		String orderDate = dateTimeFormatter.format(orderToFormat.getOrderDate());

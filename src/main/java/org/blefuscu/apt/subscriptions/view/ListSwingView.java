@@ -29,7 +29,7 @@ public class ListSwingView extends JPanel implements ListView {
 	private static final long serialVersionUID = 1L;
 
 	private DefaultListModel<Order> listOrdersModel;
-	private SubscriptionsController subscriptionsController;
+	private transient SubscriptionsController subscriptionsController;
 	private JFileChooser fc;
 	private JButton btnExport;
 
@@ -64,15 +64,15 @@ public class ListSwingView extends JPanel implements ListView {
 		setLayout(gridBagLayout);
 
 		JScrollPane scrollPane1 = new JScrollPane();
-		GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
-		gbc_scrollPane_1.gridheight = 2;
-		gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane_1.insets = new Insets(0, 0, 5, 0);
-		gbc_scrollPane_1.gridx = 0;
-		gbc_scrollPane_1.gridy = 0;
-		add(scrollPane1, gbc_scrollPane_1);
+		GridBagConstraints gbcScrollPane1 = new GridBagConstraints();
+		gbcScrollPane1.gridheight = 2;
+		gbcScrollPane1.fill = GridBagConstraints.BOTH;
+		gbcScrollPane1.insets = new Insets(0, 0, 5, 0);
+		gbcScrollPane1.gridx = 0;
+		gbcScrollPane1.gridy = 0;
+		add(scrollPane1, gbcScrollPane1);
 
-		list = new JList<Order>(listOrdersModel);
+		list = new JList<>(listOrdersModel);
 		list.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
 				

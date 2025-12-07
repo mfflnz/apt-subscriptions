@@ -274,7 +274,6 @@
 					<version>${pitest-maven.version}</version>
 					<configuration>
 						<targetClasses>
-							<!-- <param>org.blefuscu.apt.subscriptions.view.*</param> -->
 							<param>org.blefuscu.apt.subscriptions.controller.*</param>
 							<param>org.blefuscu.apt.subscriptions.repository.*</param>
 						</targetClasses>
@@ -282,11 +281,6 @@
 							<param>org.blefuscu.apt.subscriptions.controller.ExportControllerTest</param>
 							<param>org.blefuscu.apt.subscriptions.controller.SubscriptionsControllerTest</param>
 							<param>org.blefuscu.apt.subscriptions.repository.OrderMongoRepositoryTest</param>
-<!--							<param>org.blefuscu.apt.subscriptions.view.DashBoardSwingViewTest</param>-->
-<!--							<param>org.blefuscu.apt.subscriptions.view.ListSwingViewTest</param>-->
-<!--							<param>org.blefuscu.apt.subscriptions.view.MessageSwingViewTest</param>-->
-<!--							<param>org.blefuscu.apt.subscriptions.view.OrderSwingViewTest</param>-->
-<!--							<param>org.blefuscu.apt.subscriptions.view.SearchSwingViewTest</param>-->
 						</targetTests>
 						<excludedTestClasses>
 							<excludedTestClass>org.blefuscu.apt.subscriptions.controller.SubscriptionsControllerIT.java</excludedTestClass>

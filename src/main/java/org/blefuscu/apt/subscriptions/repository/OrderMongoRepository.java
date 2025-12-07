@@ -505,7 +505,7 @@ public class OrderMongoRepository implements OrderRepository {
 		int firstIssue = (d.getInteger(FIRST_ISSUE) == null) ? 0 : d.getInteger(FIRST_ISSUE);
 		
 		double orderNetTotal = (d.getDouble(ORDER_NET_TOTAL) == null) ? 0.0 : d.getDouble(ORDER_NET_TOTAL); 
-		boolean orderConfirmed = (d.getBoolean(ORDER_CONFIRMED) == null) ? false : d.getBoolean(ORDER_CONFIRMED);
+		boolean orderConfirmed = (d.getBoolean(ORDER_CONFIRMED) != null) && d.getBoolean(ORDER_CONFIRMED);
 		
 		LocalDate orderDate = (d.getString(ORDER_DATE).isEmpty()) ? null : LocalDate.parse(cleanupDate(d.getString(ORDER_DATE)));
 		LocalDate paidDate = (d.getString(PAID_DATE).isEmpty()) ? null : LocalDate.parse(cleanupDate(d.getString(PAID_DATE)));

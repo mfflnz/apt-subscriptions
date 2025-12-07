@@ -1091,7 +1091,7 @@ public class OrderMongoRepositoryTest {
 	public void testFindAllIfCustomerIdHasWrongTypeShouldThrow() {
 		addTestOrderWithWrongTypeToDatabase("customer_id", false);
 		assertThatThrownBy(() -> orderRepository.findAll()).isInstanceOf(IllegalArgumentException.class)
-		.hasMessage("Error: Customer Id should be a number or a string");
+				.hasMessage("Error: Customer Id should be a number or a string");
 	}
 	
 	// TODO: caso in cui customer id e order number sono delle stringhe

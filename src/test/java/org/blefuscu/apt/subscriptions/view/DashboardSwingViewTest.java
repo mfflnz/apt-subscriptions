@@ -2,10 +2,14 @@ package org.blefuscu.apt.subscriptions.view;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertTrue;
+
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
+
 
 @RunWith(GUITestRunner.class)
 public class DashboardSwingViewTest extends AssertJSwingJUnitTestCase {
@@ -38,6 +42,13 @@ public class DashboardSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.panel("listPanel").requireVisible();
 		window.panel("orderPanel").requireVisible();
 		window.panel("messagePanel").requireVisible();
+		
+		// SonarQube
+		assertTrue(window.panel("searchPanel").isEnabled());
+		assertTrue(window.panel("listPanel").isEnabled());
+		assertTrue(window.panel("orderPanel").isEnabled());
+		assertTrue(window.panel("messagePanel").isEnabled());
+		
 	}
 
 }

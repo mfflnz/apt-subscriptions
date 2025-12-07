@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.blefuscu.apt.subscriptions.model.FormattedOrder;
 import org.blefuscu.apt.subscriptions.view.MessageSwingView;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,10 +31,6 @@ public class ExportControllerIT {
 		Files.deleteIfExists(Paths.get(FILENAME));
 	}
 
-	@After
-	public void tearDown() throws Exception {
-   // TODO document why this method is empty
- }
 
 	@Test
 	public void testSaveDataIfFileDoesNotExistWritesFileOnDiskAndSendsAnInfoMessageToTheMessageViewAndReturnsZero() throws IOException {

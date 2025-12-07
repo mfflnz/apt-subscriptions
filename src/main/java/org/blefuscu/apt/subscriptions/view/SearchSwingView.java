@@ -26,7 +26,7 @@ public class SearchSwingView extends JPanel implements SearchView {
 	private JTextField fromTextBox;
 	private JTextField toTextBox;
 	private JButton btnSearch;
-	private SubscriptionsController subscriptionsController;
+	private transient SubscriptionsController subscriptionsController;
 
 	public void setSubscriptionsController(SubscriptionsController subscriptionsController) {
 		this.subscriptionsController = subscriptionsController;
@@ -169,7 +169,6 @@ public class SearchSwingView extends JPanel implements SearchView {
 	}
 
 	public JButton getBtnSearch() {
-		// TODO Auto-generated method stub
 		return btnSearch;
 	}
 

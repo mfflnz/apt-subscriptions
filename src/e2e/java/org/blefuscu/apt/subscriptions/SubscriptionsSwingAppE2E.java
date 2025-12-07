@@ -53,10 +53,7 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		mongoCollection.insertOne(doc1);
 		mongoCollection.insertOne(doc2);
 
-		// In alternativa il fully qualified name:
 		application("org.blefuscu.apt.subscriptions.SubscriptionsSwingApp").start();
-		// TODO: v. errore CI SubscriptionsSwingAppE2E>AssertJSwingJUnitTestCase.setUp:49->onSetUp:56 » Unexpected Unable to load class 'org.blefuscu.apt.subscriptions.SubscriptionsSwingApp'
-		// application(SubscriptionsSwingApp.class).start();
 
 		window = WindowFinder.findFrame(new GenericTypeMatcher<JFrame>(JFrame.class) {
 			@Override

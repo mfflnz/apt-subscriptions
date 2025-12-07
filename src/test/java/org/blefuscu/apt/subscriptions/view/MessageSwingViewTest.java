@@ -45,35 +45,44 @@ public class MessageSwingViewTest {
 	@GUITest
 	public void testControlsInitialStates() {
 		window.textBox("messageTextBox").requireVisible();
+		assertTrue(window.textBox("messageTextBox").isEnabled());
 	}
 
 	@Test
 	@GUITest
 	public void testShowInfoMessageShouldDisplayAnInfoMessage() {
-		messageSwingView.showInfoMessage("Sample info message");
+		GuiActionRunner.execute(() -> {
+			messageSwingView.showInfoMessage("Sample info message");
+		});
 		assertEquals("Sample info message", window.textBox("messageTextBox").text());
 	}
 
 	@Test
 	@GUITest
 	public void testShowErrorMessageShouldDisplayAnErrorMessage() {
-		messageSwingView.showErrorMessage("Sample error message");
+		GuiActionRunner.execute(() -> {
+			messageSwingView.showErrorMessage("Sample error message");
+		});
 		assertEquals("Sample error message", window.textBox("messageTextBox").text());
 	}
 
 	@Test
 	@GUITest
 	public void testMessageTextBoxShouldBeResetAfterAFewSeconds() {
-		messageSwingView.showErrorMessage("Sample error message");
+		GuiActionRunner.execute(() -> {
+			messageSwingView.showErrorMessage("Sample error message");
+		});
 		assertEquals("Sample error message", window.textBox("messageTextBox").text());
 		Pause.pause(8000);
 		assertEquals("", window.textBox("messageTextBox").text());
 	}
-	
+
 	@Test
 	public void testGetMessage() {
-		messageSwingView.showErrorMessage("Sample error message");
+		GuiActionRunner.execute(() -> {
+			messageSwingView.showErrorMessage("Sample error message");
+		});
 		assertEquals("Sample error message", messageSwingView.getMessageTextBox().getText());
 	}
-	
+
 }
