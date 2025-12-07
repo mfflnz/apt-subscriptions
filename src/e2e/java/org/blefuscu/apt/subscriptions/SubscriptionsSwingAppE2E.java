@@ -2,7 +2,6 @@ package org.blefuscu.apt.subscriptions;
 
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.ORDER_COLLECTION_NAME;
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.SUBSCRIPTIONS_DB_NAME;
-import org.blefuscu.apt.subscriptions.SubscriptionsSwingApp;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
