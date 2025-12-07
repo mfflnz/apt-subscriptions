@@ -2,6 +2,7 @@ package org.blefuscu.apt.subscriptions;
 
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.ORDER_COLLECTION_NAME;
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.SUBSCRIPTIONS_DB_NAME;
+import org.blefuscu.apt.subscriptions.SubscriptionsSwingApp;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -53,9 +54,10 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		mongoCollection.insertOne(doc1);
 		mongoCollection.insertOne(doc2);
 
-		// In alternativa il fully qualified name: application("org.blefuscu.apt.subscriptions.SubscriptionsSwingApp").start();
+		// In alternativa il fully qualified name:
+		application("org.blefuscu.apt.subscriptions.SubscriptionsSwingApp").start();
 		// TODO: v. errore CI SubscriptionsSwingAppE2E>AssertJSwingJUnitTestCase.setUp:49->onSetUp:56 » Unexpected Unable to load class 'org.blefuscu.apt.subscriptions.SubscriptionsSwingApp'
-		application(SubscriptionsSwingApp.class).start();
+		// application(SubscriptionsSwingApp.class).start();
 
 		window = WindowFinder.findFrame(new GenericTypeMatcher<JFrame>(JFrame.class) {
 			@Override
