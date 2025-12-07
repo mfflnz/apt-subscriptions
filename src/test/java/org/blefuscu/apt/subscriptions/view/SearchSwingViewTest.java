@@ -1,10 +1,11 @@
 package org.blefuscu.apt.subscriptions.view;
 
 import static org.assertj.swing.fixture.Containers.showInFrame;
-import static org.mockito.Mockito.timeout;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.verify;
 
 import java.time.LocalDate;
+import java.util.concurrent.TimeUnit;
 
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.matcher.JButtonMatcher;
@@ -18,8 +19,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 public class SearchSwingViewTest {
-	
-	private static final int TIMEOUT = 10000;
 	
 	private SearchSwingView searchSwingView;
 	private FrameFixture window;
@@ -95,10 +94,15 @@ public class SearchSwingViewTest {
 		window.textBox("fromTextBox").enterText("2025-02-01");
 		window.textBox("toTextBox").deleteText();
 		window.textBox("toTextBox").enterText("2025-02-28");
-		window.button(JButtonMatcher.withText("Search")).click();
-
-		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("2025-02-01"), LocalDate.parse("2025-02-28"));
 		
+		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Search")).isEnabled());
+
+		GuiActionRunner.execute(() -> {
+			searchSwingView.getBtnSearch().doClick();
+		});
+		
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(subscriptionsController)
+				.requestOrders(LocalDate.parse("2025-02-01"), LocalDate.parse("2025-02-28")));
 	}
 	
 	@Test
@@ -107,10 +111,17 @@ public class SearchSwingViewTest {
 		window.textBox("fromTextBox").enterText("2025-02-51");
 		window.textBox("toTextBox").deleteText();
 		window.textBox("toTextBox").enterText("2025-02-28");
-		window.button(JButtonMatcher.withText("Search")).click();
+		
+		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Search")).isEnabled());
 
-		verify(subscriptionsController, timeout(TIMEOUT)).sendErrorMessage("Please check start date format");
+		GuiActionRunner.execute(() -> {
+			searchSwingView.getBtnSearch().doClick();
+		});
+		
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(subscriptionsController)
+				.sendErrorMessage("Please check start date format"));
 	}
+
 	
 	@Test
 	public void testIfToDateCannotBeParsedThenTheControllerShouldSendAnErrorMessage() {
@@ -118,9 +129,17 @@ public class SearchSwingViewTest {
 		window.textBox("fromTextBox").enterText("2025-02-01");
 		window.textBox("toTextBox").deleteText();
 		window.textBox("toTextBox").enterText("2025-02-68");
-		window.button(JButtonMatcher.withText("Search")).click();
+		
+		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Search")).isEnabled());
 
-		verify(subscriptionsController, timeout(TIMEOUT)).sendErrorMessage("Please check end date format");
+		GuiActionRunner.execute(() -> {
+			searchSwingView.getBtnSearch().doClick();
+		});
+		
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(subscriptionsController)
+				.sendErrorMessage("Please check end date format"));
+		
+
 	}
 	
 	@Test
@@ -129,9 +148,15 @@ public class SearchSwingViewTest {
 		window.textBox("fromTextBox").enterText("2025-02-01");
 		window.textBox("toTextBox").deleteText();
 		window.textBox("toTextBox").enterText("2025-01-01");
-		window.button(JButtonMatcher.withText("Search")).click();
+		
+		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Search")).isEnabled());
 
-		verify(subscriptionsController, timeout(TIMEOUT)).sendErrorMessage("Start date should be earlier or equal to end date");
+		GuiActionRunner.execute(() -> {
+			searchSwingView.getBtnSearch().doClick();
+		});
+		
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(subscriptionsController)
+				.sendErrorMessage("Start date should be earlier or equal to end date"));
 	}
 	
 	@Test
@@ -140,9 +165,15 @@ public class SearchSwingViewTest {
 		window.textBox("fromTextBox").enterText("2025-02-01");
 		window.textBox("toTextBox").deleteText();
 		window.textBox("toTextBox").enterText("2025-02-01");
-		window.button(JButtonMatcher.withText("Search")).click();
+		
+		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Search")).isEnabled());
 
-		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("2025-02-01"), LocalDate.parse("2025-02-01"));
+		GuiActionRunner.execute(() -> {
+			searchSwingView.getBtnSearch().doClick();
+		});
+		
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(subscriptionsController)
+				.requestOrders(LocalDate.parse("2025-02-01"), LocalDate.parse("2025-02-01")));
 	}
 	
 	@Test
@@ -150,9 +181,15 @@ public class SearchSwingViewTest {
 		window.textBox("fromTextBox").deleteText();
 		window.textBox("toTextBox").deleteText();
 		window.textBox("toTextBox").enterText("2025-01-01");
-		window.button(JButtonMatcher.withText("Search")).click();
+		
+		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Search")).isEnabled());
 
-		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("1970-01-01"), LocalDate.parse("2025-01-01"));
+		GuiActionRunner.execute(() -> {
+			searchSwingView.getBtnSearch().doClick();
+		});
+		
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(subscriptionsController)
+				.requestOrders(LocalDate.parse("1970-01-01"), LocalDate.parse("2025-01-01")));
 
 	}
 
@@ -162,9 +199,15 @@ public class SearchSwingViewTest {
 		window.textBox("fromTextBox").enterText("  ");
 		window.textBox("toTextBox").deleteText();
 		window.textBox("toTextBox").enterText("2025-01-01");
-		window.button(JButtonMatcher.withText("Search")).click();
 		
-		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("1970-01-01"), LocalDate.parse("2025-01-01"));
+		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Search")).isEnabled());
+
+		GuiActionRunner.execute(() -> {
+			searchSwingView.getBtnSearch().doClick();
+		});
+		
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(subscriptionsController)
+				.requestOrders(LocalDate.parse("1970-01-01"), LocalDate.parse("2025-01-01")));
 		
 	}
 	
@@ -173,9 +216,16 @@ public class SearchSwingViewTest {
 		window.textBox("fromTextBox").deleteText();
 		window.textBox("fromTextBox").enterText("2025-01-01");
 		window.textBox("toTextBox").deleteText();
-		window.button(JButtonMatcher.withText("Search")).click();
+		
+		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Search")).isEnabled());
 
-		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("2025-01-01"), LocalDate.now());
+		GuiActionRunner.execute(() -> {
+			searchSwingView.getBtnSearch().doClick();
+		});
+		
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(subscriptionsController)
+				.requestOrders(LocalDate.parse("2025-01-01"), LocalDate.now()));
+
 	}
 	
 	@Test
@@ -184,9 +234,15 @@ public class SearchSwingViewTest {
 		window.textBox("fromTextBox").enterText("2025-01-01");
 		window.textBox("toTextBox").deleteText();
 		window.textBox("toTextBox").enterText("  ");
-		window.button(JButtonMatcher.withText("Search")).click();
 		
-		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders(LocalDate.parse("2025-01-01"), LocalDate.now());
+		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Search")).isEnabled());
+
+		GuiActionRunner.execute(() -> {
+			searchSwingView.getBtnSearch().doClick();
+		});
+		
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(subscriptionsController)
+				.requestOrders(LocalDate.parse("2025-01-01"), LocalDate.now()));
 		
 	}
 	
@@ -194,9 +250,15 @@ public class SearchSwingViewTest {
 	public void testIfFromDateAndToDateAreBothEmptyThenEveryOrderShouldBeListed() {
 		window.textBox("fromTextBox").deleteText();
 		window.textBox("toTextBox").deleteText();
-		window.button(JButtonMatcher.withText("Search")).click();
+
+		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Search")).isEnabled());
+
+		GuiActionRunner.execute(() -> {
+			searchSwingView.getBtnSearch().doClick();
+		});
 		
-		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders();
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(subscriptionsController)
+				.requestOrders());
 		
 	}
 
@@ -206,9 +268,15 @@ public class SearchSwingViewTest {
 		window.textBox("fromTextBox").enterText(" ");
 		window.textBox("toTextBox").deleteText();
 		window.textBox("toTextBox").enterText(" ");
-		window.button(JButtonMatcher.withText("Search")).click();
 		
-		verify(subscriptionsController, timeout(TIMEOUT)).requestOrders();
+		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Search")).isEnabled());
+
+		GuiActionRunner.execute(() -> {
+			searchSwingView.getBtnSearch().doClick();
+		});
+		
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(subscriptionsController)
+				.requestOrders());
 		
 	}
 

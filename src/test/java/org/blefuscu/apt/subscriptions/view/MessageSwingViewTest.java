@@ -29,7 +29,6 @@ public class MessageSwingViewTest {
 
 		GuiActionRunner.execute(() -> {
 			messageSwingView = new MessageSwingView();
-			messageSwingView.setSubscriptionsController(subscriptionsController);
 			return messageSwingView;
 		});
 

@@ -2,8 +2,6 @@ package org.blefuscu.apt.subscriptions.view;
 
 import javax.swing.JPanel;
 
-import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
-
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,8 +17,6 @@ public class MessageSwingView extends JPanel implements MessageView {
 	private static final int MESSAGE_TIMEOUT = 5000;
 	private static final long serialVersionUID = 1L;
 	private JTextField messageTextBox;
-
-	private SubscriptionsController subscriptionsController;
 
 	/**
 	 * Create the panel.
@@ -67,10 +63,6 @@ public class MessageSwingView extends JPanel implements MessageView {
 	public void showErrorMessage(String string) {
 		messageTextBox.setForeground(Color.RED);
 		messageTextBox.setText(string);
-	}
-
-	public void setSubscriptionsController(SubscriptionsController subscriptionsController) {
-		this.subscriptionsController = subscriptionsController;
 	}
 
 	public JTextField getMessageTextBox() {

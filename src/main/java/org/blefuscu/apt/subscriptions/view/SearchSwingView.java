@@ -168,4 +168,9 @@ public class SearchSwingView extends JPanel implements SearchView {
 
 	}
 
+	public JButton getBtnSearch() {
+		// TODO Auto-generated method stub
+		return btnSearch;
+	}
+
 }
