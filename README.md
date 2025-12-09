@@ -354,7 +354,7 @@ Con il commit https://github.com/mfflnz/apt-subscriptions/commit/68cbfdb6d7e47e2
 
 Il Quality Gate di SonarQube segnala un Security Hotspot nel workflow, e prescrive di specificare il SHA del commit della `setup-docker-action` anziché il tag. Procedo di conseguenza.
 
-Dal 4 dicembre 2025 GitHub Actions non mette più a disposizione il runner macos-13, l'ultima versione con cui era possibile installare Docker con il procedimento sopra descritto. In alternativa uso la action [Setup Docker on macOS](https://github.com/marketplace/actions/setup-docker-on-macos) con macos-15-intel specificando nel workflow la variabile d'ambiente `DOCKER_HOST` (che punta al socket aperto da Colima, di cui fa uso la action).
+Dal 4 dicembre 2025 GitHub Actions [non mette più a disposizione](https://github.com/actions/runner-images/issues/13046) il runner macos-13, l'ultima versione con cui era possibile installare Docker con il procedimento sopra descritto. In alternativa uso la action [Setup Docker on macOS](https://github.com/marketplace/actions/setup-docker-on-macos) con macos-15-intel specificando nel workflow la variabile d'ambiente `DOCKER_HOST` (che punta al socket aperto da Colima, di cui fa uso la action).
 
 #### Workflow per Windows
 

@@ -29,5 +29,5 @@ jobs:
     - name: Build with Maven
       run: >
         mvn
-        -Dassetshost=D:\\a\\apt-subscriptions\\apt-subscriptions\\assets
-        clean verify
+        -Dassetshost=${{ github.workspace }}
+        clean test
