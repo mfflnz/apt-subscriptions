@@ -22,8 +22,8 @@ public class OrderSwingView extends JPanel implements OrderView {
 
 	private static final String WHITESPACES_REGEX = "^\\s*$";
 	private static final String DATE_REGEX = "^\\d{4}-\\d{2}-\\d{2}$";
-	// https://rules.sonarsource.com/java/RSPEC-5852/
-	private static final String EMAIL_REGEX = "^\\S+@\\S+\\.\\S++$";
+	// https://www.rfc-editor.org/errata/eid1690
+	private static final String EMAIL_REGEX = "^\\S{1,64}@\\S{1,256}\\.\\S{2,24}$";
 	private static final String NUMBER_REGEX = "^\\d+$";
 	private static final long serialVersionUID = 1L;
 	private JTextField orderIdTextBox;

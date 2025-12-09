@@ -17,7 +17,7 @@ import com.mongodb.client.model.Filters;
 
 public class SubscriptionsController {
 
-	private static final String ITEMS_SPECIAL_CHARACTERS = ".*[|{}].*+";
+
 	private ListView listView;
 	private OrderView orderView;
 	private MessageView messageView;
@@ -30,6 +30,9 @@ public class SubscriptionsController {
 	private static final String PLEASE_PROVIDE_FILE_NAME = "Please provide file name";
 	private static final String ERROR_NO_ORDERS_TO_EXPORT = "Error: no orders to export";
 	private static final String ERROR_EXPORTING_FILE = "Error exporting file";
+	// https://rules.sonarsource.com/java/type/Security%20Hotspot/RSPEC-5852/
+	// limite a 2048 caratteri nel campo "Items", che può contenere caratteri '|', '{' e '}'
+	private static final String ITEMS_SPECIAL_CHARACTERS = ".{0,1024}[|{}]{1,1024}";
 
 	public SubscriptionsController(ListView listView, OrderView orderView, MessageView messageView,
 			OrderRepository orderRepository, ExportController exportController) {
