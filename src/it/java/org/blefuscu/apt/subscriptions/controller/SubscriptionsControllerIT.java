@@ -93,7 +93,7 @@ public class SubscriptionsControllerIT {
 				.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 				.setLineItem1(
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
 				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build();
 
 		orderRepository.save(order);
@@ -140,7 +140,7 @@ public class SubscriptionsControllerIT {
 				.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 				.setLineItem1(
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
 				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build();
 	
 		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 11, 2), "customer@email.com").setOrderNumber(12345)
@@ -178,7 +178,7 @@ public class SubscriptionsControllerIT {
 				.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 				.setLineItem1(
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
 				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build();
 		
 		orderRepository.save(order1);
@@ -226,7 +226,7 @@ public class SubscriptionsControllerIT {
 				.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 				.setLineItem1(
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
 				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build();
 		
 		orderRepository.save(order1);
@@ -274,7 +274,7 @@ public class SubscriptionsControllerIT {
 				.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 				.setLineItem1(
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
 				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build();
 		
 		orderRepository.save(order1);
@@ -317,7 +317,7 @@ public class SubscriptionsControllerIT {
 				.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 				.setLineItem1(
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
 				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build();
 		
 		subscriptionsController.updateOrder(1, updatedOrder);

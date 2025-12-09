@@ -44,7 +44,6 @@ public class SubscriptionsSwingApp implements Callable<Void> {
 	public Void call() throws Exception {
 		EventQueue.invokeLater(() -> {
 			try {
-
 				SearchSwingView searchSwingView = new SearchSwingView();
 				ListSwingView listSwingView = new ListSwingView();
 				OrderSwingView orderSwingView = new OrderSwingView();
@@ -61,7 +60,6 @@ public class SubscriptionsSwingApp implements Callable<Void> {
 				orderSwingView.setSubscriptionsController(subscriptionsController);
 				dashboardSwingView.setVisible(true);
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		});
 		return null;

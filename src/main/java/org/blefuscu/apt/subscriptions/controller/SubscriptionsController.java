@@ -65,13 +65,12 @@ public class SubscriptionsController {
 			throw new IllegalArgumentException(START_DATE_SHOULD_BE_EARLIER_OR_EQUAL_TO_END_DATE);
 		}
 
-		Bson filter = Filters.and(Filters.gte("order_date", fromDate.toString()), Filters.lte("order_date", toDate.toString()));
-		
+		Bson filter = Filters.and(Filters.gte("order_date", fromDate.toString()),
+				Filters.lte("order_date", toDate.toString()));
+
 		messageView.showInfoMessage(displayNumberOfOrders(filter));
 		listView.showOrders(orderRepository.findByDateRange(fromDate, toDate));
 	}
-
-
 
 	public Order orderDetails(int orderId) {
 		Order order = orderRepository.findById(orderId);
@@ -126,47 +125,18 @@ public class SubscriptionsController {
 		String lastIssue = Integer.toString(orderToFormat.getLastIssue());
 		String customerNote = orderToFormat.getCustomerNote();
 
-		if (orderToFormat.getPaidDate() == null) {
-			paidDate = "";
-		} else {
-			paidDate = dateTimeFormatter.format(orderToFormat.getPaidDate());
-		}
+		paidDate = formatPaidDate(orderToFormat, dateTimeFormatter);
+		shippingFirstName = formatShippingFirstName(orderToFormat, shippingFirstName);
+		shippingLastName = formatShippingLastName(orderToFormat, shippingLastName);
+		shippingAddress1 = formatShippingAddress1(orderToFormat, shippingAddress1);
+		shippingPostcode = formatShippingPostcode(orderToFormat, shippingPostcode);
 
-		if (("".equals(shippingFirstName)) || (shippingFirstName == null)) {
-			shippingFirstName = orderToFormat.getBillingFirstName();
-		}
+		shippingCity = formatShippingCity(orderToFormat, shippingCity);
 
-		if (("".equals(shippingLastName)) || (shippingLastName == null)) {
-			shippingLastName = orderToFormat.getBillingLastName();
-		}
+		shippingState = formatShippingState(orderToFormat, shippingState);
 
-		if (("".equals(shippingAddress1)) || (shippingAddress1 == null)) {
-			shippingAddress1 = orderToFormat.getBillingAddress1();
-		}
+		shippingItems = formatShippingItems(shippingItems);
 
-		if (("".equals(shippingPostcode)) || (shippingPostcode == null)) {
-			shippingPostcode = orderToFormat.getBillingPostcode();
-		}
-
-		if (("".equals(shippingCity)) || (shippingCity == null)) {
-			shippingCity = orderToFormat.getBillingCity();
-		}
-
-		if (("".equals(shippingState)) || (shippingState == null)) {
-			shippingState = orderToFormat.getBillingState();
-		}
-		
-		if (("".equals(shippingItems)) || (shippingItems == null)) {
-			shippingItems = "";
-		}
-		
-		// Se la stringa non è già formattata (cioè se non contiene occorrenze di '|',
-		// '{' o '}', toglie il prefisso "items:" e il suffisso a partire dalla prima
-		// occorrenza di '|'
-		if (shippingItems.matches(".*[|{}].*")) {
-			shippingItems = shippingItems.substring(6, shippingItems.indexOf("|"));
-		}
-		
 		return new FormattedOrder.FormattedOrderBuilder(Integer.toString(orderToFormat.getOrderId()))
 				.setOrderDate(orderDate).setPaidDate(paidDate).setOrderTotal(orderTotal).setOrderNetTotal(orderNetTotal)
 				.setPaymentMethodTitle(paymentMethodTitle).setShippingFirstName(shippingFirstName)
@@ -174,8 +144,73 @@ public class SubscriptionsController {
 				.setShippingPostcode(shippingPostcode).setShippingCity(shippingCity).setShippingState(shippingState)
 				.setCustomerEmail(customerEmail).setBillingPhone(billingPhone).setShippingItems(shippingItems)
 				.setFirstIssue(firstIssue).setLastIssue(lastIssue).setCustomerNote(customerNote).build();
-		
 
+	}
+
+	private String formatShippingItems(String shippingItems) {
+		if (("".equals(shippingItems)) || (shippingItems == null)) {
+			shippingItems = "";
+		}
+
+		// Se la stringa non è già formattata (cioè se non contiene occorrenze di '|',
+		// '{' o '}', toglie il prefisso "items:" e il suffisso a partire dalla prima
+		// occorrenza di '|'
+		if (shippingItems.matches(".*[|{}].*")) {
+			shippingItems = shippingItems.substring(6, shippingItems.indexOf("|"));
+		}
+		return shippingItems;
+	}
+
+	private String formatShippingState(Order orderToFormat, String shippingState) {
+		if (("".equals(shippingState)) || (shippingState == null)) {
+			shippingState = orderToFormat.getBillingState();
+		}
+		return shippingState;
+	}
+
+	private String formatShippingCity(Order orderToFormat, String shippingCity) {
+		if (("".equals(shippingCity)) || (shippingCity == null)) {
+			shippingCity = orderToFormat.getBillingCity();
+		}
+		return shippingCity;
+	}
+
+	private String formatShippingPostcode(Order orderToFormat, String shippingPostcode) {
+		if (("".equals(shippingPostcode)) || (shippingPostcode == null)) {
+			shippingPostcode = orderToFormat.getBillingPostcode();
+		}
+		return shippingPostcode;
+	}
+
+	private String formatShippingAddress1(Order orderToFormat, String shippingAddress1) {
+		if (("".equals(shippingAddress1)) || (shippingAddress1 == null)) {
+			shippingAddress1 = orderToFormat.getBillingAddress1();
+		}
+		return shippingAddress1;
+	}
+
+	private String formatShippingLastName(Order orderToFormat, String shippingLastName) {
+		if (("".equals(shippingLastName)) || (shippingLastName == null)) {
+			shippingLastName = orderToFormat.getBillingLastName();
+		}
+		return shippingLastName;
+	}
+
+	private String formatShippingFirstName(Order orderToFormat, String shippingFirstName) {
+		if (("".equals(shippingFirstName)) || (shippingFirstName == null)) {
+			shippingFirstName = orderToFormat.getBillingFirstName();
+		}
+		return shippingFirstName;
+	}
+
+	private String formatPaidDate(Order orderToFormat, DateTimeFormatter dateTimeFormatter) {
+		String paidDate;
+		if (orderToFormat.getPaidDate() == null) {
+			paidDate = "";
+		} else {
+			paidDate = dateTimeFormatter.format(orderToFormat.getPaidDate());
+		}
+		return paidDate;
 	}
 
 	public void exportOrders(List<FormattedOrder> ordersToExport, String filename) {
@@ -204,13 +239,13 @@ public class SubscriptionsController {
 
 	public void sendInfoMessage(String infoMessage) {
 		messageView.showInfoMessage(infoMessage);
-		
+
 	}
-	
+
 	private String displayNumberOfOrders(Bson filter) {
 		long numberOfOrders = orderRepository.countOrders(filter);
 		String numberOfOrdersMessage = "";
-		
+
 		if (numberOfOrders == 1) {
 			numberOfOrdersMessage = "1 order found";
 		} else {

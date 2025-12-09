@@ -499,6 +499,12 @@ Porto al 100% la code coverage della View e aggiungo tra gli `<excludes>` di JaC
 
 ### Code Quality
 
-TODO: spiega questo: Devo parametrare le assertion di AssertJ Swing, che non vengono trattate da SonarLint.
+Le assertion di AssertJ Swing non vengono trattate da SonarLint: ad esempio:
+
+    window.button(JButtonMatcher.withText("Update")).requireEnabled();
+
+A questa assertion aggiungo per completezza (a costo di ridondanza nel codice dei test) le analoghe assertion di AssertJ supportate da SonarLint, ad esempio:
+
+    window.button(JButtonMatcher.withText("Update")).requireDisabled();
 
 Nell'analisi della SearchSwingView... TODO: spiega che c'è traoppa Cognitive Complexity. Fare un esempio di prima e dopo sul codice della SearchSwingView.

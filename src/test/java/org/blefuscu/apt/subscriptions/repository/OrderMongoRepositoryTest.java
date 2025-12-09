@@ -112,7 +112,7 @@ public class OrderMongoRepositoryTest {
 						"\"EUR\"")
 				.setMetaStripeFee(0.49).setMetaStripeNet(15.51).setLineItem1(
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
 				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build(),
 				
 				new Order.OrderBuilder(2, LocalDate.of(2025, 9, 6), "other@address.com").setOrderNumber(12345)
@@ -152,7 +152,7 @@ public class OrderMongoRepositoryTest {
 						.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 						.setLineItem1(
 								"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
 						.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build(),
 			
 						new Order.OrderBuilder(3, LocalDate.of(2025, 9, 7), "third@address.com").setOrderNumber(12345)
@@ -192,7 +192,7 @@ public class OrderMongoRepositoryTest {
 						.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 						.setLineItem1(
 								"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
 						.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build(),
 						
 						new Order.OrderBuilder(4, LocalDate.of(2025, 9, 8), "another@address.com").setOrderNumber(12345)
@@ -232,7 +232,7 @@ public class OrderMongoRepositoryTest {
 						.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 						.setLineItem1(
 								"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
 						.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build(),
 						
 						new Order.OrderBuilder(5, LocalDate.of(2025, 9, 9), "yetanother@address.com").setOrderNumber(12345)
@@ -272,7 +272,7 @@ public class OrderMongoRepositoryTest {
 						.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.0).setMetaStripeNet(0.0)
 						.setLineItem1(
 								"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(false)
+						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
 						.setOrderNetTotal(0.0).setFirstIssue(0).setLastIssue(0).build()		
 	
 				
@@ -334,7 +334,7 @@ public class OrderMongoRepositoryTest {
 						.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 						.setLineItem1(
 								"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
 						.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build());
 	}
 
@@ -388,7 +388,7 @@ public class OrderMongoRepositoryTest {
 								"\"EUR\"")
 						.setMetaStripeFee(0.49).setMetaStripeNet(15.51).setLineItem1(
 								"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
 						.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build(),
 				new Order.OrderBuilder(2, LocalDate.of(2025, 8, 1), "other@address.com").setOrderNumber(12345)
 						.setPaidDate(LocalDate.of(2025, 9, 10)).setStatus("processing").setShippingTotal(3.0)
@@ -427,7 +427,7 @@ public class OrderMongoRepositoryTest {
 						.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 						.setLineItem1(
 								"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+						.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
 						.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build());
 	}
 
@@ -474,7 +474,7 @@ public class OrderMongoRepositoryTest {
 				.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 				.setLineItem1(
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderConfirmed(true)
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
 				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build());
 	}
 
@@ -669,7 +669,7 @@ public class OrderMongoRepositoryTest {
 				.append("line_item_1",
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
 				.append("line_item_2", "").append("line_item_3", "").append("line_item_4", "").append("line_item_5", "")
-				.append("order_confirmed", true).append("order_net_total", 15.30).append("first_issue", 112)
+				.append("order_net_total", 15.30).append("first_issue", 112)
 				.append("last_issue", 117));
 
 	}
@@ -718,7 +718,7 @@ public class OrderMongoRepositoryTest {
 				.append("line_item_1",
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
 				.append("line_item_2", "").append("line_item_3", "").append("line_item_4", "").append("line_item_5", "")
-				.append("order_confirmed", true).append("order_net_total", 15.30).append("first_issue", 112)
+				.append("order_net_total", 15.30).append("first_issue", 112)
 				.append("last_issue", 117));
 
 	}
@@ -767,7 +767,7 @@ public class OrderMongoRepositoryTest {
 				.append("line_item_1",
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
 				.append("line_item_2", "").append("line_item_3", "").append("line_item_4", "").append("line_item_5", "")
-				.append("order_confirmed", true).append("order_net_total", 15.30).append("first_issue", 112)
+				.append("order_net_total", 15.30).append("first_issue", 112)
 				.append("last_issue", 117));
 
 	}
@@ -816,7 +816,7 @@ public class OrderMongoRepositoryTest {
 				.append("line_item_1",
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
 				.append("line_item_2", "").append("line_item_3", "").append("line_item_4", "").append("line_item_5", "")
-				.append("order_confirmed", null).append("order_net_total", null).append("first_issue", null)
+				.append("order_net_total", null).append("first_issue", null)
 				.append("last_issue", null));
 
 	}
@@ -865,7 +865,7 @@ public class OrderMongoRepositoryTest {
 				.append("line_item_1",
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
 				.append("line_item_2", "").append("line_item_3", "").append("line_item_4", "").append("line_item_5", "")
-				.append("order_confirmed", null).append("order_net_total", null).append("first_issue", null)
+				.append("order_net_total", null).append("first_issue", null)
 				.append("last_issue", null));
 
 	}
@@ -1094,38 +1094,26 @@ public class OrderMongoRepositoryTest {
 				.hasMessage("Error: Customer Id should be a number or a string");
 	}
 	
-	// TODO: caso in cui customer id e order number sono delle stringhe
-	
 	@Test
 	public void testFindAllIfMetaStripeCurrencyIsNull() {
-		
 		addTestOrderWithNullValueToDatabase("'meta:_stripe_currency'");
-		
 		assertThat(orderRepository.findAll().get(0).getMetaStripeCurrency()).isEqualTo("EUR");
-		
 	}
 	
 	@Test
 	public void testFindAllIfMetaStripeCurrencyIsAString() {
-		
 		addTestOrderWithGivenStringValueToDatabase("'meta:_stripe_currency'");
-		
 		assertThat(orderRepository.findAll().get(0).getMetaStripeCurrency()).isEqualTo("123456");
-		
 	}
 	
 	@Test
 	public void testFindAllIfBillingPhoneIsALong() {
-		
 		addTestOrderWithGivenLongValueToDatabase("billing_phone");
-		
 		assertThat(orderRepository.findAll().get(0).getBillingPhone()).isEqualTo("15000000000");
-		
 	}
 	
 	@Test
 	public void testFindAllIfGivenNumericalValuesAreStrings() {
-		
 		addTestOrderWithGivenStringValueToDatabase("customer_id");
 		addTestOrderWithGivenStringValueToDatabase("order_number");
 		
@@ -1133,7 +1121,139 @@ public class OrderMongoRepositoryTest {
 		assertThat(orderRepository.findAll().get(1).getOrderNumber()).isEqualTo(123456);
 		
 	}
+	
+	@Test
+	public void testFindAllIfDiscountTotalIsNull() {
+		addTestOrderWithNullValueToDatabase("discount_total");
+		assertThat(orderRepository.findAll().get(0).getDiscountTotal()).isEqualTo(0.0);
+		
+	}
 
+	@Test
+	public void testFindAllIfDiscountTotalIsADouble() {
+		addTestOrderWithGivenDoubleValueToDatabase("discount_total");
+		assertThat(orderRepository.findAll().get(0).getDiscountTotal()).isEqualTo(2.5);
+		
+	}
+
+	@Test
+	public void testFindAllIfDiscountTotalIsAnInt() {
+		addTestOrderWithGivenIntValueToDatabase("discount_total");
+		assertThat(orderRepository.findAll().get(0).getDiscountTotal()).isEqualTo(5);
+		
+	}
+	
+	@Test
+	public void testFindAllIfOrderDiscountIsNull() {
+		addTestOrderWithNullValueToDatabase("order_discount");
+		assertThat(orderRepository.findAll().get(0).getOrderDiscount()).isEqualTo(0.0);
+		
+	}
+
+	@Test
+	public void testFindAllIfOrderDiscountIsADouble() {
+		addTestOrderWithGivenDoubleValueToDatabase("order_discount");
+		assertThat(orderRepository.findAll().get(0).getOrderDiscount()).isEqualTo(2.5);
+		
+	}
+
+	@Test
+	public void testFindAllIfOrderDiscountIsAnInt() {
+		addTestOrderWithGivenIntValueToDatabase("order_discount");
+		assertThat(orderRepository.findAll().get(0).getOrderDiscount()).isEqualTo(5);
+	}
+	
+	@Test
+	public void testFindAllIfCartDiscountIsNull() {
+		addTestOrderWithNullValueToDatabase("cart_discount");
+		assertThat(orderRepository.findAll().get(0).getCartDiscount()).isEqualTo(0.0);
+	}
+
+	@Test
+	public void testFindAllIfCartDiscountIsADouble() {
+		addTestOrderWithGivenDoubleValueToDatabase("cart_discount");
+		assertThat(orderRepository.findAll().get(0).getCartDiscount()).isEqualTo(2.5);
+	}
+
+	@Test
+	public void testFindAllIfCartDiscountIsAnInt() {
+		addTestOrderWithGivenIntValueToDatabase("cart_discount");
+		assertThat(orderRepository.findAll().get(0).getCartDiscount()).isEqualTo(5);
+	}
+
+	@Test
+	public void testFindAllIfTaxTotalIsNull() {
+		addTestOrderWithNullValueToDatabase("tax_total");
+		assertThat(orderRepository.findAll().get(0).getTaxTotal()).isEqualTo(0.0);
+	}
+
+	@Test
+	public void testFindAllIfTaxTotalIsADouble() {
+		addTestOrderWithGivenDoubleValueToDatabase("tax_total");
+		assertThat(orderRepository.findAll().get(0).getTaxTotal()).isEqualTo(2.5);
+	}
+
+	@Test
+	public void testFindAllIfTaxTotalIsAnInt() {
+		addTestOrderWithGivenIntValueToDatabase("tax_total");
+		assertThat(orderRepository.findAll().get(0).getTaxTotal()).isEqualTo(5);
+	}
+	
+	@Test
+	public void testFindAllIfFeeTaxTotalIsNull() {
+		addTestOrderWithNullValueToDatabase("fee_tax_total");
+		assertThat(orderRepository.findAll().get(0).getFeeTaxTotal()).isEqualTo(0.0);
+	}
+
+	@Test
+	public void testFindAllIfFeeTaxTotalIsADouble() {
+		addTestOrderWithGivenDoubleValueToDatabase("fee_tax_total");
+		assertThat(orderRepository.findAll().get(0).getFeeTaxTotal()).isEqualTo(2.5);
+	}
+
+	@Test
+	public void testFindAllIfFeeTaxTotalIsAnInt() {
+		addTestOrderWithGivenIntValueToDatabase("fee_tax_total");
+		assertThat(orderRepository.findAll().get(0).getFeeTaxTotal()).isEqualTo(5);
+	}
+
+	@Test
+	public void testFindAllIfFeeTotalIsNull() {
+		addTestOrderWithNullValueToDatabase("fee_total");
+		assertThat(orderRepository.findAll().get(0).getFeeTotal()).isEqualTo(0.0);
+	}
+
+	@Test
+	public void testFindAllIfFeeTotalIsADouble() {
+		addTestOrderWithGivenDoubleValueToDatabase("fee_total");
+		assertThat(orderRepository.findAll().get(0).getFeeTotal()).isEqualTo(2.5);
+	}
+
+	@Test
+	public void testFindAllIfFeeTotalIsAnInt() {
+		addTestOrderWithGivenIntValueToDatabase("fee_total");
+		assertThat(orderRepository.findAll().get(0).getFeeTotal()).isEqualTo(5);
+	}
+
+	@Test
+	public void testFindAllIfShippingTaxTotalIsNull() {
+		addTestOrderWithNullValueToDatabase("shipping_tax_total");
+		assertThat(orderRepository.findAll().get(0).getShippingTaxTotal()).isEqualTo(0.0);
+	}
+
+	@Test
+	public void testFindAllIfShippingTaxTotalIsADouble() {
+		addTestOrderWithGivenDoubleValueToDatabase("shipping_tax_total");
+		assertThat(orderRepository.findAll().get(0).getShippingTaxTotal()).isEqualTo(2.5);
+	}
+
+	@Test
+	public void testFindAllIfShippingTaxTotalIsAnInt() {
+		addTestOrderWithGivenIntValueToDatabase("shipping_tax_total");
+		assertThat(orderRepository.findAll().get(0).getShippingTaxTotal()).isEqualTo(5);
+	}
+
+	
 	private void addTestOrderWithWrongTypeToDatabase(String keyOfValueThatShouldThrow, boolean wrongType) {
 		orderCollection.insertOne(new Document().append("order_id", 6).append("order_date", "2025-09-10")
 				.append("customer_email", "onemore@address.com").append(keyOfValueThatShouldThrow, wrongType));
@@ -1152,5 +1272,15 @@ public class OrderMongoRepositoryTest {
 	private void addTestOrderWithGivenLongValueToDatabase(String keyWithLongValue) {
 		orderCollection.insertOne(new Document().append("order_id", 6).append("order_date", "2025-09-10")
 				.append("customer_email", "onemore@address.com").append("paid_date", "2025-09-11").append(keyWithLongValue, 15000000000L));
+	}
+
+	private void addTestOrderWithGivenDoubleValueToDatabase(String keyWithDoubleValue) {
+		orderCollection.insertOne(new Document().append("order_id", 6).append("order_date", "2025-09-10")
+				.append("customer_email", "onemore@address.com").append("paid_date", "2025-09-11").append(keyWithDoubleValue, 2.5));
+	}
+	
+	private void addTestOrderWithGivenIntValueToDatabase(String keyWithIntValue) {
+		orderCollection.insertOne(new Document().append("order_id", 6).append("order_date", "2025-09-10")
+				.append("customer_email", "onemore@address.com").append("paid_date", "2025-09-11").append(keyWithIntValue, 5));
 	}
 }

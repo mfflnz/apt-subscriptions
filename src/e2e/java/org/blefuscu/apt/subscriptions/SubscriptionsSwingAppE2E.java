@@ -68,6 +68,8 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 	@GUITest
 	public void testOnStartAllTheFieldsAreEmpty() {
 		assertThat(window.list().contents()).isEmpty();
+	// assertThat(window.textBox(anyString()).text()).isEmpty();
+
 		// TODO: altri campi
 	}
 

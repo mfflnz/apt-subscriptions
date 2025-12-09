@@ -307,7 +307,6 @@ public class ListSwingViewTest {
 		});
 
 		window.button(JButtonMatcher.withText("Export")).click();
-		// listSwingView.getBtnExport().doClick();
 
 		await().atMost(5, TimeUnit.SECONDS).until(() -> listSwingView.getFc().isShowing());
 		GuiActionRunner.execute(() -> {

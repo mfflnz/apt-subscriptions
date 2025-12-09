@@ -164,7 +164,6 @@ public class Order {
 		this.lineItem3 = builder.lineItem3;
 		this.lineItem4 = builder.lineItem4;
 		this.lineItem5 = builder.lineItem5;
-		this.orderConfirmed = builder.orderConfirmed;
 		this.orderNetTotal = builder.orderNetTotal;
 		this.firstIssue = builder.firstIssue;
 		this.lastIssue = builder.lastIssue;
@@ -254,24 +253,87 @@ public class Order {
 		private int lastIssue;
 		private int firstIssue;
 		private double orderNetTotal;
-		private boolean orderConfirmed;
 
 		public OrderBuilder(int orderId, LocalDate orderDate, String customerEmail) {
 			this.orderId = orderId;
 			this.orderDate = orderDate;
 			this.customerEmail = customerEmail;
-			// TODO: Default per gli altri valori
+		
+			this.billingAddress1 = "";
+			this.billingAddress2 = "";
+			this.billingCity = "";
+			this.billingCompany = "";
+			this.billingCountry = "";
+			this.billingEmail = "";
+			this.billingFirstName = "";
+			this.billingLastName = "";
 			this.billingPhone = "";
+			this.billingPostcode = "";
+			this.billingState = "";
+			this.cartDiscount = 0.0;
+			this.couponItems = "";
+			this.customerId = 0;
+			this.customerIpAddress = "";
+			this.customerNote = "";
+			this.customerUser = "";
+			this.customerUserAgent = "";
+			this.discountTotal = 0.0;
+			this.downloadPermissions = "";
+			this.feeItems = "";
+			this.feeTaxTotal = 0.0;
+			this.feeTotal = 0.0;
+			this.firstIssue = 0;
+			this.lastIssue = 0;
+			this.lineItem1 = "";
+			this.lineItem2 = "";
+			this.lineItem3 = "";
+			this.lineItem4 = "";
+			this.lineItem5 = "";
+			this.metaPpcpPaypalFees = 0.0;
+			this.metaStripeCurrency = "";
+			this.metaStripeFee = 0.0;
+			this.metaStripeNet = 0.0;
+			this.metaWcOrderAttributionDeviceType = "";
+			this.metaWcOrderAttributionReferrer = "";
+			this.metaWcOrderAttributionSessionCount = "";
+			this.metaWcOrderAttributionSessionEntry = "";
+			this.metaWcOrderAttributionSessionPages = "";
+			this.metaWcOrderAttributionSessionStartTime = "";
+			this.metaWcOrderAttributionSourceType = "";
+			this.metaWcOrderAttributionUserAgent = "";
+			this.metaWcOrderAttributionUtmSource = "";
+			this.orderCurrency = "";
+			this.orderDiscount = 0.0;
+			this.orderKey = "";
+			this.orderNetTotal = 0.0;
+			this.orderNotes = "";
+			this.orderNumber = 0;
+			this.orderSubtotal = 0.0;
+			this.orderTotal = 0.0;
+			this.paidDate = null;
 			this.paymentMethod = "";
 			this.paymentMethodTitle = "";
-			this.shippingFirstName = "";
-			this.shippingLastName = "";
+			this.refundItems = "";
 			this.shippingAddress1 = "";
-			this.shippingPostcode = "";
+			this.shippingAddress2 = "";
 			this.shippingCity = "";
-			this.shippingState = "";
-			this.customerNote = "";
+			this.shippingCompany = "";
+			this.shippingCountry = "";
+			this.shippingFirstName = "";
 			this.shippingItems = "";
+			this.shippingLastName = "";
+			this.shippingMethod = "";
+			this.shippingPhone = "";
+			this.shippingPostcode = "";
+			this.shippingState = "";
+			this.shippingTaxTotal = 0.0;
+			this.shippingTotal = 0.0;
+			this.status = "";
+			this.taxItems = "";
+			this.taxTotal = 0.0;
+			this.transactionId = "";
+			this.wtImportKey = "";
+
 		}
 
 		public OrderBuilder setOrderNumber(int orderNumber) {
@@ -626,11 +688,6 @@ public class Order {
 
 		public OrderBuilder setLineItem5(String lineItem5) {
 			this.lineItem5 = lineItem5;
-			return this;
-		}
-		
-		public OrderBuilder setOrderConfirmed(boolean orderConfirmed) {
-			this.orderConfirmed = orderConfirmed;
 			return this;
 		}
 		

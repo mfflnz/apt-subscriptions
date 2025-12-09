@@ -64,7 +64,6 @@ public class OrderMongoRepository implements OrderRepository {
 	private static final String META_WC_ORDER_ATTRIBUTION_SOURCE_TYPE = "'meta:_wc_order_attribution_source_type'";
 	private static final String META_WC_ORDER_ATTRIBUTION_USER_AGENT = "'meta:_wc_order_attribution_user_agent'";
 	private static final String META_WC_ORDER_ATTRIBUTION_UTM_SOURCE = "'meta:_wc_order_attribution_utm_source'";
-	private static final String ORDER_CONFIRMED = "order_confirmed";
 	private static final String ORDER_CURRENCY = "order_currency";
 	private static final String ORDER_DATE = "order_date";
 	private static final String ORDER_DISCOUNT = "order_discount";
@@ -206,294 +205,24 @@ public class OrderMongoRepository implements OrderRepository {
 		if (d == null)
 			return null;
 
-		String downloadPermissions = "";
-		if (d.get(DOWNLOAD_PERMISSIONS) == null)
-			downloadPermissions = "";
-		else {
-			switch (d.get(DOWNLOAD_PERMISSIONS).getClass().getSimpleName()) {
-			case STRING:
-				downloadPermissions = d.getString(DOWNLOAD_PERMISSIONS);
-				break;
-			case INTEGER:
-				downloadPermissions = String.valueOf(d.get(DOWNLOAD_PERMISSIONS));
-				break;
-			default:
-				throw new IllegalArgumentException("Error: download permissions should be expressed with a number");
-			}
-		}
-
-		String wtImportKey = "";
-		if (d.get(WT_IMPORT_KEY) == null)
-			wtImportKey = "";
-		else {
-			switch (d.get(WT_IMPORT_KEY).getClass().getSimpleName()) {
-			case STRING:
-				wtImportKey = d.getString(WT_IMPORT_KEY);
-				break;
-			case INTEGER:
-				wtImportKey = String.valueOf(d.get(WT_IMPORT_KEY));
-				break;
-			default:
-				throw new IllegalArgumentException("Error: WT Import Key should be a number or a string");
-			}
-		}
-
-		String shippingPostcode = "";
-		if (d.get(SHIPPING_POSTCODE) == null)
-			shippingPostcode = "";
-		else {
-			switch (d.get(SHIPPING_POSTCODE).getClass().getSimpleName()) {
-			case STRING:
-				shippingPostcode = d.getString(SHIPPING_POSTCODE);
-				break;
-			case INTEGER:
-				shippingPostcode = String.valueOf(d.get(SHIPPING_POSTCODE));
-				break;
-			default:
-				throw new IllegalArgumentException("Error: Shipping Postcode should be a number or a string");
-			} 
-		}
-
-		String billingPostcode = "";
-		if (d.get(BILLING_POSTCODE) == null)
-			billingPostcode = "";
-		else {
-			switch (d.get(BILLING_POSTCODE).getClass().getSimpleName()) {
-			case STRING:
-				billingPostcode = d.getString(BILLING_POSTCODE);
-				break;
-			case INTEGER:
-				billingPostcode = String.valueOf(d.get(BILLING_POSTCODE));
-				break;
-			default:
-				throw new IllegalArgumentException("Error: Billing Postcode should be a number or a string");
-			}
-		}
-		
-		String billingPhone = "";
-		if (d.get(BILLING_PHONE) == null)
-			billingPhone = "";
-		else {
-			switch (d.get(BILLING_PHONE).getClass().getSimpleName()) {
-
-			case STRING:
-				billingPhone = d.getString(BILLING_PHONE);
-				break;
-			case INTEGER:
-				billingPhone = String.valueOf(d.get(BILLING_PHONE));
-				break;
-			case LONG:
-				billingPhone = String.valueOf(d.get(BILLING_PHONE));
-				break;
-			default:
-				throw new IllegalArgumentException("Error: Billing Phone should be a number or a string");
-			}
-		}
-
-		String customerUser = "";
-		if (d.get(CUSTOMER_USER) == null)
-			customerUser = "";
-		else {
-			switch (d.get(CUSTOMER_USER).getClass().getSimpleName()) {
-			case STRING:
-				customerUser = d.getString(CUSTOMER_USER);
-				break;
-			case INTEGER:
-				customerUser = String.valueOf(d.get(CUSTOMER_USER));
-				break;
-			default:
-				throw new IllegalArgumentException("Error: Customer User should be a number or a string");
-			}
-		}
-
-		int orderNumber;
-		if (d.get(ORDER_NUMBER) == null)
-			orderNumber = 0;
-		else {
-			switch (d.get(ORDER_NUMBER).getClass().getSimpleName()) {
-			case STRING:
-				orderNumber = Integer.valueOf(d.getString(ORDER_NUMBER));
-				break;
-			case INTEGER:
-				orderNumber = d.getInteger(ORDER_NUMBER);
-				break;
-			default:
-				throw new IllegalArgumentException("Error: Order Number should be a number or a string");
-			}
-		}
-
-		int customerId;
-		if (d.get(CUSTOMER_ID) == null)
-			customerId = 0;
-		else {
-			switch (d.get(CUSTOMER_ID).getClass().getSimpleName()) {
-			case STRING:
-				customerId = Integer.valueOf(d.getString(CUSTOMER_ID));
-				break;
-			case INTEGER:
-				customerId = d.getInteger(CUSTOMER_ID);
-				break;
-			default:
-				throw new IllegalArgumentException("Error: Customer Id should be a number or a string");
-			}
-		}
-
-		double shippingTotal = 0.0;
-		if (d.get(SHIPPING_TOTAL) == null)
-			shippingTotal = 0.0;
-		else {
-			if (d.get(SHIPPING_TOTAL).getClass() == Double.class) {
-				shippingTotal = d.getDouble(SHIPPING_TOTAL);
-			}
-			if (d.get(SHIPPING_TOTAL).getClass() == Integer.class) {
-				shippingTotal = d.getInteger(SHIPPING_TOTAL);
-			}
-		}
-
-		double shippingTaxTotal;
-		if (d.get(SHIPPING_TAX_TOTAL) == null)
-			shippingTaxTotal = 0.0;
-		else {
-			switch (d.get(SHIPPING_TAX_TOTAL).getClass().getSimpleName()) {
-			case DOUBLE:
-				shippingTaxTotal = d.getDouble(SHIPPING_TAX_TOTAL);
-				break;
-			case INTEGER:
-				shippingTaxTotal = d.getInteger(SHIPPING_TAX_TOTAL);
-				break;
-			default:
-				throw new IllegalArgumentException("Error: shipping tax total should be a number");
-			}
-			
-		}
-
-		double feeTotal;
-		if (d.get(FEE_TOTAL) == null)
-			feeTotal = 0.0;
-		else {
-			switch (d.get(FEE_TOTAL).getClass().getSimpleName()) {
-			case DOUBLE:
-				feeTotal = d.getDouble(FEE_TOTAL);
-				break;
-			case INTEGER:
-				feeTotal = d.getInteger(FEE_TOTAL);
-				break;
-			default:
-				throw new IllegalArgumentException("Error: Fee Total should be a number");
-			}
-		}
-
-		double feeTaxTotal;
-		if (d.get(FEE_TAX_TOTAL) == null)
-			feeTaxTotal = 0.0;
-		else {
-			switch (d.get(FEE_TAX_TOTAL).getClass().getSimpleName()) {
-			case DOUBLE:
-				feeTaxTotal = d.getDouble(FEE_TAX_TOTAL);
-				break;
-			case INTEGER:
-				feeTaxTotal = d.getInteger(FEE_TAX_TOTAL);
-				break;
-			default:
-				throw new IllegalArgumentException("Error: Fee Tax Total should be a number");
-			}
-		}
-
-		double taxTotal;
-		if (d.get(TAX_TOTAL) == null)
-			taxTotal = 0.0;
-		else {
-			switch (d.get(TAX_TOTAL).getClass().getSimpleName()) {
-			case DOUBLE:
-				taxTotal = d.getDouble(TAX_TOTAL);
-				break;
-			case INTEGER:
-				taxTotal = d.getInteger(TAX_TOTAL);
-				break;
-			default:
-				throw new IllegalArgumentException("Error: Tax Total should be a number");
-			}
-		}
-
-		double cartDiscount;
-		if (d.get(CART_DISCOUNT) == null)
-			cartDiscount = 0.0;
-		else {
-			switch (d.get(CART_DISCOUNT).getClass().getSimpleName()) {
-			case DOUBLE:
-				cartDiscount = d.getDouble(CART_DISCOUNT);
-				break;
-			case INTEGER:
-				cartDiscount = d.getInteger(CART_DISCOUNT);
-				break;
-			default:
-				throw new IllegalArgumentException("Error: Cart Discount should be a number");
-			}
-		}
-
-		double orderDiscount;
-		if (d.get(ORDER_DISCOUNT) == null)
-			orderDiscount = 0.0;
-		else {
-			switch (d.get(ORDER_DISCOUNT).getClass().getSimpleName()) {
-			case DOUBLE:
-				orderDiscount = d.getDouble(ORDER_DISCOUNT);
-				break;
-			case INTEGER:
-				orderDiscount = d.getInteger(ORDER_DISCOUNT);
-				break;
-			default:
-				throw new IllegalArgumentException("Error: Order Discount should be a number");
-			}
-		}
-
-		double discountTotal;
-		if (d.get(DISCOUNT_TOTAL) == null)
-			discountTotal = 0.0;
-		else {
-			switch (d.get(DISCOUNT_TOTAL).getClass().getSimpleName()) {
-			case DOUBLE:
-				discountTotal = d.getDouble(DISCOUNT_TOTAL);
-				break;
-			case INTEGER:
-				discountTotal = d.getInteger(DISCOUNT_TOTAL);
-				break;
-			default:
-				throw new IllegalArgumentException("Error: Discount Total should be a number");
-			}
-		}
-
-		double orderTotal;
-		if (d.get(ORDER_TOTAL) == null)
-			orderTotal = 0.0;
-		else {
-			switch (d.get(ORDER_TOTAL).getClass().getSimpleName()) {
-			case DOUBLE:
-				orderTotal = d.getDouble(ORDER_TOTAL);
-				break;
-			case INTEGER:
-				orderTotal = d.getInteger(ORDER_TOTAL);
-				break;
-			default:
-				throw new IllegalArgumentException("Error: Order Total should be a number");
-			}
-		}
-
-		double orderSubtotal;
-		if (d.get(ORDER_SUBTOTAL) == null)
-			orderSubtotal = 0.0;
-		else {
-			switch (d.get(ORDER_SUBTOTAL).getClass().getSimpleName()) {
-			case DOUBLE:
-				orderSubtotal = d.getDouble(ORDER_SUBTOTAL);
-				break;
-			case INTEGER:
-				orderSubtotal = d.getInteger(ORDER_SUBTOTAL);
-				break;
-			default:
-				throw new IllegalArgumentException("Error: Order Subtotal should be a number");
-			}
-		}
+		String downloadPermissions = convertDownloadPermissions(d);
+		String wtImportKey = convertWtImportKey(d);
+		String shippingPostcode = convertShippingPostcode(d);
+		String billingPostcode = convertBillingPostcode(d);
+		String billingPhone = convertBillingPhone(d);
+		String customerUser = convertCustomerUser(d);
+		int orderNumber = convertOrderNumber(d);
+		int customerId = convertCustomerId(d);
+		double shippingTotal = convertShippingTotal(d);
+		double shippingTaxTotal = convertShippingTaxTotal(d);
+		double feeTotal = convertFeeTotal(d);
+		double feeTaxTotal = convertFeeTaxTotal(d);
+		double taxTotal = convertTaxTotal(d);
+		double cartDiscount = convertCartDiscount(d);
+		double orderDiscount = convertOrderDiscount(d);
+		double discountTotal = convertDiscountTotal(d);
+		double orderTotal = convertOrderTotal(d);
+		double orderSubtotal = convertOrderSubtotal(d);
 		
 		String metaStripeCurrency = (d.get(META_STRIPE_CURRENCY) == null) ? "EUR" : d.get(META_STRIPE_CURRENCY, String.class); 
 
@@ -505,7 +234,6 @@ public class OrderMongoRepository implements OrderRepository {
 		int firstIssue = (d.getInteger(FIRST_ISSUE) == null) ? 0 : d.getInteger(FIRST_ISSUE);
 		
 		double orderNetTotal = (d.getDouble(ORDER_NET_TOTAL) == null) ? 0.0 : d.getDouble(ORDER_NET_TOTAL); 
-		boolean orderConfirmed = (d.getBoolean(ORDER_CONFIRMED) != null) && d.getBoolean(ORDER_CONFIRMED);
 		
 		LocalDate orderDate = (d.getString(ORDER_DATE).isEmpty()) ? null : LocalDate.parse(cleanupDate(d.getString(ORDER_DATE)));
 		LocalDate paidDate = (d.getString(PAID_DATE).isEmpty()) ? null : LocalDate.parse(cleanupDate(d.getString(PAID_DATE)));
@@ -586,8 +314,350 @@ public class OrderMongoRepository implements OrderRepository {
 				.setLastIssue(lastIssue)
 				.setFirstIssue(firstIssue)
 				.setOrderNetTotal(orderNetTotal)
-				.setOrderConfirmed(orderConfirmed)
 				.build();
+	}
+
+	private double convertOrderSubtotal(Document d) {
+		double orderSubtotal;
+		if (d.get(ORDER_SUBTOTAL) == null)
+			orderSubtotal = 0.0;
+		else {
+			switch (d.get(ORDER_SUBTOTAL).getClass().getSimpleName()) {
+			case DOUBLE:
+				orderSubtotal = d.getDouble(ORDER_SUBTOTAL);
+				break;
+			case INTEGER:
+				orderSubtotal = d.getInteger(ORDER_SUBTOTAL);
+				break;
+			default:
+				throw new IllegalArgumentException("Error: Order Subtotal should be a number");
+			}
+		}
+		return orderSubtotal;
+	}
+
+	private double convertOrderTotal(Document d) {
+		double orderTotal;
+		if (d.get(ORDER_TOTAL) == null)
+			orderTotal = 0.0;
+		else {
+			switch (d.get(ORDER_TOTAL).getClass().getSimpleName()) {
+			case DOUBLE:
+				orderTotal = d.getDouble(ORDER_TOTAL);
+				break;
+			case INTEGER:
+				orderTotal = d.getInteger(ORDER_TOTAL);
+				break;
+			default:
+				throw new IllegalArgumentException("Error: Order Total should be a number");
+			}
+		}
+		return orderTotal;
+	}
+
+	private double convertDiscountTotal(Document d) {
+		double discountTotal;
+		if (d.get(DISCOUNT_TOTAL) == null)
+			discountTotal = 0.0;
+		else {
+			switch (d.get(DISCOUNT_TOTAL).getClass().getSimpleName()) {
+			case DOUBLE:
+				discountTotal = d.getDouble(DISCOUNT_TOTAL);
+				break;
+			case INTEGER:
+				discountTotal = d.getInteger(DISCOUNT_TOTAL);
+				break;
+			default:
+				throw new IllegalArgumentException("Error: Discount Total should be a number");
+			}
+		}
+		return discountTotal;
+	}
+
+	private double convertOrderDiscount(Document d) {
+		double orderDiscount;
+		if (d.get(ORDER_DISCOUNT) == null)
+			orderDiscount = 0.0;
+		else {
+			switch (d.get(ORDER_DISCOUNT).getClass().getSimpleName()) {
+			case DOUBLE:
+				orderDiscount = d.getDouble(ORDER_DISCOUNT);
+				break;
+			case INTEGER:
+				orderDiscount = d.getInteger(ORDER_DISCOUNT);
+				break;
+			default:
+				throw new IllegalArgumentException("Error: Order Discount should be a number");
+			}
+		}
+		return orderDiscount;
+	}
+
+	private double convertCartDiscount(Document d) {
+		double cartDiscount;
+		if (d.get(CART_DISCOUNT) == null)
+			cartDiscount = 0.0;
+		else {
+			switch (d.get(CART_DISCOUNT).getClass().getSimpleName()) {
+			case DOUBLE:
+				cartDiscount = d.getDouble(CART_DISCOUNT);
+				break;
+			case INTEGER:
+				cartDiscount = d.getInteger(CART_DISCOUNT);
+				break;
+			default:
+				throw new IllegalArgumentException("Error: Cart Discount should be a number");
+			}
+		}
+		return cartDiscount;
+	}
+
+	private double convertTaxTotal(Document d) {
+		double taxTotal;
+		if (d.get(TAX_TOTAL) == null)
+			taxTotal = 0.0;
+		else {
+			switch (d.get(TAX_TOTAL).getClass().getSimpleName()) {
+			case DOUBLE:
+				taxTotal = d.getDouble(TAX_TOTAL);
+				break;
+			case INTEGER:
+				taxTotal = d.getInteger(TAX_TOTAL);
+				break;
+			default:
+				throw new IllegalArgumentException("Error: Tax Total should be a number");
+			}
+		}
+		return taxTotal;
+	}
+
+	private double convertFeeTaxTotal(Document d) {
+		double feeTaxTotal;
+		if (d.get(FEE_TAX_TOTAL) == null)
+			feeTaxTotal = 0.0;
+		else {
+			switch (d.get(FEE_TAX_TOTAL).getClass().getSimpleName()) {
+			case DOUBLE:
+				feeTaxTotal = d.getDouble(FEE_TAX_TOTAL);
+				break;
+			case INTEGER:
+				feeTaxTotal = d.getInteger(FEE_TAX_TOTAL);
+				break;
+			default:
+				throw new IllegalArgumentException("Error: Fee Tax Total should be a number");
+			}
+		}
+		return feeTaxTotal;
+	}
+
+	private double convertFeeTotal(Document d) {
+		double feeTotal;
+		if (d.get(FEE_TOTAL) == null)
+			feeTotal = 0.0;
+		else {
+			switch (d.get(FEE_TOTAL).getClass().getSimpleName()) {
+			case DOUBLE:
+				feeTotal = d.getDouble(FEE_TOTAL);
+				break;
+			case INTEGER:
+				feeTotal = d.getInteger(FEE_TOTAL);
+				break;
+			default:
+				throw new IllegalArgumentException("Error: Fee Total should be a number");
+			}
+		}
+		return feeTotal;
+	}
+
+	private double convertShippingTaxTotal(Document d) {
+		double shippingTaxTotal;
+		if (d.get(SHIPPING_TAX_TOTAL) == null)
+			shippingTaxTotal = 0.0;
+		else {
+			switch (d.get(SHIPPING_TAX_TOTAL).getClass().getSimpleName()) {
+			case DOUBLE:
+				shippingTaxTotal = d.getDouble(SHIPPING_TAX_TOTAL);
+				break;
+			case INTEGER:
+				shippingTaxTotal = d.getInteger(SHIPPING_TAX_TOTAL);
+				break;
+			default:
+				throw new IllegalArgumentException("Error: shipping tax total should be a number");
+			}
+			
+		}
+		return shippingTaxTotal;
+	}
+
+	private double convertShippingTotal(Document d) {
+		double shippingTotal = 0.0;
+		if (d.get(SHIPPING_TOTAL) == null)
+			shippingTotal = 0.0;
+		else {
+			if (d.get(SHIPPING_TOTAL).getClass() == Double.class) {
+				shippingTotal = d.getDouble(SHIPPING_TOTAL);
+			}
+			if (d.get(SHIPPING_TOTAL).getClass() == Integer.class) {
+				shippingTotal = d.getInteger(SHIPPING_TOTAL);
+			}
+		}
+		return shippingTotal;
+	}
+
+	private int convertCustomerId(Document d) {
+		int customerId;
+		if (d.get(CUSTOMER_ID) == null)
+			customerId = 0;
+		else {
+			switch (d.get(CUSTOMER_ID).getClass().getSimpleName()) {
+			case STRING:
+				customerId = Integer.valueOf(d.getString(CUSTOMER_ID));
+				break;
+			case INTEGER:
+				customerId = d.getInteger(CUSTOMER_ID);
+				break;
+			default:
+				throw new IllegalArgumentException("Error: Customer Id should be a number or a string");
+			}
+		}
+		return customerId;
+	}
+
+	private int convertOrderNumber(Document d) {
+		int orderNumber;
+		if (d.get(ORDER_NUMBER) == null)
+			orderNumber = 0;
+		else {
+			switch (d.get(ORDER_NUMBER).getClass().getSimpleName()) {
+			case STRING:
+				orderNumber = Integer.valueOf(d.getString(ORDER_NUMBER));
+				break;
+			case INTEGER:
+				orderNumber = d.getInteger(ORDER_NUMBER);
+				break;
+			default:
+				throw new IllegalArgumentException("Error: Order Number should be a number or a string");
+			}
+		}
+		return orderNumber;
+	}
+
+	private String convertCustomerUser(Document d) {
+		String customerUser = "";
+		if (d.get(CUSTOMER_USER) == null)
+			customerUser = "";
+		else {
+			switch (d.get(CUSTOMER_USER).getClass().getSimpleName()) {
+			case STRING:
+				customerUser = d.getString(CUSTOMER_USER);
+				break;
+			case INTEGER:
+				customerUser = String.valueOf(d.get(CUSTOMER_USER));
+				break;
+			default:
+				throw new IllegalArgumentException("Error: Customer User should be a number or a string");
+			}
+		}
+		return customerUser;
+	}
+
+	private String convertBillingPhone(Document d) {
+		String billingPhone = "";
+		if (d.get(BILLING_PHONE) == null)
+			billingPhone = "";
+		else {
+			switch (d.get(BILLING_PHONE).getClass().getSimpleName()) {
+
+			case STRING:
+				billingPhone = d.getString(BILLING_PHONE);
+				break;
+			case INTEGER:
+				billingPhone = String.valueOf(d.get(BILLING_PHONE));
+				break;
+			case LONG:
+				billingPhone = String.valueOf(d.get(BILLING_PHONE));
+				break;
+			default:
+				throw new IllegalArgumentException("Error: Billing Phone should be a number or a string");
+			}
+		}
+		return billingPhone;
+	}
+
+	private String convertBillingPostcode(Document d) {
+		String billingPostcode = "";
+		if (d.get(BILLING_POSTCODE) == null)
+			billingPostcode = "";
+		else {
+			switch (d.get(BILLING_POSTCODE).getClass().getSimpleName()) {
+			case STRING:
+				billingPostcode = d.getString(BILLING_POSTCODE);
+				break;
+			case INTEGER:
+				billingPostcode = String.valueOf(d.get(BILLING_POSTCODE));
+				break;
+			default:
+				throw new IllegalArgumentException("Error: Billing Postcode should be a number or a string");
+			}
+		}
+		return billingPostcode;
+	}
+
+	private String convertShippingPostcode(Document d) {
+		String shippingPostcode = "";
+		if (d.get(SHIPPING_POSTCODE) == null)
+			shippingPostcode = "";
+		else {
+			switch (d.get(SHIPPING_POSTCODE).getClass().getSimpleName()) {
+			case STRING:
+				shippingPostcode = d.getString(SHIPPING_POSTCODE);
+				break;
+			case INTEGER:
+				shippingPostcode = String.valueOf(d.get(SHIPPING_POSTCODE));
+				break;
+			default:
+				throw new IllegalArgumentException("Error: Shipping Postcode should be a number or a string");
+			} 
+		}
+		return shippingPostcode;
+	}
+
+	private String convertWtImportKey(Document d) {
+		String wtImportKey = "";
+		if (d.get(WT_IMPORT_KEY) == null)
+			wtImportKey = "";
+		else {
+			switch (d.get(WT_IMPORT_KEY).getClass().getSimpleName()) {
+			case STRING:
+				wtImportKey = d.getString(WT_IMPORT_KEY);
+				break;
+			case INTEGER:
+				wtImportKey = String.valueOf(d.get(WT_IMPORT_KEY));
+				break;
+			default:
+				throw new IllegalArgumentException("Error: WT Import Key should be a number or a string");
+			}
+		}
+		return wtImportKey;
+	}
+
+	private String convertDownloadPermissions(Document d) {
+		String downloadPermissions = "";
+		if (d.get(DOWNLOAD_PERMISSIONS) == null)
+			downloadPermissions = "";
+		else {
+			switch (d.get(DOWNLOAD_PERMISSIONS).getClass().getSimpleName()) {
+			case STRING:
+				downloadPermissions = d.getString(DOWNLOAD_PERMISSIONS);
+				break;
+			case INTEGER:
+				downloadPermissions = String.valueOf(d.get(DOWNLOAD_PERMISSIONS));
+				break;
+			default:
+				throw new IllegalArgumentException("Error: download permissions should be expressed with a number");
+			}
+		}
+		return downloadPermissions;
 	}
 
 	private Document fromOrderToDocument(Order order) {
@@ -669,7 +739,6 @@ public class OrderMongoRepository implements OrderRepository {
 				.append(LINE_ITEM_3, order.getLineItem3())
 				.append(LINE_ITEM_4, order.getLineItem4())
 				.append(LINE_ITEM_5, order.getLineItem5())
-				.append(ORDER_CONFIRMED, true)
 				.append(ORDER_NET_TOTAL, order.getOrderNetTotal())
 				.append(FIRST_ISSUE, order.getFirstIssue())
 				.append(LAST_ISSUE, order.getLastIssue());

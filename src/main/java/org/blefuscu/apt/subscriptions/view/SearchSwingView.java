@@ -65,7 +65,15 @@ public class SearchSwingView extends JPanel implements SearchView {
 		fromTextBox.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) {
-				btnSearch.setEnabled(fromTextBox.getText().matches(DATE_REGEX) || fromTextBox.getText().matches(WHITESPACES_REGEX));
+				enableSearchButtonIfFromDateIsValid();
+			}
+
+			private void enableSearchButtonIfFromDateIsValid() {
+				btnSearch.setEnabled(fromDateIsValid());
+			}
+
+			private boolean fromDateIsValid() {
+				return fromTextBox.getText().matches(DATE_REGEX) || fromTextBox.getText().matches(WHITESPACES_REGEX);
 			}
 		});
 		fromTextBox.setName("fromTextBox");
@@ -82,9 +90,16 @@ public class SearchSwingView extends JPanel implements SearchView {
 
 		toTextBox.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyReleased(KeyEvent e) {
-				btnSearch.setEnabled(toTextBox.getText().matches(DATE_REGEX) || toTextBox.getText().matches(WHITESPACES_REGEX));
+			public void keyReleased(KeyEvent arg0) {
+				enableSearchButtonIfToDateIsValid();
+			}
 
+			private void enableSearchButtonIfToDateIsValid() {
+				btnSearch.setEnabled(toDateIsValid());
+			}
+
+			private boolean toDateIsValid() {
+				return toTextBox.getText().matches(DATE_REGEX) || toTextBox.getText().matches(WHITESPACES_REGEX);
 			}
 		});
 		toTextBox.setName("toTextBox");
@@ -109,16 +124,15 @@ public class SearchSwingView extends JPanel implements SearchView {
 				fromText = removeWhitespacesOnly(fromText);
 				toText = removeWhitespacesOnly(toText);
 
-				if ((fromText.isEmpty())) {
+				if (fromText.isEmpty()) {
 					if (!toText.isEmpty()) {
 						fromText = "1970-01-01";
 					} else {
 						subscriptionsController.requestOrders();
-						return;	
+						return;
 					}
 				}
-
-				if((toText.isEmpty())) {
+				if(toText.isEmpty()) {
 					toText = LocalDate.now().toString();
 				}
 				
@@ -139,7 +153,6 @@ public class SearchSwingView extends JPanel implements SearchView {
 				}
 				
 				checkIfDatesAreInTheRightOrder(fromDate, toDate);
-
 			}
 
 			private void checkIfDatesAreInTheRightOrder(LocalDate fromDate, LocalDate toDate) {
@@ -156,7 +169,6 @@ public class SearchSwingView extends JPanel implements SearchView {
 				}
 				return text;
 			}
-
 		});
 
 		GridBagConstraints gbcBtnSearch = new GridBagConstraints();

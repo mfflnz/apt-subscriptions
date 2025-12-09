@@ -452,24 +452,16 @@ public class OrderSwingView extends JPanel implements OrderView {
 		btnUpdate = new JButton("Update");
 		btnUpdate.addActionListener(e -> {
 			
-				 int firstIssue = (firstIssueTextBox.getText().isEmpty()) ? 0
-						 : Integer.parseInt(firstIssueTextBox.getText());
-				 
-				 int lastIssue = (lastIssueTextBox.getText().isEmpty()) ? 0
-						 : Integer.parseInt(lastIssueTextBox.getText());
+				 int firstIssue = readFirstIssue();
+				 int lastIssue = readLastIssue();
 				 
 				 if(firstIssue > lastIssue) {
 					 subscriptionsController.sendErrorMessage("First issue should be lesser than or equal to last issue");
 				 } else {
-					 // toglie tutti i caratteri che non sono numeri o il punto
-					 double orderTotal = (orderTotalTextBox.getText().isEmpty()) ? 0.0
-							 : Double.parseDouble(orderTotalTextBox.getText().replace(",", ".").replaceAll("[^0-9.]", ""));
 					 
-					 double orderNetTotal = (netTotalTextBox.getText().isEmpty()) ? 0.0
-							 : Double.parseDouble(netTotalTextBox.getText().replace(",", ".").replaceAll("[^0-9.]", ""));
-					 
-					 LocalDate paidDate = (paidDateTextBox.getText().isEmpty() ? null
-							 : LocalDate.parse(paidDateTextBox.getText()));
+					 double orderTotal = readOrderTotal();
+					 double orderNetTotal = readOrderNetTotal();
+					 LocalDate paidDate = readPaidDate();
 					 
 					 subscriptionsController.updateOrder(Integer.parseInt(orderIdTextBox.getText()),
 							 new Order.OrderBuilder(Integer.parseInt(orderIdTextBox.getText()),
@@ -497,6 +489,32 @@ public class OrderSwingView extends JPanel implements OrderView {
 		gbcBtnUpdate.gridy = 15;
 		add(btnUpdate, gbcBtnUpdate);
 
+	}
+
+	private LocalDate readPaidDate() {
+		return (paidDateTextBox.getText().isEmpty() ? null
+				 : LocalDate.parse(paidDateTextBox.getText()));
+	}
+
+	private double readOrderNetTotal() {
+		return (netTotalTextBox.getText().isEmpty()) ? 0.0
+				 : Double.parseDouble(netTotalTextBox.getText().replace(",", ".").replaceAll("[^0-9.]", ""));
+	}
+
+	private double readOrderTotal() {
+		// toglie tutti i caratteri che non sono numeri o il punto
+		 return (orderTotalTextBox.getText().isEmpty()) ? 0.0
+				 : Double.parseDouble(orderTotalTextBox.getText().replace(",", ".").replaceAll("[^0-9.]", ""));
+	}
+
+	private int readLastIssue() {
+		return (lastIssueTextBox.getText().isEmpty()) ? 0
+				 : Integer.parseInt(lastIssueTextBox.getText());
+	}
+
+	private int readFirstIssue() {
+		return (firstIssueTextBox.getText().isEmpty()) ? 0
+				 : Integer.parseInt(firstIssueTextBox.getText());
 	}
 
 	@Override
