@@ -12,6 +12,8 @@ jobs:
         include:
           - java: 11
           - java: 17
+    env:
+      DOCKER_HOST: unix:///var/run/docker.sock
 
     name: Build with Java ${{ matrix.java }}
     steps:
