@@ -17,6 +17,7 @@ import com.mongodb.client.model.Filters;
 
 public class SubscriptionsController {
 
+	private static final String ITEMS_SPECIAL_CHARACTERS = ".*[|{}].*+";
 	private ListView listView;
 	private OrderView orderView;
 	private MessageView messageView;
@@ -155,7 +156,7 @@ public class SubscriptionsController {
 		// Se la stringa non è già formattata (cioè se non contiene occorrenze di '|',
 		// '{' o '}', toglie il prefisso "items:" e il suffisso a partire dalla prima
 		// occorrenza di '|'
-		if (shippingItems.matches(".*[|{}].*")) {
+		if (shippingItems.matches(ITEMS_SPECIAL_CHARACTERS)) {
 			shippingItems = shippingItems.substring(6, shippingItems.indexOf("|"));
 		}
 		return shippingItems;
