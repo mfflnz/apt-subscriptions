@@ -13,8 +13,8 @@ jobs:
         include:
           - java: 11
           - java: 17
-    # https://github.com/fabric8io/docker-maven-plugin/issues/1584#issuecomment-1199262997      
     env:
+      # https://github.com/fabric8io/docker-maven-plugin/issues/1584#issuecomment-1199262997      
       DOCKER_HOST: unix:///Users/runner/.colima/default/docker.sock
                 
     name: Build with Java ${{ matrix.java }}
@@ -27,7 +27,7 @@ jobs:
         distribution: 'temurin'
       # https://github.com/marketplace/actions/setup-docker-on-macos
     - name: Setup Docker on macOS
-      uses: douglascamata/setup-docker-macos-action@v1.0.2
+      uses: douglascamata/setup-docker-macos-action@c1dd43caa51675f36e413202b738f0dee34efeb5
     - name: Cache Maven packages
       uses: actions/cache@v4
       with:
