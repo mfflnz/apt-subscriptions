@@ -19,11 +19,6 @@ import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 import org.blefuscu.apt.subscriptions.model.FormattedOrder;
 import org.blefuscu.apt.subscriptions.model.Order;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
-
 public class ListSwingView extends JPanel implements ListView {
 
 	private static final long serialVersionUID = 1L;
@@ -73,14 +68,12 @@ public class ListSwingView extends JPanel implements ListView {
 		add(scrollPane1, gbcScrollPane1);
 
 		list = new JList<>(listOrdersModel);
-		list.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent arg0) {
-				
-				if(!list.isSelectionEmpty()) {
-					subscriptionsController.orderDetails(list.getSelectedValue().getOrderId());
-				}
+		list.addListSelectionListener(arg0 -> {
+			if (!list.isSelectionEmpty()) {
+				subscriptionsController.orderDetails(list.getSelectedValue().getOrderId());
 			}
 		});
+
 		scrollPane1.setViewportView(list);
 		list.setName("ordersList");
 
@@ -92,25 +85,23 @@ public class ListSwingView extends JPanel implements ListView {
 		gbcBtnExport.gridx = 0;
 		gbcBtnExport.gridy = 2;
 		add(btnExport, gbcBtnExport);
-		btnExport.addActionListener(new ActionListener() {
+		btnExport.addActionListener(e -> {
+			fc = new JFileChooser();
+			fc.setVisible(true);
+			fc.setDialogTitle("Export orders");
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				fc = new JFileChooser();
-				fc.setVisible(true);
-				fc.setDialogTitle("Export orders");
-
-				if (fc.showSaveDialog(scrollPane1) == JFileChooser.APPROVE_OPTION) {
-					List<FormattedOrder> formattedOrders = new ArrayList<>();
-					for (int i = 0; i < listOrdersModel.getSize(); i++) {
-						formattedOrders.add(subscriptionsController.formatOrder(listOrdersModel.elementAt(i)));
-					}
-					subscriptionsController.exportOrders(formattedOrders, fc.getSelectedFile().getAbsolutePath());
-				} else {
-					fc.setVisible(false);
+			if (fc.showSaveDialog(scrollPane1) == JFileChooser.APPROVE_OPTION) {
+				List<FormattedOrder> formattedOrders = new ArrayList<>();
+				for (int i = 0; i < listOrdersModel.getSize(); i++) {
+					formattedOrders.add(subscriptionsController.formatOrder(listOrdersModel.elementAt(i)));
 				}
+				subscriptionsController.exportOrders(formattedOrders, fc.getSelectedFile().getAbsolutePath());
+			} else {
+				fc.setVisible(false);
 			}
 		});
+				
+
 
 		class MyListDataListener implements ListDataListener {
 

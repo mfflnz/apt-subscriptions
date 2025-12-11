@@ -43,11 +43,11 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		mongoDatabase.drop();
 
 		String json1 = new String(
-				Files.readAllBytes(Paths.get(System.getProperty("user.dir") + "/assets/sample-document-1.json")));
+				Files.readAllBytes(Paths.get(System.getProperty("user.dir") + "/src/main/resources/sample-document-1.json")));
 		Document doc1 = Document.parse(json1);
 
 		String json2 = new String(
-				Files.readAllBytes(Paths.get(System.getProperty("user.dir") + "/assets/sample-document-2.json")));
+				Files.readAllBytes(Paths.get(System.getProperty("user.dir") + "/src/main/resources/sample-document-2.json")));
 		Document doc2 = Document.parse(json2);
 
 		mongoCollection.insertOne(doc1);
@@ -68,9 +68,28 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 	@GUITest
 	public void testOnStartAllTheFieldsAreEmpty() {
 		assertThat(window.list().contents()).isEmpty();
-	// assertThat(window.textBox(anyString()).text()).isEmpty();
-
-		// TODO: altri campi
+		assertThat(window.textBox("fromTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("toTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("orderIdTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("orderTotalTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("orderDateTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("netTotalTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("paidDateTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("paymentMethodTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("firstNameTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("lastNameTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("addressTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("postcodeTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("stateTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("cityTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("emailTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("phoneTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("productTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("firstIssueTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("lastIssueTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("notesTextBox").requireVisible().text()).isEmpty();
+		assertThat(window.textBox("messageTextBox").requireVisible().text()).isEmpty();
+		
 	}
 
 	@Test

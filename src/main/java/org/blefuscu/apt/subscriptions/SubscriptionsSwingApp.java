@@ -2,6 +2,8 @@ package org.blefuscu.apt.subscriptions;
 
 import java.awt.EventQueue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.blefuscu.apt.subscriptions.controller.ExportController;
 import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 import org.blefuscu.apt.subscriptions.repository.OrderMongoRepository;
@@ -33,6 +35,8 @@ public class SubscriptionsSwingApp implements Callable<Void> {
 
 	@Option(names = { "--db-collection" }, description = "Collection name")
 	private String collectionName = "orders";
+	
+	private static final Logger LOGGER = LogManager.getLogger(SubscriptionsSwingApp.class);
 
 	public static void main(String[] args) {
 
@@ -60,6 +64,7 @@ public class SubscriptionsSwingApp implements Callable<Void> {
 				orderSwingView.setSubscriptionsController(subscriptionsController);
 				dashboardSwingView.setVisible(true);
 			} catch (Exception e) {
+				LOGGER.error(String.format("Error starting the application: %s", e.getMessage()), e);
 			}
 		});
 		return null;

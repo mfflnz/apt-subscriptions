@@ -479,6 +479,85 @@ public class OrderSwingViewTest {
 		verify(subscriptionsController).sendErrorMessage("First issue should be lesser than or equal to last issue");
 
 	}
+	
+	@Test
+	@GUITest
+	public void testFirstIssueFieldShouldAllowOnlyNumbersOrWhitespaces() {
+		window.textBox("orderIdTextBox").deleteText();
+		window.textBox("orderIdTextBox").enterText("123");
+		window.textBox("orderDateTextBox").deleteText();
+		window.textBox("orderDateTextBox").enterText("2025-11-05");
+		window.textBox("emailTextBox").deleteText();
+		window.textBox("emailTextBox").enterText("customer@email.com");
+
+		window.button(JButtonMatcher.withText("Update")).requireEnabled();
+		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
+	
+		// SonarQube
+		assertTrue(window.button(JButtonMatcher.withText("Update")).isEnabled());
+		assertTrue(window.button(JButtonMatcher.withText("Delete")).isEnabled());
+		
+		window.textBox("firstIssueTextBox").deleteText();
+		window.textBox("firstIssueTextBox").enterText("123");
+		
+		window.button(JButtonMatcher.withText("Update")).requireEnabled();
+		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
+	
+		// SonarQube
+		assertTrue(window.button(JButtonMatcher.withText("Update")).isEnabled());
+		assertTrue(window.button(JButtonMatcher.withText("Delete")).isEnabled());
+		
+		window.textBox("firstIssueTextBox").deleteText();
+		window.textBox("firstIssueTextBox").enterText("123r");
+
+		window.button(JButtonMatcher.withText("Update")).requireDisabled();
+		window.button(JButtonMatcher.withText("Delete")).requireDisabled();
+		
+		// SonarQube
+		assertFalse(window.button(JButtonMatcher.withText("Update")).isEnabled());
+		assertFalse(window.button(JButtonMatcher.withText("Delete")).isEnabled());
+		
+		
+	}
+
+	@Test
+	@GUITest
+	public void testLastIssueFieldShouldAllowOnlyNumbersOrWhitespaces() {
+		window.textBox("orderIdTextBox").deleteText();
+		window.textBox("orderIdTextBox").enterText("123");
+		window.textBox("orderDateTextBox").deleteText();
+		window.textBox("orderDateTextBox").enterText("2025-11-05");
+		window.textBox("emailTextBox").deleteText();
+		window.textBox("emailTextBox").enterText("customer@email.com");
+		
+		window.button(JButtonMatcher.withText("Update")).requireEnabled();
+		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
+		
+		// SonarQube
+		assertTrue(window.button(JButtonMatcher.withText("Update")).isEnabled());
+		assertTrue(window.button(JButtonMatcher.withText("Delete")).isEnabled());
+		
+		window.textBox("lastIssueTextBox").deleteText();
+		window.textBox("lastIssueTextBox").enterText("123");
+		
+		window.button(JButtonMatcher.withText("Update")).requireEnabled();
+		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
+		
+		// SonarQube
+		assertTrue(window.button(JButtonMatcher.withText("Update")).isEnabled());
+		assertTrue(window.button(JButtonMatcher.withText("Delete")).isEnabled());
+		
+		window.textBox("lastIssueTextBox").deleteText();
+		window.textBox("lastIssueTextBox").enterText("123r");
+		
+		window.button(JButtonMatcher.withText("Update")).requireDisabled();
+		window.button(JButtonMatcher.withText("Delete")).requireDisabled();
+		
+		// SonarQube
+		assertFalse(window.button(JButtonMatcher.withText("Update")).isEnabled());
+		assertFalse(window.button(JButtonMatcher.withText("Delete")).isEnabled());
+		
+	}
 
 	private Order createSampleOrder() {
 		return new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com")

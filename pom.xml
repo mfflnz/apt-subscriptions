@@ -30,7 +30,7 @@
 		<maven-failsafe.version>3.5.2</maven-failsafe.version>
 		<log4j.version>2.24.3</log4j.version>
 		<picocli.version>4.7.6</picocli.version>
-		<assetshost>./assets</assetshost>
+		<resourcesHost>./src/main/resources</resourcesHost>
 	</properties>
 
 	<dependencies>
@@ -83,11 +83,11 @@
 			<version>${picocli.version}</version>
 		</dependency>
 		<dependency>
-<groupId>org.awaitility</groupId>
-<artifactId>awaitility</artifactId>
-<version>4.0.2</version>
-<scope>test</scope>
-</dependency>
+			<groupId>org.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
+			<version>4.0.2</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -144,7 +144,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<!-- Docker -->
 			<plugin>
 				<groupId>io.fabric8</groupId>
@@ -188,11 +188,11 @@
 								</network>
 								<volumes>
 									<bind>
-										<volume>assets</volume>
-										<volume>${assetshost}:/assets:rw</volume>
+										<volume>resources</volume>
+										<volume>${resourcesHost}:/resources:rw</volume>
 									</bind>
 								</volumes>
-								<cmd>mongoimport --host mongod --db='subscriptions' --collection='orders' --headerline --file=assets/sample-orders.csv --type=csv</cmd>
+								<cmd>mongoimport --host mongod --db='subscriptions' --collection='orders' --headerline --file=src/main/resources/sample-orders.csv --type=csv</cmd>
 								<log>
 									<prefix>%a</prefix>
 									<date>default</date>
@@ -222,7 +222,7 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-			
+
 				<!-- JaCoCo -->
 				<plugin>
 					<groupId>org.jacoco</groupId>
@@ -266,7 +266,7 @@
 						</execution>
 					</executions>
 				</plugin>
-				
+
 				<!-- Pitest -->
 				<plugin>
 					<groupId>org.pitest</groupId>

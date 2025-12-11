@@ -3,7 +3,6 @@ package org.blefuscu.apt.subscriptions.view;
 import javax.swing.JPanel;
 
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.GridBagConstraints;
 import javax.swing.JTextField;
@@ -42,12 +41,7 @@ public class MessageSwingView extends JPanel implements MessageView {
 		messageTextBox.setMinimumSize(new Dimension(300, 100));
 
 		int delay = MESSAGE_TIMEOUT;
-		ActionListener taskPerformer = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				messageTextBox.setText("");
-			}
-		};
+		ActionListener taskPerformer = arg0 -> messageTextBox.setText("");
 		new Timer(delay, taskPerformer).start();
 
 	}

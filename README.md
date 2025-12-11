@@ -95,10 +95,10 @@ Verifico che il codice del Controller sia raggiungibile e che i mutanti siano el
 
 Proseguo con l'implementazione di altre funzioni del Controller:
 
-- ✅ recupero dei dettagli di un ordine;
-- ✅ eliminazione di un ordine;
-- ✅ modifica di un ordine;
-- ✅ formattazione di una lista di ordini secondo i seguenti criteri:
+- recupero dei dettagli di un ordine;
+- eliminazione di un ordine;
+- modifica di un ordine;
+- formattazione di una lista di ordini secondo i seguenti criteri:
     1. `orderId`
     2. `orderDate`: "2025-08-05 11:11:01" -> "05/08/2025"
     3. `paidDate`: come sopra, se presente, altrimenti campo vuoto
@@ -117,15 +117,11 @@ Proseguo con l'implementazione di altre funzioni del Controller:
     16. `firstIssue`
     17. `lastIssue`
     18. `customerNote`
-- ✅ esportazione della lista formattata nel file .csv.
+- esportazione della lista formattata nel file .csv.
     - Si pone il problema di organizzare degli unit test su un metodo che scrive sul filesystem. Per farlo, dichiaro un'interfaccia *wrapper*, `ExportManager`, con i metodi necessari (controllo presenza del file, scrittura del file, cancellazione del file) che invocherò come mock in questa fase e successivamente implementerò richiamando metodi delle API `java.nio`.
-- ✅ comunicazione con le view
+- comunicazione con le view
 
 (Osservo che al comparire di nuovi scheletri di codice SonarCloud lamenta diverse *issues* dovute alla disseminazione di vari TODO e la build nella CI non va a buon fine perché la coverage complessiva scende al di sotto del 100%.)
-
-**TODO**: Nella conversione dei documenti in Order, le stringhe `orderDate` e `paidDate` vanno tradotte in oggetti di tipo `LocalDate` (es: "2025-08-05 11:11:01" -> `LocalDate.of(2025, 8, 5)`; stringhe che eventualmente contengono doppi apici ("), segnatamente `shippingItems`, vanno trattate in modo consono.
-
-**TODO**: Migliorare la formattazione di orderDate e paidDate.
 
 Proseguo con l'implementazione del Repository. Ho già aggiunto al POM le dipendenze per il Mongo Java Driver e per l'accesso ai log. Aggiungo la dipendenza per MongoDB Java Server (database in-memory). Al lancio del primo unit test ottengo un errore di inizializzazione:
 
@@ -151,8 +147,6 @@ Ripulisco e faccio un push, approfittandone anche per eseguire un workflow di Wi
 Comincio a implementare la View preparando i primi unit test. Aggiorno nel POM la dipendenza di AssertJ Core sostituendola con AssertJ Swing.
 
 Tengo sotto controllo la code coverage. A buon punto della scrittura degli unit test raggiungo il 100% del codice del Controller e del Repository, il 99.4% della View (non è raggiunto il metodo main() della DashboardSwingView)
-
-TODO: Problema: esecuzione di test con xvfb-run, che falliscono in modo imperscrutabile. Da studiare: https://joel-costigliola.github.io/assertj/assertj-swing-running.html
 
 ---
 
@@ -256,12 +250,6 @@ Configuro il plugin di Pitest in modo da includere i mutator del gruppo STRONGER
 Sorge un problema al momento di dover far girare Pitclipse sui test delle view, che prevedono le interfacce grafiche. Facendo riferimento ad alcune issue ([qui](https://github.com/hcoles/pitest/issues/581), a cui fa riferimento [questa PR](https://github.com/hcoles/pitest/pull/601); [qui](https://github.com/hcoles/pitest/issues/881), e [qui](https://github.com/hcoles/pitest/issues/1033)), modifico la Run Configuration in modo da inserire l'opzione `-Djava.awt.headless=false` (Run Configurations... > PIT Mutation Test > OrderSwingViewTest (1) > Arguments > VM Arguments > -Djava.awt.headless=false).
 
 NB: Per mantenere il plugin `pitest-maven` compatibile con Java 8, mantengo la versione cui si fa riferimento nel libro (1.5.2), poiché le successive richiedono almeno Java 11. Per ora mantengo nel POM l'opzione esplicita `-Djava.awt.headless=false` ed evito di attivare il mutation testing nel workflow per macOS.
-
-**TODO**: qual è il modo più civile di passare 
-
-    <jvmArg>-Djava.awt.headless=false</jvmArg>
-    
-alla command line su Linux per evitare di inserire l'argomento nel POM?
 
 Escludo dal Mutation Testing il codice relativo alle View, in quanto generato in massima parte dal WindowBuilder e soggetto a XXXXXX decine di mutanti superstiti, ad esempio:
 
@@ -418,12 +406,6 @@ Implemento la DashboardView con una classe `DashboardSwingView` (sottoclasse di 
 
 Faccio un test case per la `DashboardSwingView`, cioè il JFrame che posso testare esplicitamente con AssertJ Swing: il codice degli altri JPanel sarà quindi testato all'interno del test case `DashboardSwingViewTest`.
 
-**TODO**: nel test della OrderView attivare il pulsante Delete anche solo con l'orderId compilato?
-
-**TODO**: il campo orderId non deve essere editabile ma deve essere pieno
-
-(**TODO: controllare i mutanti superstiti della ListSwingView:**
-
     removed call to javax/swing/JFileChooser::setVisible → SURVIVED
     
 che si riferisce a:
@@ -470,8 +452,6 @@ Dopo aver scritto il SubscriptionsController e le View, mi concentro su uno dei 
 
 Restano da fare gli Integration test per il SubscriptionsController.
 
-**TODO** NullPointer in fromDocumentToOrder nell'ordermongorepository
-
 Gli Integration Test sono svolti a partire dai due controller (export e subscriptions). Lanciati da Eclipse, dopo aver lanciato i container Docker di MongoDB (`./setup.sh`), danno buon esito. Provo con Maven da linea di comando ma ottengo errore: 
 
     [ERROR] Failed to execute goal io.fabric8:docker-maven-plugin:0.45.1:start (docker-start) on project apt-subscriptions: Execution docker-start of goal io.fabric8:docker-maven-plugin:0.45.1:start failed.: NullPointerException -> [Help 1]
@@ -485,10 +465,6 @@ Aggiorno la versione di `docker-maven-plugin` (da 0.45.1 a 0.48.0) e riprovo: fu
 
 **TODO**: timeout dei messaggi deve partire dal momento in cui viene mostrato il messaggio, non sempre
 
-**TODO**: leggi E2E
-
-**TODO**: controlla il filtro Bson (lte/gte)
-
 Provo a questo punto a fare `mvn clean verify -Pjacoco,mutation-testing` ma ottengo due warning da JaCoCo:
 
     [WARNING] Rule violated for package org.blefuscu.apt.subscriptions.view: lines covered ratio is 0.99, but expected minimum is 1.00
@@ -496,7 +472,6 @@ Provo a questo punto a fare `mvn clean verify -Pjacoco,mutation-testing` ma otte
     
 Porto al 100% la code coverage della View e aggiungo tra gli `<excludes>` di JaCoCo la classe `SubscriptionsSwingApp` (l'unica porzione di codice non raggiunta dai test è il ramo `catch` che lancia l'eccezione nella lambda della classe `call()`).
     
-
 ---
 
 ### Code Quality
@@ -510,3 +485,9 @@ A questa assertion aggiungo per completezza (a costo di ridondanza nel codice de
     window.button(JButtonMatcher.withText("Update")).requireDisabled();
 
 Nell'analisi della SearchSwingView... TODO: spiega che c'è traoppa Cognitive Complexity. Fare un esempio di prima e dopo sul codice della SearchSwingView.
+
+---
+
+### Altre osservazioni
+
+A buon punto dello sviluppo, clono il repository su un'altra macchina e provo la build del codice da zero. Apro un nuovo branch del repository per gli opportuni aggiustamenti. Una questione notevole riguarda l'incompatibilità della versione 5 di MongoDB con la vecchia CPU del laptop su cui tento la build, pertanto abbasso la versione alla 4.4.3. Eseguendo `mvn clean verify` osservo che molti dei test svolti da AssertJ-Swing falliscono per qualche problema che sembra legato alla disposizione della tastiera (ad esempio, al posto del carattere `@` viene inserito il carattere `"`). (Noto che questo non si verifica né eseguendo i test tramite `xvfb-run` né testando a mano l'applicazione.) Provo a impostare l'opzione `-Dassertj.swing.keyboard.locale=it` (inserendola nel file `.mvn/jvm.config`) ma ancora non ottengo il risultato sperato. Provo anche a inserire il testo utilizzando il metodo di AssertJ-Swing `pressAndReleaseKeys(int KeyEvent)` anziché `enterText(String text)`, e a inserire il carattere `@` utilizzando direttamente il codice esadecimale `\u0040`, ma di nuovo senza sucesso (ottengo in un caso il carattere `"` e nell'altro il carattere `q`).

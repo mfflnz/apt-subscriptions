@@ -178,8 +178,6 @@ public class OrderSwingView extends JPanel implements OrderView {
 			public void keyReleased(KeyEvent arg0) {
 				validateOptionalFieldsAndManageButtons();
 			}
-
-
 		});
 		paidDateTextBox.setName("paidDateTextBox");
 		GridBagConstraints gbcPaidDateTextField = new GridBagConstraints();
@@ -393,6 +391,12 @@ public class OrderSwingView extends JPanel implements OrderView {
 
 		firstIssueTextBox = new JTextField();
 		firstIssueTextBox.setName("firstIssueTextBox");
+		firstIssueTextBox.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+				validateOptionalFieldsAndManageButtons();
+			}
+		});
 		GridBagConstraints gbcFirstIssueTextField = new GridBagConstraints();
 		gbcFirstIssueTextField.insets = new Insets(0, 0, 5, 5);
 		gbcFirstIssueTextField.fill = GridBagConstraints.HORIZONTAL;
@@ -411,6 +415,12 @@ public class OrderSwingView extends JPanel implements OrderView {
 
 		lastIssueTextBox = new JTextField();
 		lastIssueTextBox.setName("lastIssueTextBox");
+		lastIssueTextBox.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+				validateOptionalFieldsAndManageButtons();
+			}
+		});
 		GridBagConstraints gbcLastIssueTextField = new GridBagConstraints();
 		gbcLastIssueTextField.insets = new Insets(0, 0, 5, 5);
 		gbcLastIssueTextField.fill = GridBagConstraints.HORIZONTAL;
@@ -577,7 +587,11 @@ public class OrderSwingView extends JPanel implements OrderView {
 	private boolean validateOptionalFieldsAndManageButtons() {
 		if (validateRequiredFieldsAndManageButtons()
 				&& (paidDateTextBox.getText().matches(DATE_REGEX)
-				|| paidDateTextBox.getText().matches(WHITESPACES_REGEX))) {
+						|| paidDateTextBox.getText().matches(WHITESPACES_REGEX))
+				&& (firstIssueTextBox.getText().matches(NUMBER_REGEX)
+						|| firstIssueTextBox.getText().matches(WHITESPACES_REGEX))
+				&& (lastIssueTextBox.getText().matches(NUMBER_REGEX)
+						|| lastIssueTextBox.getText().matches(WHITESPACES_REGEX))) {
 			btnUpdate.setEnabled(true);
 			btnDelete.setEnabled(true);
 			return true;
