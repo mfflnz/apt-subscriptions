@@ -448,90 +448,84 @@ public class OrderSwingView extends JPanel implements OrderView {
 		add(notesTextBox, gbcNotestTextField);
 		notesTextBox.setColumns(10);
 
-		btnDelete = new JButton("Delete");
-		btnDelete.addActionListener(e ->  
-			subscriptionsController.deleteOrder(Integer.parseInt(orderIdTextBox.getText()))
-		);
-		btnDelete.setEnabled(false);
-		GridBagConstraints gbcBtnDelete = new GridBagConstraints();
-		gbcBtnDelete.anchor = GridBagConstraints.EAST;
-		gbcBtnDelete.insets = new Insets(0, 0, 5, 5);
-		gbcBtnDelete.gridx = 3;
-		gbcBtnDelete.gridy = 15;
-		add(btnDelete, gbcBtnDelete);
-		
 		btnUpdate = new JButton("Update");
 		btnUpdate.addActionListener(e -> {
-			
-				 int firstIssue = readFirstIssue();
-				 int lastIssue = readLastIssue();
-				 
-				 if(firstIssue > lastIssue) {
-					 subscriptionsController.sendErrorMessage("First issue should be lesser than or equal to last issue");
-				 } else {
-					 
-					 double orderTotal = readOrderTotal();
-					 double orderNetTotal = readOrderNetTotal();
-					 LocalDate paidDate = readPaidDate();
-					 
-					 subscriptionsController.updateOrder(Integer.parseInt(orderIdTextBox.getText()),
-							 new Order.OrderBuilder(Integer.parseInt(orderIdTextBox.getText()),
-									 LocalDate.parse(orderDateTextBox.getText()), emailTextBox.getText())
-							 .setPaidDate(paidDate).setOrderTotal(orderTotal).setOrderNetTotal(orderNetTotal)
-							 .setPaymentMethodTitle(paymentMethodTitleTextBox.getText())
-							 .setShippingFirstName(firstNameTextBox.getText())
-							 .setShippingLastName(lastNameTextBox.getText())
-							 .setShippingAddress1(addressTextBox.getText())
-							 .setShippingPostcode(postcodeTextBox.getText())
-							 .setShippingState(stateTextBox.getText()).setShippingCity(cityTextBox.getText())
-							 .setBillingPhone(phoneTextBox.getText()).setShippingItems(productTextBox.getText())
-							 .setFirstIssue(firstIssue).setLastIssue(lastIssue)
-							 .setCustomerNote(notesTextBox.getText()).build());
-				 }
+
+			int firstIssue = readFirstIssue();
+			int lastIssue = readLastIssue();
+
+			if (firstIssue > lastIssue) {
+				subscriptionsController.sendErrorMessage("First issue should be lesser than or equal to last issue");
+			} else {
+
+				double orderTotal = readOrderTotal();
+				double orderNetTotal = readOrderNetTotal();
+				LocalDate paidDate = readPaidDate();
+
+				subscriptionsController.updateOrder(Integer.parseInt(orderIdTextBox.getText()),
+						new Order.OrderBuilder(Integer.parseInt(orderIdTextBox.getText()),
+								LocalDate.parse(orderDateTextBox.getText()), emailTextBox.getText())
+								.setPaidDate(paidDate).setOrderTotal(orderTotal).setOrderNetTotal(orderNetTotal)
+								.setPaymentMethodTitle(paymentMethodTitleTextBox.getText())
+								.setShippingFirstName(firstNameTextBox.getText())
+								.setShippingLastName(lastNameTextBox.getText())
+								.setShippingAddress1(addressTextBox.getText())
+								.setShippingPostcode(postcodeTextBox.getText()).setShippingState(stateTextBox.getText())
+								.setShippingCity(cityTextBox.getText()).setBillingPhone(phoneTextBox.getText())
+								.setShippingItems(productTextBox.getText()).setFirstIssue(firstIssue)
+								.setLastIssue(lastIssue).setCustomerNote(notesTextBox.getText()).build());
+			}
 
 		});
 
-		
+		btnDelete = new JButton("Delete");
+		btnDelete.addActionListener(
+				e -> subscriptionsController.deleteOrder(Integer.parseInt(orderIdTextBox.getText())));
+		btnDelete.setEnabled(false);
+		GridBagConstraints gbcBtnDelete = new GridBagConstraints();
+		gbcBtnDelete.anchor = GridBagConstraints.WEST;
+		gbcBtnDelete.insets = new Insets(0, 0, 0, 5);
+		gbcBtnDelete.gridx = 1;
+		gbcBtnDelete.gridy = 18;
+		add(btnDelete, gbcBtnDelete);
+
 		btnUpdate.setEnabled(false);
 		GridBagConstraints gbcBtnUpdate = new GridBagConstraints();
 		gbcBtnUpdate.anchor = GridBagConstraints.EAST;
-		gbcBtnUpdate.insets = new Insets(0, 0, 5, 5);
+		gbcBtnUpdate.insets = new Insets(0, 0, 0, 5);
 		gbcBtnUpdate.gridx = 4;
-		gbcBtnUpdate.gridy = 15;
+		gbcBtnUpdate.gridy = 18;
 		add(btnUpdate, gbcBtnUpdate);
 
 	}
 
 	private LocalDate readPaidDate() {
-		return (paidDateTextBox.getText().isEmpty() ? null
-				 : LocalDate.parse(paidDateTextBox.getText()));
+		return (paidDateTextBox.getText().isEmpty() ? null : LocalDate.parse(paidDateTextBox.getText()));
 	}
 
 	private double readOrderNetTotal() {
 		return (netTotalTextBox.getText().isEmpty()) ? 0.0
-				 : Double.parseDouble(netTotalTextBox.getText().replace(",", ".").replaceAll("[^0-9.]", ""));
+				: Double.parseDouble(netTotalTextBox.getText().replace(",", ".").replaceAll("[^0-9.]", ""));
 	}
 
 	private double readOrderTotal() {
 		// toglie tutti i caratteri che non sono numeri o il punto
-		 return (orderTotalTextBox.getText().isEmpty()) ? 0.0
-				 : Double.parseDouble(orderTotalTextBox.getText().replace(",", ".").replaceAll("[^0-9.]", ""));
+		return (orderTotalTextBox.getText().isEmpty()) ? 0.0
+				: Double.parseDouble(orderTotalTextBox.getText().replace(",", ".").replaceAll("[^0-9.]", ""));
 	}
 
 	private int readLastIssue() {
-		return (lastIssueTextBox.getText().isEmpty()) ? 0
-				 : Integer.parseInt(lastIssueTextBox.getText());
+		return (lastIssueTextBox.getText().isEmpty()) ? 0 : Integer.parseInt(lastIssueTextBox.getText());
 	}
 
 	private int readFirstIssue() {
-		return (firstIssueTextBox.getText().isEmpty()) ? 0
-				 : Integer.parseInt(firstIssueTextBox.getText());
+		return (firstIssueTextBox.getText().isEmpty()) ? 0 : Integer.parseInt(firstIssueTextBox.getText());
 	}
 
 	@Override
 	public void showOrderDetails(Order order) {
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(order);
-		
+
 		orderIdTextBox.setText(formattedOrder.getOrderId());
 		orderDateTextBox.setText(formattedOrder.getOrderDate());
 		paidDateTextBox.setText(formattedOrder.getPaidDate());
@@ -550,9 +544,9 @@ public class OrderSwingView extends JPanel implements OrderView {
 		firstIssueTextBox.setText(formattedOrder.getFirstIssue());
 		lastIssueTextBox.setText(formattedOrder.getLastIssue());
 		notesTextBox.setText(formattedOrder.getCustomerNote());
-		
+
 		orderIdTextBox.setEnabled(false);
-		
+
 		validateRequiredFieldsAndManageButtons();
 
 	}
@@ -583,7 +577,7 @@ public class OrderSwingView extends JPanel implements OrderView {
 			return false;
 		}
 	}
-	
+
 	private boolean validateOptionalFieldsAndManageButtons() {
 		if (validateRequiredFieldsAndManageButtons()
 				&& (paidDateTextBox.getText().matches(DATE_REGEX)
@@ -601,7 +595,7 @@ public class OrderSwingView extends JPanel implements OrderView {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public void clearAll() {
 		this.getOrderIdTextBox().setText("");

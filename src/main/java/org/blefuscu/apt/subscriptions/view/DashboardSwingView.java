@@ -18,7 +18,7 @@ public class DashboardSwingView extends JFrame implements DashboardView {
 	 */
 	public DashboardSwingView(SearchSwingView searchPanel, ListSwingView listPanel, OrderSwingView orderPanel, MessageSwingView messagePanel) {
 		setTitle("Dashboard");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
 		contentPanel = new JPanel();
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));

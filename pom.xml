@@ -192,7 +192,11 @@
 										<volume>${resourcesHost}:/resources:rw</volume>
 									</bind>
 								</volumes>
-								<cmd>mongoimport --host mongod --db='subscriptions' --collection='orders' --headerline --file=src/main/resources/sample-orders.csv --type=csv</cmd>
+								<cmd>mongoimport --host mongod
+									--db='subscriptions' --collection='orders'
+									--headerline
+									--file=src/main/resources/sample-orders.csv
+									--type=csv</cmd>
 								<log>
 									<prefix>%a</prefix>
 									<date>default</date>
@@ -219,10 +223,45 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>
+								org.blefuscu.apt.subscriptions.SubscriptionsSwingApp</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<archive>
+								<manifest>
+									<mainClass>
+										org.blefuscu.apt.subscriptions.SubscriptionsSwingApp</mainClass>
+								</manifest>
+							</archive>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 		<pluginManagement>
 			<plugins>
-
 				<!-- JaCoCo -->
 				<plugin>
 					<groupId>org.jacoco</groupId>
@@ -278,13 +317,18 @@
 							<param>org.blefuscu.apt.subscriptions.repository.*</param>
 						</targetClasses>
 						<targetTests>
-							<param>org.blefuscu.apt.subscriptions.controller.ExportControllerTest</param>
-							<param>org.blefuscu.apt.subscriptions.controller.SubscriptionsControllerTest</param>
-							<param>org.blefuscu.apt.subscriptions.repository.OrderMongoRepositoryTest</param>
+							<param>
+								org.blefuscu.apt.subscriptions.controller.ExportControllerTest</param>
+							<param>
+								org.blefuscu.apt.subscriptions.controller.SubscriptionsControllerTest</param>
+							<param>
+								org.blefuscu.apt.subscriptions.repository.OrderMongoRepositoryTest</param>
 						</targetTests>
 						<excludedTestClasses>
-							<excludedTestClass>org.blefuscu.apt.subscriptions.controller.SubscriptionsControllerIT.java</excludedTestClass>
-							<excludedTestClass>org.blefuscu.apt.subscriptions.SubscriptionsSwingAppE2E.java</excludedTestClass>
+							<excludedTestClass>
+								org.blefuscu.apt.subscriptions.controller.SubscriptionsControllerIT.java</excludedTestClass>
+							<excludedTestClass>
+								org.blefuscu.apt.subscriptions.SubscriptionsSwingAppE2E.java</excludedTestClass>
 						</excludedTestClasses>
 						<mutators>
 							<mutator>STRONGER</mutator>

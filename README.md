@@ -484,10 +484,12 @@ A questa assertion aggiungo per completezza (a costo di ridondanza nel codice de
 
     window.button(JButtonMatcher.withText("Update")).requireDisabled();
 
-Nell'analisi della SearchSwingView... TODO: spiega che c'è traoppa Cognitive Complexity. Fare un esempio di prima e dopo sul codice della SearchSwingView.
+Riduco laddove possibile la Cognitive Complexity indicata da SonarQube. Resta da rifattorizzare l'algoritmo per decidere i parametri di ricerca della Search View (implementato nel listener del pulsante "Search"), che allo stato attuale concorre a incrementare fino a 20 la Cognitive Complexity del costruttore. 
+SonarQube prescrive anche di rifattorizzare 3 unit test della Seach View in modo da ottenere un solo test con parametri, ma preferisco lasciare i 3 codici separati, ancorché ridondanti.
 
 ---
 
 ### Altre osservazioni
 
 A buon punto dello sviluppo, clono il repository su un'altra macchina e provo la build del codice da zero. Apro un nuovo branch del repository per gli opportuni aggiustamenti. Una questione notevole riguarda l'incompatibilità della versione 5 di MongoDB con la vecchia CPU del laptop su cui tento la build, pertanto abbasso la versione alla 4.4.3. Eseguendo `mvn clean verify` osservo che molti dei test svolti da AssertJ-Swing falliscono per qualche problema che sembra legato alla disposizione della tastiera (ad esempio, al posto del carattere `@` viene inserito il carattere `"`). (Noto che questo non si verifica né eseguendo i test tramite `xvfb-run` né testando a mano l'applicazione.) Provo a impostare l'opzione `-Dassertj.swing.keyboard.locale=it` (inserendola nel file `.mvn/jvm.config`) ma ancora non ottengo il risultato sperato. Provo anche a inserire il testo utilizzando il metodo di AssertJ-Swing `pressAndReleaseKeys(int KeyEvent)` anziché `enterText(String text)`, e a inserire il carattere `@` utilizzando direttamente il codice esadecimale `\u0040`, ma di nuovo senza sucesso (ottengo in un caso il carattere `"` e nell'altro il carattere `q`).
+

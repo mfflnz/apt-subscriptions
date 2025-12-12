@@ -123,7 +123,7 @@ public class SearchSwingView extends JPanel implements SearchView {
 				
 				fromText = removeWhitespacesOnly(fromText);
 				toText = removeWhitespacesOnly(toText);
-
+				
 				if (fromText.isEmpty()) {
 					if (!toText.isEmpty()) {
 						fromText = "1970-01-01";
@@ -152,10 +152,10 @@ public class SearchSwingView extends JPanel implements SearchView {
 					return;
 				}
 				
-				checkIfDatesAreInTheRightOrder(fromDate, toDate);
+				checkIfDatesAreInTheRightOrderAndPerformSearch(fromDate, toDate);
 			}
 
-			private void checkIfDatesAreInTheRightOrder(LocalDate fromDate, LocalDate toDate) {
+			private void checkIfDatesAreInTheRightOrderAndPerformSearch(LocalDate fromDate, LocalDate toDate) {
 				if (fromDate.isBefore(toDate) || fromDate.isEqual(toDate)) {
 					subscriptionsController.requestOrders(fromDate, toDate);
 				} else {

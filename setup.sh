@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Creo la rete apt-network: 
 docker network create apt-network
