@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.blefuscu.apt.subscriptions.model.FormattedOrder;
 import org.blefuscu.apt.subscriptions.view.MessageSwingView;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,9 +26,15 @@ public class ExportControllerIT {
 	private MessageSwingView messageView;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() throws IOException {
 		messageView = new MessageSwingView();
 		exportController = new ExportController(messageView);
+		Files.deleteIfExists(Paths.get(FILENAME));
+
+	}
+	
+	@AfterClass
+	public static void removeTestExportFile() throws IOException {
 		Files.deleteIfExists(Paths.get(FILENAME));
 	}
 
