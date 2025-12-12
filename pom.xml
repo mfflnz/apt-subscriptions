@@ -30,7 +30,7 @@
 		<maven-failsafe.version>3.5.2</maven-failsafe.version>
 		<log4j.version>2.24.3</log4j.version>
 		<picocli.version>4.7.6</picocli.version>
-		<resourcesHost>./src/main/resources</resourcesHost>
+		<resourcesHost>./src/main/resources/</resourcesHost>
 	</properties>
 
 	<dependencies>
@@ -189,7 +189,7 @@
 								<volumes>
 									<bind>
 										<volume>resources</volume>
-										<volume>${resourcesHost}:/resources:rw</volume>
+										<volume>${resourcesHost}:/resources</volume>
 									</bind>
 								</volumes>
 								<cmd>mongoimport --host mongod
