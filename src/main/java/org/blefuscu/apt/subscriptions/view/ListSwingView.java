@@ -88,6 +88,7 @@ public class ListSwingView extends JPanel implements ListView {
 		btnExport.addActionListener(e -> {
 			fc = new JFileChooser();
 			fc.setVisible(true);
+			fc.setName("Export orders");
 			fc.setDialogTitle("Export orders");
 
 			if (fc.showSaveDialog(scrollPane1) == JFileChooser.APPROVE_OPTION) {

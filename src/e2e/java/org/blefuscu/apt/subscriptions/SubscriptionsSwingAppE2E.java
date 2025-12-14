@@ -2,9 +2,15 @@ package org.blefuscu.apt.subscriptions;
 
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.ORDER_COLLECTION_NAME;
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.SUBSCRIPTIONS_DB_NAME;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.awaitility.Awaitility.*;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.launcher.ApplicationLauncher.*;
@@ -19,12 +25,15 @@ import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.mongodb.MongoClient;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 
 @RunWith(GUITestRunner.class)
 public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
@@ -41,6 +50,8 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		mongoDatabase = mongoClient.getDatabase(SUBSCRIPTIONS_DB_NAME);
 		mongoCollection = mongoDatabase.getCollection(ORDER_COLLECTION_NAME);
 		mongoDatabase.drop();
+		
+		Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "exported-orders-e2e.csv"));
 
 		String json1 = new String(
 				Files.readAllBytes(Paths.get(System.getProperty("user.dir") + "/src/main/resources/sample-document-1.json")));
@@ -94,19 +105,56 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 
 	@Test
 	@GUITest
-	public void testSearchButton() {
+	public void testButtonsAndListSelector() {
+		
 		window.button(JButtonMatcher.withText("Search")).click();
+	
 		assertThat(window.list().contents()).anySatisfy(e -> assertThat(e).contains("12345", "client1@address.com"));
 		assertThat(window.textBox("messageTextBox").text()).contains("2 orders found");
-	}
+		window.list().requireNoSelection();
+		window.list().requireItemCount(2);
+		assertThat(window.textBox("orderIdTextBox").text()).isEmpty();
+		assertFalse(window.button(JButtonMatcher.withText("Update")).isEnabled());
+		assertFalse(window.button(JButtonMatcher.withText("Delete")).isEnabled());
 
-	@Test
-	@GUITest
-	public void testSelectOrderFromList() {
-		window.button(JButtonMatcher.withText("Search")).click();
 		window.list().selectItem(0);
+
 		assertThat(window.textBox("orderIdTextBox").text()).isEqualTo("12345");
 		assertThat(window.textBox("paidDateTextBox").text()).isEqualTo("2025-08-05");
+		assertThat(window.textBox("emailTextBox").text()).isEqualTo("client1@address.com");
+		assertTrue(window.button(JButtonMatcher.withText("Update")).isEnabled());
+		assertTrue(window.button(JButtonMatcher.withText("Delete")).isEnabled());
+		
+		window.textBox("emailTextBox").deleteText().enterText("new1@address.com");
+		window.button(JButtonMatcher.withText("Update")).click();
+		window.list().selectItem(1);
+	
+		assertThat(window.textBox("emailTextBox").text()).isEqualTo("client2@address.com");
+
+		window.list().selectItem(0);
+
+		assertThat(window.textBox("emailTextBox").text()).isEqualTo("new1@address.com");
+		Bson emailFilter = Filters.eq("customer_email", "new1@address.com");
+		FindIterable<Document> documentWithUpdatedEmailAddress = mongoCollection.find(emailFilter);
+		assertEquals(12345, documentWithUpdatedEmailAddress.first().get("order_id"));
+		assertEquals(2, mongoCollection.countDocuments());
+
+		window.button(JButtonMatcher.withText("Delete")).click();
+		
+		window.list().requireItemCount(1);
+		assertEquals(1, mongoCollection.countDocuments());
+
+		window.button(JButtonMatcher.withText("Export")).click();
+
+		window.fileChooser("Export orders").requireVisible();
+
+		window.fileChooser("Export orders").setCurrentDirectory(new File(System.getProperty("user.dir")));
+		window.fileChooser("Export orders").fileNameTextBox().enterText("exported-orders-e2e.csv");
+		window.fileChooser("Export orders").approveButton().click();
+		
+		File exportFile = new File("exported-orders-e2e.csv");
+
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(exportFile.exists()));
 	}
 
 	@Test
