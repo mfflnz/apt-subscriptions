@@ -1,23 +1,25 @@
 package org.blefuscu.apt.subscriptions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.swing.launcher.ApplicationLauncher.*;
+import static org.awaitility.Awaitility.*;
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.ORDER_COLLECTION_NAME;
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.SUBSCRIPTIONS_DB_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.awaitility.Awaitility.*;
 
+import com.mongodb.MongoClient;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.swing.launcher.ApplicationLauncher.*;
-
 import javax.swing.JFrame;
-
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.GenericTypeMatcher;
 import org.assertj.swing.core.matcher.JButtonMatcher;
@@ -27,28 +29,35 @@ import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.testcontainers.mongodb.MongoDBContainer;
 
-import com.mongodb.MongoClient;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
 
 @RunWith(GUITestRunner.class)
-public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
+public class SubscriptionsSwingAppTestcontainersE2E extends AssertJSwingJUnitTestCase {
 
 	private static final String EXPORTED_ORDERS_FILENAME = System.getProperty("user.dir") + "/exported-orders-e2e.csv";
+	private static MongoDBContainer mongoDBContainer;
 	private MongoClient mongoClient;
 	private MongoDatabase mongoDatabase;
 	private MongoCollection<Document> mongoCollection;
 	private FrameFixture window;
+	
+	@BeforeClass
+	public static void startContainer() {
+		mongoDBContainer = new MongoDBContainer("mongo:5");
+		mongoDBContainer.start();
+	}
 
 	@Override
 	protected void onSetUp() throws Exception {
 
-		mongoClient = new MongoClient("localhost");
+		String containerIpAddress = mongoDBContainer.getHost();
+		Integer mappedPort = mongoDBContainer.getFirstMappedPort();
+		mongoClient = new MongoClient(containerIpAddress, mappedPort);
 		mongoDatabase = mongoClient.getDatabase(SUBSCRIPTIONS_DB_NAME);
 		mongoCollection = mongoDatabase.getCollection(ORDER_COLLECTION_NAME);
 		mongoDatabase.drop();
@@ -66,7 +75,10 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		mongoCollection.insertOne(doc1);
 		mongoCollection.insertOne(doc2);
 
-		application("org.blefuscu.apt.subscriptions.SubscriptionsSwingApp").start();
+		application("org.blefuscu.apt.subscriptions.SubscriptionsSwingApp")
+				.withArgs("--mongo-host=" + containerIpAddress, "--mongo-port=" + mappedPort.toString(),
+						"--db-name=" + SUBSCRIPTIONS_DB_NAME, "--db-collection=" + ORDER_COLLECTION_NAME)
+				.start();
 
 		window = WindowFinder.findFrame(new GenericTypeMatcher<JFrame>(JFrame.class) {
 			@Override
@@ -81,6 +93,12 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 	protected void onTearDown() throws Exception {
 		Files.deleteIfExists(Paths.get(EXPORTED_ORDERS_FILENAME));
 	}
+	
+	@AfterClass
+	public static void stopContainer() {
+		mongoDBContainer.stop();
+	}
+
 	
 
 	@Test

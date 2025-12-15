@@ -471,6 +471,10 @@ Provo a questo punto a fare `mvn clean verify -Pjacoco,mutation-testing` ma otte
     [WARNING] Rule violated for package org.blefuscu.apt.subscriptions: lines covered ratio is 0.92, but expected minimum is 1.00
     
 Porto al 100% la code coverage della View e aggiungo tra gli `<excludes>` di JaCoCo la classe `SubscriptionsSwingApp` (l'unica porzione di codice non raggiunta dai test è il ramo `catch` che lancia l'eccezione nella lambda della classe `call()`).
+
+Con le impostazioni di default di `xvfb-run`, al momento di fare il test di `SubscriptionsSwingApp`, ottengo una failure dovuta al fatto che gli elementi dell'interfaccia si trovano al di fuori dell'area del framebuffer virtuale (`-screen 0 640x480x8`). Riprovo con:
+
+    xvfb-run -a --server-args="-screen 0 1366x768x24" mvn clean verify
     
 ---
 

@@ -30,6 +30,7 @@
 		<maven-failsafe.version>3.5.2</maven-failsafe.version>
 		<log4j.version>2.24.3</log4j.version>
 		<picocli.version>4.7.6</picocli.version>
+		<testcontainers.version>2.0.2</testcontainers.version>
 		<resourcesHost>./src/main/resources/</resourcesHost>
 	</properties>
 
@@ -88,6 +89,13 @@
 			<version>4.0.2</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers-mongodb</artifactId>
+			<version>${testcontainers.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
