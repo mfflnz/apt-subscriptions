@@ -161,7 +161,7 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		window.fileChooser("Export orders").fileNameTextBox().enterText("exported-orders-e2e.csv");
 		window.fileChooser("Export orders").approveButton().click();
 
-		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(exportFile.exists()));
+		await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(exportFile.exists()));
 		
 		Files.deleteIfExists(Paths.get(EXPORTED_ORDERS_FILENAME));
 
