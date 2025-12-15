@@ -31,7 +31,6 @@
 		<log4j.version>2.24.3</log4j.version>
 		<picocli.version>4.7.6</picocli.version>
 		<testcontainers.version>2.0.2</testcontainers.version>
-		<resourcesHost>./src/main/resources/</resourcesHost>
 	</properties>
 
 	<dependencies>
@@ -184,7 +183,6 @@
 								<containerNamePattern>%a</containerNamePattern>
 							</run>
 						</image>
-					
 					</images>
 				</configuration>
 				<executions>
@@ -239,7 +237,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 		<pluginManagement>
 			<plugins>
