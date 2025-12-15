@@ -4,7 +4,7 @@
 
 ---
 
-### Requisiti
+### Specifiche
 
 Voglio leggere da un database le informazioni relative agli ordini di acquisto di copie o abbonamenti a una rivista, filtrare e formattare i risultati, e quindi esportarli in un file in cui mantengo solo alcuni campi a cui sono interessato.
 
@@ -12,9 +12,7 @@ Voglio visualizzare un elenco sintetico degli ordini presenti e i dettagli di un
 
 La funzione che mi interessa particolarmente è specificare un intervallo di date ed estrarre gli ordini conclusi in quel periodo.
 
----
-
-### Ambiente
+#### Ambiente
 
 Con il gestore di pacchetti del S.O. (Arch Linux) installo:
 
@@ -36,11 +34,13 @@ Tramite il Marketplace di Eclipse installo alcuni plugin:
 - SonarQube for IDE 11.13
 - WindowBuilder 1.20.0
 
----
 
-### Design
 
-Per l'accesso al database intendo seguire il pattern Repository (descritto in [Eva03] nel riferimento bibliografico del testo). Per la creazione degli oggetti mi rifaccio al pattern Builder ([GHJV95]).
+### Tecniche e framework utilizzati
+
+### Scelte di design e di implementazione
+
+Per l'accesso al database seguo il pattern Repository (descritto in [Eva03] nel riferimento bibliografico del testo). Per la creazione degli oggetti mi rifaccio al pattern Builder ([GHJV95]).
 
 (Il termine "Order" = "ordine" è da intendersi nel senso di ordine di acquisto di un prodotto.)
 
@@ -75,7 +75,14 @@ Schema del Model–view–presenter:
         ExportController
             operazioni sugli export (-> filesystem)
 
----
+
+### Problemi e soluzioni
+
+### Requisiti
+
+
+
+
 
 ### TDD
 

@@ -325,6 +325,44 @@ public class OrderSwingViewTest {
 		verify(subscriptionsController, timeout(TIMEOUT)).deleteOrder(425);
 
 	}
+	
+	@Test
+	public void testDeleteButtonShouldClearAllTextBoxes() {
+		window.textBox("orderIdTextBox").deleteText();
+		window.textBox("orderIdTextBox").enterText("425");
+		window.textBox("orderDateTextBox").deleteText();
+		window.textBox("orderDateTextBox").enterText("2025-11-06");
+		window.textBox("emailTextBox").deleteText();
+		window.textBox("emailTextBox").enterText("customer@email.com");
+
+		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Delete")).isEnabled());
+
+		GuiActionRunner.execute(() -> {
+			orderSwingView.getBtnDelete().doClick();
+		});
+
+		assertThat(window.textBox("orderIdTextBox").text()).isEmpty();
+		assertThat(window.textBox("orderDateTextBox").text()).isEmpty();
+		assertThat(window.textBox("orderTotalTextBox").text()).isEmpty();
+		assertThat(window.textBox("netTotalTextBox").text()).isEmpty();
+		assertThat(window.textBox("paymentMethodTextBox").text()).isEmpty();
+		assertThat(window.textBox("firstNameTextBox").text()).isEmpty();
+		assertThat(window.textBox("lastNameTextBox").text()).isEmpty();
+		assertThat(window.textBox("addressTextBox").text()).isEmpty();
+		assertThat(window.textBox("postcodeTextBox").text()).isEmpty();
+		assertThat(window.textBox("stateTextBox").text()).isEmpty();
+		assertThat(window.textBox("cityTextBox").text()).isEmpty();
+		assertThat(window.textBox("emailTextBox").text()).isEmpty();
+		assertThat(window.textBox("phoneTextBox").text()).isEmpty();
+		assertThat(window.textBox("productTextBox").text()).isEmpty();
+		assertThat(window.textBox("firstIssueTextBox").text()).isEmpty();
+		assertThat(window.textBox("lastIssueTextBox").text()).isEmpty();
+		assertThat(window.textBox("notesTextBox").text()).isEmpty();
+		
+		window.button(JButtonMatcher.withText("Update")).requireDisabled();
+		window.button(JButtonMatcher.withText("Delete")).requireDisabled();
+
+	}
 
 	@Test
 	public void testOrderUpdatedShouldDelegateTheMessageViewToDisplayAnInfoMessage() {

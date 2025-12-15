@@ -184,34 +184,7 @@
 								<containerNamePattern>%a</containerNamePattern>
 							</run>
 						</image>
-						<!-- MongoDB: client per importare i dati -->
-						<image>
-							<name>mongo:5</name>
-							<alias>mongoimport</alias>
-							<run>
-								<network>
-									<mode>custom</mode>
-									<name>apt-network</name>
-									<alias>mongodb</alias>
-								</network>
-								<volumes>
-									<bind>
-										<volume>resources</volume>
-										<volume>${resourcesHost}:/resources</volume>
-									</bind>
-								</volumes>
-								<cmd>mongoimport --host mongod
-									--db='subscriptions' --collection='orders'
-									--headerline
-									--file=src/main/resources/sample-orders.csv
-									--type=csv</cmd>
-								<log>
-									<prefix>%a</prefix>
-									<date>default</date>
-									<color>yellow</color>
-								</log>
-							</run>
-						</image>
+					
 					</images>
 				</configuration>
 				<executions>

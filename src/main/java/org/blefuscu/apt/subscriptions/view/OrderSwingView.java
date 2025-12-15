@@ -479,8 +479,10 @@ public class OrderSwingView extends JPanel implements OrderView {
 		});
 
 		btnDelete = new JButton("Delete");
-		btnDelete.addActionListener(
-				e -> subscriptionsController.deleteOrder(Integer.parseInt(orderIdTextBox.getText())));
+		btnDelete.addActionListener(e -> {
+			subscriptionsController.deleteOrder(Integer.parseInt(orderIdTextBox.getText()));
+			clearAll();
+		});
 		btnDelete.setEnabled(false);
 		GridBagConstraints gbcBtnDelete = new GridBagConstraints();
 		gbcBtnDelete.anchor = GridBagConstraints.WEST;
