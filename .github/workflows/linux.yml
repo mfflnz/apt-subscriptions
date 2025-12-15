@@ -38,8 +38,8 @@ jobs:
     - name: Build with Maven
       run: >
         xvfb-run -a --server-args="-screen 0 1366x768x24"
-		mvn clean verify
-		${{ matrix.additional-maven-args }}
+        mvn clean verify
+        ${{ matrix.additional-maven-args }}
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
