@@ -11,8 +11,6 @@ jobs:
       matrix:
         include:
           - java: 21
-    env:
-      workdir: org.blefuscu.apt.subscriptions
 
     name: Build with Java ${{ matrix.java }}
     steps:
@@ -32,4 +30,3 @@ jobs:
       run: >
         mvn
         clean verify -Pskip-testcontainers
-      working-directory: ${{ env.workdir }}
