@@ -1,10 +1,10 @@
 package org.blefuscu.apt.subscriptions.controller;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,15 +32,15 @@ public class ExportControllerIT {
 		Files.deleteIfExists(Paths.get(FILENAME));
 
 	}
-	
+
 	@AfterClass
 	public static void removeTestExportFile() throws IOException {
 		Files.deleteIfExists(Paths.get(FILENAME));
 	}
 
-
 	@Test
-	public void testSaveDataIfFileDoesNotExistWritesFileOnDiskAndSendsAnInfoMessageToTheMessageViewAndReturnsZero() throws IOException {
+	public void testSaveDataIfFileDoesNotExistWritesFileOnDiskAndSendsAnInfoMessageToTheMessageViewAndReturnsZero()
+			throws IOException {
 
 		List<FormattedOrder> formattedOrders = addSampleFormattedOrders();
 
@@ -50,47 +50,45 @@ public class ExportControllerIT {
 	}
 
 	@Test
-	public void testSaveDataIfFileAlreadyExistsShouldSendsAnErrorMessageToTheMessageViewAndReturnANegativeValue() throws IOException {
-		
+	public void testSaveDataIfFileAlreadyExistsShouldSendsAnErrorMessageToTheMessageViewAndReturnANegativeValue()
+			throws IOException {
+
 		List<FormattedOrder> formattedOrders = addSampleFormattedOrders();
-		
+
 		Path filePath = Paths.get(FILENAME);
 		Files.createFile(filePath);
 		assertTrue(new File(FILENAME).exists());
-		
+
 		assertThat(exportController.saveData(formattedOrders, FILENAME)).isNegative();
 		assertEquals(messageView.getMessageTextBox().getText(), "File " + FILENAME + " already exists");
 	}
-	
+
 	@Test
 	public void testSaveDataShouldCorrectlySaveOrdersToFileAndReturnZero() throws IOException {
-		
+
 		List<FormattedOrder> formattedOrders = addSampleFormattedOrders();
 		File file = new File(FILENAME);
 
 		assertThat(exportController.saveData(formattedOrders, FILENAME)).isZero();
 		assertThat(file).exists().hasContent(
 				"1,2025-10-09,2025-11-03,€ 65.00,€ 58.00,PayPal,Ada,Perrotta,\"via Irnerio 51\",40125,Bologna,BO,customer@emailaddress.com,+39 321 456 7890,Abbonamento cartaceo,106,111,\"Abbonamento regalato da Gianluca Boarelli\""
-				+ "\n"
-				+ "2,2025-10-10,2025-11-03,€ 65.00,€ 58.00,PayPal,Livia,Varrà,\"via Irnerio 51\",40125,Bologna,BO,customer@emailaddress.com,+39 321 456 7890,Abbonamento cartaceo,106,111,\"Abbonamento regalato da Gianluca Boarelli\""
-				);
+						+ "\n"
+						+ "2,2025-10-10,2025-11-03,€ 65.00,€ 58.00,PayPal,Livia,Varrà,\"via Irnerio 51\",40125,Bologna,BO,customer@emailaddress.com,+39 321 456 7890,Abbonamento cartaceo,106,111,\"Abbonamento regalato da Gianluca Boarelli\"");
 
-		
 	}
 
 	@Test
 	public void testDeleteDataShouldRemoveFileFromDiskIfExists() throws IOException {
 		Path filePath = Paths.get(FILENAME);
 		Files.createFile(filePath);
-		
+
 		exportController.deleteData(FILENAME);
-		
+
 		assertFalse(new File(FILENAME).exists());
 		assertEquals(messageView.getMessageTextBox().getText(), "File " + FILENAME + " was deleted");
 
-		
 	}
-	
+
 	private List<FormattedOrder> addSampleFormattedOrders() {
 		FormattedOrder formattedOrder1 = new FormattedOrder.FormattedOrderBuilder("1").setOrderDate("2025-10-09")
 				.setPaidDate("2025-11-03").setOrderTotal("€ 65.00").setOrderNetTotal("€ 58.00")
@@ -106,9 +104,8 @@ public class ExportControllerIT {
 				.setShippingState("BO").setCustomerEmail("customer@emailaddress.com")
 				.setBillingPhone("+39 321 456 7890").setShippingItems("Abbonamento cartaceo").setFirstIssue("106")
 				.setLastIssue("111").setCustomerNote("Abbonamento regalato da Gianluca Boarelli").build();
-	
+
 		return asList(formattedOrder1, formattedOrder2);
 	}
-
 
 }

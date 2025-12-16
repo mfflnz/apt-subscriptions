@@ -1,7 +1,8 @@
 package org.blefuscu.apt.subscriptions.view;
 
 import static org.assertj.swing.fixture.Containers.showInFrame;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.edt.GuiActionRunner;

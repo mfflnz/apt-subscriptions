@@ -1,5 +1,18 @@
 package org.blefuscu.apt.subscriptions.view;
 
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.swing.fixture.Containers.showInFrame;
+import static org.awaitility.Awaitility.await;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -17,20 +30,6 @@ import org.blefuscu.apt.subscriptions.controller.ExportController;
 import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 import org.blefuscu.apt.subscriptions.model.FormattedOrder;
 import org.blefuscu.apt.subscriptions.model.Order;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.swing.fixture.Containers.showInFrame;
-import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
-import static java.util.Arrays.asList;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -129,7 +128,6 @@ public class ListSwingViewTest {
 		window.button(JButtonMatcher.withText("Export")).requireEnabled();
 		// SonarQube
 		assertTrue(window.button(JButtonMatcher.withText("Export")).isEnabled());
-
 
 		// contentsChanged()
 		GuiActionRunner.execute(() -> {

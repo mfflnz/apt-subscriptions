@@ -1,12 +1,12 @@
 package org.blefuscu.apt.subscriptions.view;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 
 public class DashboardSwingView extends JFrame implements DashboardView {
 
@@ -16,7 +16,8 @@ public class DashboardSwingView extends JFrame implements DashboardView {
 	/**
 	 * Create the frame.
 	 */
-	public DashboardSwingView(SearchSwingView searchPanel, ListSwingView listPanel, OrderSwingView orderPanel, MessageSwingView messagePanel) {
+	public DashboardSwingView(SearchSwingView searchPanel, ListSwingView listPanel, OrderSwingView orderPanel,
+			MessageSwingView messagePanel) {
 		setTitle("Dashboard");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
@@ -66,6 +67,5 @@ public class DashboardSwingView extends JFrame implements DashboardView {
 		contentPanel.add(messagePanel, gbcMessagePanel);
 
 	}
-
 
 }

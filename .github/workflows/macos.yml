@@ -12,7 +12,6 @@ jobs:
       matrix:
         include:
           - java: 11
-          - java: 17
     env:
       # https://github.com/fabric8io/docker-maven-plugin/issues/1584#issuecomment-1199262997      
       DOCKER_HOST: unix:///Users/runner/.colima/default/docker.sock

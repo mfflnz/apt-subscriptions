@@ -1,22 +1,22 @@
 package org.blefuscu.apt.subscriptions.view;
 
-import javax.swing.JPanel;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import javax.swing.JTextField;
-
-import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
-
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-import javax.swing.JButton;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.Dimension;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
 
 public class SearchSwingView extends JPanel implements SearchView {
 
@@ -115,15 +115,15 @@ public class SearchSwingView extends JPanel implements SearchView {
 		btnSearch.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 				LocalDate fromDate;
 				LocalDate toDate;
 				String fromText = fromTextBox.getText();
 				String toText = toTextBox.getText();
-				
+
 				fromText = removeWhitespacesOnly(fromText);
 				toText = removeWhitespacesOnly(toText);
-				
+
 				if (fromText.isEmpty()) {
 					if (!toText.isEmpty()) {
 						fromText = "1970-01-01";
@@ -132,26 +132,24 @@ public class SearchSwingView extends JPanel implements SearchView {
 						return;
 					}
 				}
-				if(toText.isEmpty()) {
+				if (toText.isEmpty()) {
 					toText = LocalDate.now().toString();
 				}
-				
+
 				try {
 					fromDate = LocalDate.parse(fromText);
-				}
-				catch (DateTimeParseException e) {
+				} catch (DateTimeParseException e) {
 					subscriptionsController.sendErrorMessage("Please check start date format");
 					return;
 				}
-				
+
 				try {
 					toDate = LocalDate.parse(toText);
-				} 
-				catch (DateTimeParseException e) {
+				} catch (DateTimeParseException e) {
 					subscriptionsController.sendErrorMessage("Please check end date format");
 					return;
 				}
-				
+
 				checkIfDatesAreInTheRightOrderAndPerformSearch(fromDate, toDate);
 			}
 
@@ -164,7 +162,7 @@ public class SearchSwingView extends JPanel implements SearchView {
 			}
 
 			private String removeWhitespacesOnly(String text) {
-				if(text.matches(WHITESPACES_REGEX)) {
+				if (text.matches(WHITESPACES_REGEX)) {
 					text = "";
 				}
 				return text;

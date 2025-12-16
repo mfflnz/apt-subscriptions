@@ -1,5 +1,6 @@
 package org.blefuscu.apt.subscriptions.controller;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
@@ -7,19 +8,19 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static java.util.Arrays.asList;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.model.FormattedOrder;
+import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
 import org.blefuscu.apt.subscriptions.view.ListView;
 import org.blefuscu.apt.subscriptions.view.MessageView;
 import org.blefuscu.apt.subscriptions.view.OrderView;
+import org.bson.conversions.Bson;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,8 +31,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import com.mongodb.client.model.Filters;
-
-import org.bson.conversions.Bson;
 
 public class SubscriptionsControllerTest {
 
@@ -444,7 +443,7 @@ public class SubscriptionsControllerTest {
 				.setShippingItems("").build();
 		FormattedOrder formattedOrder = subscriptionsController.formatOrder(orderToFormat);
 		assertThat(formattedOrder.getShippingItems()).isEmpty();
-		
+
 	}
 
 	@Test
@@ -607,43 +606,45 @@ public class SubscriptionsControllerTest {
 		verify(messageView).showInfoMessage("Info Message");
 		verifyNoMoreInteractions(messageView);
 	}
-	
+
 	@Test
 	public void testRequestOrdersShouldDelegateMessageViewToShowNumberOfOrders() {
 		LocalDate fromDate = LocalDate.of(2025, 8, 25);
 		LocalDate toDate = LocalDate.of(2025, 8, 26);
-		Bson filter = Filters.and(Filters.gte("order_date", fromDate.toString()), Filters.lte("order_date", toDate.toString()));
-		
+		Bson filter = Filters.and(Filters.gte("order_date", fromDate.toString()),
+				Filters.lte("order_date", toDate.toString()));
+
 		when(orderRepository.countOrders(filter)).thenReturn((long) 2);
-		
+
 		subscriptionsController.requestOrders(fromDate, toDate);
-		
+
 		verify(messageView).showInfoMessage("2 orders found");
 	}
-	
+
 	@Test
 	public void testRequestOrdersWhenExactlyOneOrderIsFoundShouldDelegateMessageViewToShowNumberOfOrders() {
 		LocalDate fromDate = LocalDate.of(2025, 8, 25);
 		LocalDate toDate = LocalDate.of(2025, 8, 26);
-		Bson filter = Filters.and(Filters.gte("order_date", fromDate.toString()), Filters.lte("order_date", toDate.toString()));
-		
+		Bson filter = Filters.and(Filters.gte("order_date", fromDate.toString()),
+				Filters.lte("order_date", toDate.toString()));
+
 		when(orderRepository.countOrders(filter)).thenReturn((long) 1);
-		
+
 		subscriptionsController.requestOrders(fromDate, toDate);
-		
+
 		verify(messageView).showInfoMessage("1 order found");
 	}
 
 	@Test
 	public void testRequestOrdersWhenCollectionContainsExactlyOneOrderShouldDelegateMessageViewToShowNumberOfOrders() {
-		
+
 		when(orderRepository.countOrders(null)).thenReturn((long) 1);
-		
+
 		subscriptionsController.requestOrders();
-		
+
 		verify(messageView).showInfoMessage("1 order found");
 	}
-	
+
 	@Test
 	public void testRequestOrdersShouldDelegateTheListViewToClearTheListBeforeDisplayingResults() {
 		subscriptionsController.requestOrders();
@@ -659,7 +660,7 @@ public class SubscriptionsControllerTest {
 		subscriptionsController.requestOrders(fromDate, toDate);
 		verify(orderView).clearAll();
 		verify(listView).clearList();
-		
+
 	}
 
 }

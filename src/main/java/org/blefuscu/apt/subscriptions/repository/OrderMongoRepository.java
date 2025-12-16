@@ -19,7 +19,6 @@ import com.mongodb.client.model.Updates;
 
 public class OrderMongoRepository implements OrderRepository {
 
-
 	private static final String BILLING_ADDRESS_1 = "billing_address_1";
 	private static final String BILLING_ADDRESS_2 = "billing_address_2";
 	private static final String BILLING_CITY = "billing_city";
@@ -107,7 +106,7 @@ public class OrderMongoRepository implements OrderRepository {
 	public static final String SUBSCRIPTIONS_DB_NAME = "subscriptions";
 	public static final String ORDER_COLLECTION_NAME = "orders";
 	public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-	
+
 	private MongoCollection<Document> orderCollection;
 
 	public MongoCollection<Document> getOrderCollection() {
@@ -169,9 +168,7 @@ public class OrderMongoRepository implements OrderRepository {
 
 		// https://www.mongodb.com/docs/drivers/java/sync/current/crud/update-documents/
 		Bson filter = Filters.eq(ORDER_ID, id);
-		Bson update = Updates.combine(
-				Updates.set(ORDER_DATE, orderDate),
-				Updates.set(PAID_DATE, paidDate),
+		Bson update = Updates.combine(Updates.set(ORDER_DATE, orderDate), Updates.set(PAID_DATE, paidDate),
 				Updates.set(ORDER_TOTAL, updatedOrder.getOrderTotal()),
 				Updates.set(ORDER_NET_TOTAL, updatedOrder.getOrderNetTotal()),
 				Updates.set(PAYMENT_METHOD, updatedOrder.getPaymentMethod()),
@@ -223,76 +220,51 @@ public class OrderMongoRepository implements OrderRepository {
 		double discountTotal = convertDiscountTotal(d);
 		double orderTotal = convertOrderTotal(d);
 		double orderSubtotal = convertOrderSubtotal(d);
-		
-		String metaStripeCurrency = (d.get(META_STRIPE_CURRENCY) == null) ? "EUR" : d.get(META_STRIPE_CURRENCY, String.class); 
 
-		double metaPpcpPaypalFees = (d.get(META_PPCP_PAYPAL_FEES) == null) ? 0.0 : d.get(META_PPCP_PAYPAL_FEES, Double.class);
+		String metaStripeCurrency = (d.get(META_STRIPE_CURRENCY) == null) ? "EUR"
+				: d.get(META_STRIPE_CURRENCY, String.class);
+
+		double metaPpcpPaypalFees = (d.get(META_PPCP_PAYPAL_FEES) == null) ? 0.0
+				: d.get(META_PPCP_PAYPAL_FEES, Double.class);
 		double metaStripeFee = (d.get(META_STRIPE_FEE) == null) ? 0.0 : d.get(META_STRIPE_FEE, Double.class);
 		double metaStripeNet = (d.get(META_STRIPE_NET) == null) ? 0.0 : d.get(META_STRIPE_NET, Double.class);
-		
-		int lastIssue = (d.getInteger(LAST_ISSUE) == null) ? 0 : d.getInteger(LAST_ISSUE); 
+
+		int lastIssue = (d.getInteger(LAST_ISSUE) == null) ? 0 : d.getInteger(LAST_ISSUE);
 		int firstIssue = (d.getInteger(FIRST_ISSUE) == null) ? 0 : d.getInteger(FIRST_ISSUE);
-		
-		double orderNetTotal = (d.getDouble(ORDER_NET_TOTAL) == null) ? 0.0 : d.getDouble(ORDER_NET_TOTAL); 
-		
-		LocalDate orderDate = (d.getString(ORDER_DATE).isEmpty()) ? null : LocalDate.parse(cleanupDate(d.getString(ORDER_DATE)));
-		LocalDate paidDate = (d.getString(PAID_DATE).isEmpty()) ? null : LocalDate.parse(cleanupDate(d.getString(PAID_DATE)));
-		
-		return new Order.OrderBuilder(d.getInteger(ORDER_ID),
-				orderDate, d.getString(CUSTOMER_EMAIL))
-				.setOrderNumber(orderNumber)
-				.setPaidDate(paidDate)
-				.setStatus(d.getString(STATUS))
-				.setShippingTotal(shippingTotal)
-				.setShippingTaxTotal(shippingTaxTotal)
-				.setFeeTotal(feeTotal)
-				.setFeeTaxTotal(feeTaxTotal)
-				.setTaxTotal(taxTotal)
-				.setCartDiscount(cartDiscount)
-				.setOrderDiscount(orderDiscount)
-				.setDiscountTotal(discountTotal)
-				.setOrderTotal(orderTotal)
-				.setOrderSubtotal(orderSubtotal)
-				.setOrderKey(d.getString(ORDER_KEY))
-				.setOrderCurrency(d.getString(ORDER_CURRENCY))
-				.setPaymentMethod(d.getString(PAYMENT_METHOD))
-				.setPaymentMethodTitle(d.getString(PAYMENT_METHOD_TITLE))
-				.setTransactionId(d.getString(TRANSACTION_ID))
+
+		double orderNetTotal = (d.getDouble(ORDER_NET_TOTAL) == null) ? 0.0 : d.getDouble(ORDER_NET_TOTAL);
+
+		LocalDate orderDate = (d.getString(ORDER_DATE).isEmpty()) ? null
+				: LocalDate.parse(cleanupDate(d.getString(ORDER_DATE)));
+		LocalDate paidDate = (d.getString(PAID_DATE).isEmpty()) ? null
+				: LocalDate.parse(cleanupDate(d.getString(PAID_DATE)));
+
+		return new Order.OrderBuilder(d.getInteger(ORDER_ID), orderDate, d.getString(CUSTOMER_EMAIL))
+				.setOrderNumber(orderNumber).setPaidDate(paidDate).setStatus(d.getString(STATUS))
+				.setShippingTotal(shippingTotal).setShippingTaxTotal(shippingTaxTotal).setFeeTotal(feeTotal)
+				.setFeeTaxTotal(feeTaxTotal).setTaxTotal(taxTotal).setCartDiscount(cartDiscount)
+				.setOrderDiscount(orderDiscount).setDiscountTotal(discountTotal).setOrderTotal(orderTotal)
+				.setOrderSubtotal(orderSubtotal).setOrderKey(d.getString(ORDER_KEY))
+				.setOrderCurrency(d.getString(ORDER_CURRENCY)).setPaymentMethod(d.getString(PAYMENT_METHOD))
+				.setPaymentMethodTitle(d.getString(PAYMENT_METHOD_TITLE)).setTransactionId(d.getString(TRANSACTION_ID))
 				.setCustomerIpAddress(d.getString(CUSTOMER_IP_ADDRESS))
-				.setCustomerUserAgent(d.getString(CUSTOMER_USER_AGENT))
-				.setShippingMethod(d.getString(SHIPPING_METHOD))
-				.setCustomerId(customerId)
-				.setCustomerUser(customerUser)
-				.setBillingFirstName(d.getString(BILLING_FIRST_NAME))
-				.setBillingLastName(d.getString(BILLING_LAST_NAME))
-				.setBillingCompany(d.getString(BILLING_COMPANY))
-				.setBillingEmail(d.getString(BILLING_EMAIL))
-				.setBillingPhone(billingPhone)
-				.setBillingAddress1(d.getString(BILLING_ADDRESS_1))
-				.setBillingAddress2(d.getString(BILLING_ADDRESS_2))
-				.setBillingPostcode(billingPostcode)
-				.setBillingCity(d.getString(BILLING_CITY))
-				.setBillingState(d.getString(BILLING_STATE))
-				.setBillingCountry(d.getString(BILLING_COUNTRY))
-				.setShippingFirstName(d.getString(SHIPPING_FIRST_NAME))
-				.setShippingLastName(d.getString(SHIPPING_LAST_NAME))
-				.setShippingCompany(d.getString(SHIPPING_COMPANY))
-				.setShippingPhone(d.getString(SHIPPING_PHONE))
-				.setShippingAddress1(d.getString(SHIPPING_ADDRESS_1))
-				.setShippingAddress2(d.getString(SHIPPING_ADDRESS_2))
-				.setShippingPostcode(shippingPostcode)
-				.setShippingCity(d.getString(SHIPPING_CITY))
-				.setShippingState(d.getString(SHIPPING_STATE))
-				.setShippingCountry(d.getString(SHIPPING_COUNTRY))
-				.setCustomerNote(d.getString(CUSTOMER_NOTE))
-				.setWtImportKey(wtImportKey)
-				.setTaxItems(d.getString(TAX_ITEMS))
-				.setShippingItems(d.getString(SHIPPING_ITEMS))
-				.setFeeItems(d.getString(FEE_ITEMS))
-				.setCouponItems(d.getString(COUPON_ITEMS))
-				.setRefundItems(d.getString(REFUND_ITEMS))
-				.setOrderNotes(d.getString(ORDER_NOTES))
-				.setDownloadPermissions(downloadPermissions)
+				.setCustomerUserAgent(d.getString(CUSTOMER_USER_AGENT)).setShippingMethod(d.getString(SHIPPING_METHOD))
+				.setCustomerId(customerId).setCustomerUser(customerUser)
+				.setBillingFirstName(d.getString(BILLING_FIRST_NAME)).setBillingLastName(d.getString(BILLING_LAST_NAME))
+				.setBillingCompany(d.getString(BILLING_COMPANY)).setBillingEmail(d.getString(BILLING_EMAIL))
+				.setBillingPhone(billingPhone).setBillingAddress1(d.getString(BILLING_ADDRESS_1))
+				.setBillingAddress2(d.getString(BILLING_ADDRESS_2)).setBillingPostcode(billingPostcode)
+				.setBillingCity(d.getString(BILLING_CITY)).setBillingState(d.getString(BILLING_STATE))
+				.setBillingCountry(d.getString(BILLING_COUNTRY)).setShippingFirstName(d.getString(SHIPPING_FIRST_NAME))
+				.setShippingLastName(d.getString(SHIPPING_LAST_NAME)).setShippingCompany(d.getString(SHIPPING_COMPANY))
+				.setShippingPhone(d.getString(SHIPPING_PHONE)).setShippingAddress1(d.getString(SHIPPING_ADDRESS_1))
+				.setShippingAddress2(d.getString(SHIPPING_ADDRESS_2)).setShippingPostcode(shippingPostcode)
+				.setShippingCity(d.getString(SHIPPING_CITY)).setShippingState(d.getString(SHIPPING_STATE))
+				.setShippingCountry(d.getString(SHIPPING_COUNTRY)).setCustomerNote(d.getString(CUSTOMER_NOTE))
+				.setWtImportKey(wtImportKey).setTaxItems(d.getString(TAX_ITEMS))
+				.setShippingItems(d.getString(SHIPPING_ITEMS)).setFeeItems(d.getString(FEE_ITEMS))
+				.setCouponItems(d.getString(COUPON_ITEMS)).setRefundItems(d.getString(REFUND_ITEMS))
+				.setOrderNotes(d.getString(ORDER_NOTES)).setDownloadPermissions(downloadPermissions)
 				.setMetaWcOrderAttributionDeviceType(d.getString(META_WC_ORDER_ATTRIBUTION_DEVICE_TYPE))
 				.setMetaWcOrderAttributionReferrer(d.getString(META_WC_ORDER_ATTRIBUTION_REFERRER))
 				.setMetaWcOrderAttributionSessionCount(d.getString(META_WC_ORDER_ATTRIBUTION_SESSION_COUNT))
@@ -302,19 +274,11 @@ public class OrderMongoRepository implements OrderRepository {
 				.setMetaWcOrderAttributionSourceType(d.getString(META_WC_ORDER_ATTRIBUTION_SOURCE_TYPE))
 				.setMetaWcOrderAttributionUserAgent(d.getString(META_WC_ORDER_ATTRIBUTION_USER_AGENT))
 				.setMetaWcOrderAttributionUtmSource(d.getString(META_WC_ORDER_ATTRIBUTION_UTM_SOURCE))
-				.setMetaPpcpPaypalFees(metaPpcpPaypalFees)
-				.setMetaStripeCurrency(metaStripeCurrency)
-				.setMetaStripeFee(metaStripeFee)
-				.setMetaStripeNet(metaStripeNet)
-				.setLineItem1(d.getString(LINE_ITEM_1))
-				.setLineItem2(d.getString(LINE_ITEM_2))
-				.setLineItem3(d.getString(LINE_ITEM_3))
-				.setLineItem4(d.getString(LINE_ITEM_4))
-				.setLineItem5(d.getString(LINE_ITEM_5))
-				.setLastIssue(lastIssue)
-				.setFirstIssue(firstIssue)
-				.setOrderNetTotal(orderNetTotal)
-				.build();
+				.setMetaPpcpPaypalFees(metaPpcpPaypalFees).setMetaStripeCurrency(metaStripeCurrency)
+				.setMetaStripeFee(metaStripeFee).setMetaStripeNet(metaStripeNet).setLineItem1(d.getString(LINE_ITEM_1))
+				.setLineItem2(d.getString(LINE_ITEM_2)).setLineItem3(d.getString(LINE_ITEM_3))
+				.setLineItem4(d.getString(LINE_ITEM_4)).setLineItem5(d.getString(LINE_ITEM_5)).setLastIssue(lastIssue)
+				.setFirstIssue(firstIssue).setOrderNetTotal(orderNetTotal).build();
 	}
 
 	private double convertOrderSubtotal(Document d) {
@@ -484,7 +448,7 @@ public class OrderMongoRepository implements OrderRepository {
 			default:
 				throw new IllegalArgumentException("Error: shipping tax total should be a number");
 			}
-			
+
 		}
 		return shippingTaxTotal;
 	}
@@ -617,7 +581,7 @@ public class OrderMongoRepository implements OrderRepository {
 				break;
 			default:
 				throw new IllegalArgumentException("Error: Shipping Postcode should be a number or a string");
-			} 
+			}
 		}
 		return shippingPostcode;
 	}
@@ -665,61 +629,39 @@ public class OrderMongoRepository implements OrderRepository {
 		String paidDate = (order.getPaidDate() != null) ? order.getPaidDate().toString() : "";
 		String metaStripeCurrency = (order.getMetaStripeCurrency() != null) ? order.getMetaStripeCurrency() : "EUR";
 
-		return new Document().append(ORDER_ID, order.getOrderId())
-				.append(ORDER_DATE, order.getOrderDate().toString())
-				.append(CUSTOMER_EMAIL, order.getCustomerEmail())
-				.append(ORDER_NUMBER, order.getOrderNumber())
-				.append(STATUS, order.getStatus())
-				.append(SHIPPING_TOTAL, order.getShippingTotal())
-				.append(SHIPPING_TAX_TOTAL, order.getShippingTaxTotal())
-				.append(FEE_TOTAL, order.getFeeTotal())
-				.append(FEE_TAX_TOTAL, order.getFeeTaxTotal())
-				.append(TAX_TOTAL, order.getTaxTotal())
-				.append(CART_DISCOUNT, order.getCartDiscount())
-				.append(ORDER_DISCOUNT, order.getOrderDiscount())
-				.append(DISCOUNT_TOTAL, order.getDiscountTotal())
-				.append(ORDER_TOTAL, order.getOrderTotal())
-				.append(ORDER_SUBTOTAL, order.getOrderSubtotal())
-				.append(ORDER_KEY, order.getOrderKey())
-				.append(ORDER_CURRENCY, order.getOrderCurrency())
-				.append(PAYMENT_METHOD, order.getPaymentMethod())
+		return new Document().append(ORDER_ID, order.getOrderId()).append(ORDER_DATE, order.getOrderDate().toString())
+				.append(CUSTOMER_EMAIL, order.getCustomerEmail()).append(ORDER_NUMBER, order.getOrderNumber())
+				.append(STATUS, order.getStatus()).append(SHIPPING_TOTAL, order.getShippingTotal())
+				.append(SHIPPING_TAX_TOTAL, order.getShippingTaxTotal()).append(FEE_TOTAL, order.getFeeTotal())
+				.append(FEE_TAX_TOTAL, order.getFeeTaxTotal()).append(TAX_TOTAL, order.getTaxTotal())
+				.append(CART_DISCOUNT, order.getCartDiscount()).append(ORDER_DISCOUNT, order.getOrderDiscount())
+				.append(DISCOUNT_TOTAL, order.getDiscountTotal()).append(ORDER_TOTAL, order.getOrderTotal())
+				.append(ORDER_SUBTOTAL, order.getOrderSubtotal()).append(ORDER_KEY, order.getOrderKey())
+				.append(ORDER_CURRENCY, order.getOrderCurrency()).append(PAYMENT_METHOD, order.getPaymentMethod())
 				.append(PAYMENT_METHOD_TITLE, order.getPaymentMethodTitle())
 				.append(TRANSACTION_ID, order.getTransactionId())
 				.append(CUSTOMER_IP_ADDRESS, order.getCustomerIpAddress())
 				.append(CUSTOMER_USER_AGENT, order.getCustomerUserAgent())
-				.append(SHIPPING_METHOD, order.getShippingMethod())
-				.append(CUSTOMER_ID, order.getCustomerId())
-				.append(CUSTOMER_USER, order.getCustomerUser())
-				.append(PAID_DATE, paidDate)
+				.append(SHIPPING_METHOD, order.getShippingMethod()).append(CUSTOMER_ID, order.getCustomerId())
+				.append(CUSTOMER_USER, order.getCustomerUser()).append(PAID_DATE, paidDate)
 				.append(BILLING_FIRST_NAME, order.getBillingFirstName())
 				.append(BILLING_LAST_NAME, order.getBillingLastName())
-				.append(BILLING_COMPANY, order.getBillingCompany())
-				.append(BILLING_EMAIL, order.getBillingEmail())
-				.append(BILLING_PHONE, order.getBillingPhone())
-				.append(BILLING_ADDRESS_1, order.getBillingAddress1())
+				.append(BILLING_COMPANY, order.getBillingCompany()).append(BILLING_EMAIL, order.getBillingEmail())
+				.append(BILLING_PHONE, order.getBillingPhone()).append(BILLING_ADDRESS_1, order.getBillingAddress1())
 				.append(BILLING_ADDRESS_2, order.getBillingAddress2())
-				.append(BILLING_POSTCODE, order.getBillingPostcode())
-				.append(BILLING_CITY, order.getBillingCity())
-				.append(BILLING_STATE, order.getBillingState())
-				.append(BILLING_COUNTRY, order.getBillingCountry())
+				.append(BILLING_POSTCODE, order.getBillingPostcode()).append(BILLING_CITY, order.getBillingCity())
+				.append(BILLING_STATE, order.getBillingState()).append(BILLING_COUNTRY, order.getBillingCountry())
 				.append(SHIPPING_FIRST_NAME, order.getBillingFirstName())
 				.append(SHIPPING_LAST_NAME, order.getBillingLastName())
-				.append(SHIPPING_COMPANY, order.getShippingCompany())
-				.append(SHIPPING_PHONE, order.getShippingPhone())
+				.append(SHIPPING_COMPANY, order.getShippingCompany()).append(SHIPPING_PHONE, order.getShippingPhone())
 				.append(SHIPPING_ADDRESS_1, order.getShippingAddress1())
 				.append(SHIPPING_ADDRESS_2, order.getShippingAddress2())
-				.append(SHIPPING_POSTCODE, order.getShippingPostcode())
-				.append(SHIPPING_CITY, order.getShippingCity())
-				.append(SHIPPING_STATE, order.getShippingState())
-				.append(SHIPPING_COUNTRY, order.getShippingCountry())
-				.append(CUSTOMER_NOTE, order.getCustomerNote())
-				.append(WT_IMPORT_KEY, order.getWtImportKey())
-				.append(TAX_ITEMS, order.getTaxItems())
-				.append(SHIPPING_ITEMS, order.getShippingItems())
-				.append(FEE_ITEMS, order.getFeeItems())
-				.append(COUPON_ITEMS, order.getCouponItems())
-				.append(REFUND_ITEMS, order.getRefundItems())
-				.append(ORDER_NOTES, order.getOrderNotes())
+				.append(SHIPPING_POSTCODE, order.getShippingPostcode()).append(SHIPPING_CITY, order.getShippingCity())
+				.append(SHIPPING_STATE, order.getShippingState()).append(SHIPPING_COUNTRY, order.getShippingCountry())
+				.append(CUSTOMER_NOTE, order.getCustomerNote()).append(WT_IMPORT_KEY, order.getWtImportKey())
+				.append(TAX_ITEMS, order.getTaxItems()).append(SHIPPING_ITEMS, order.getShippingItems())
+				.append(FEE_ITEMS, order.getFeeItems()).append(COUPON_ITEMS, order.getCouponItems())
+				.append(REFUND_ITEMS, order.getRefundItems()).append(ORDER_NOTES, order.getOrderNotes())
 				.append(DOWNLOAD_PERMISSIONS, order.getDownloadPermissions())
 				.append(META_WC_ORDER_ATTRIBUTION_DEVICE_TYPE, order.getMetaWcOrderAttributionDeviceType())
 				.append(META_WC_ORDER_ATTRIBUTION_REFERRER, order.getMetaWcOrderAttributionReferrer())
@@ -731,16 +673,11 @@ public class OrderMongoRepository implements OrderRepository {
 				.append(META_WC_ORDER_ATTRIBUTION_USER_AGENT, order.getMetaWcOrderAttributionUserAgent())
 				.append(META_WC_ORDER_ATTRIBUTION_UTM_SOURCE, order.getMetaWcOrderAttributionUtmSource())
 				.append(META_PPCP_PAYPAL_FEES, order.getMetaPpcpPaypalFees())
-				.append(META_STRIPE_CURRENCY, metaStripeCurrency)
-				.append(META_STRIPE_FEE, order.getMetaStripeFee())
-				.append(META_STRIPE_NET, order.getMetaStripeNet())
-				.append(LINE_ITEM_1, order.getLineItem1())
-				.append(LINE_ITEM_2, order.getLineItem2())
-				.append(LINE_ITEM_3, order.getLineItem3())
-				.append(LINE_ITEM_4, order.getLineItem4())
-				.append(LINE_ITEM_5, order.getLineItem5())
-				.append(ORDER_NET_TOTAL, order.getOrderNetTotal())
-				.append(FIRST_ISSUE, order.getFirstIssue())
+				.append(META_STRIPE_CURRENCY, metaStripeCurrency).append(META_STRIPE_FEE, order.getMetaStripeFee())
+				.append(META_STRIPE_NET, order.getMetaStripeNet()).append(LINE_ITEM_1, order.getLineItem1())
+				.append(LINE_ITEM_2, order.getLineItem2()).append(LINE_ITEM_3, order.getLineItem3())
+				.append(LINE_ITEM_4, order.getLineItem4()).append(LINE_ITEM_5, order.getLineItem5())
+				.append(ORDER_NET_TOTAL, order.getOrderNetTotal()).append(FIRST_ISSUE, order.getFirstIssue())
 				.append(LAST_ISSUE, order.getLastIssue());
 	}
 

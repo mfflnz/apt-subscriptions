@@ -10,7 +10,7 @@ public class Order {
 	private LocalDate orderDate;
 	private String customerEmail;
 
-	// Optional fields:	
+	// Optional fields:
 	private int orderNumber;
 	private LocalDate paidDate;
 	private String status;
@@ -82,7 +82,7 @@ public class Order {
 	private String lineItem3;
 	private String lineItem4;
 	private String lineItem5;
-	
+
 	// Fields not specified in the documents:
 	private boolean orderConfirmed;
 	private double orderNetTotal;
@@ -170,7 +170,7 @@ public class Order {
 	}
 
 	public static class OrderBuilder {
-		
+
 		// Required fields:
 		private int orderId;
 		private LocalDate orderDate;
@@ -248,7 +248,7 @@ public class Order {
 		private String lineItem3;
 		private String lineItem4;
 		private String lineItem5;
-		
+
 		// Fields not specified in the documents:
 		private int lastIssue;
 		private int firstIssue;
@@ -258,7 +258,7 @@ public class Order {
 			this.orderId = orderId;
 			this.orderDate = orderDate;
 			this.customerEmail = customerEmail;
-		
+
 			this.billingAddress1 = "";
 			this.billingAddress2 = "";
 			this.billingCity = "";
@@ -690,22 +690,22 @@ public class Order {
 			this.lineItem5 = lineItem5;
 			return this;
 		}
-		
+
 		public OrderBuilder setOrderNetTotal(double orderNetTotal) {
 			this.orderNetTotal = orderNetTotal;
 			return this;
 		}
-		
+
 		public OrderBuilder setFirstIssue(int firstIssue) {
 			this.firstIssue = firstIssue;
 			return this;
 		}
-		
+
 		public OrderBuilder setLastIssue(int lastIssue) {
 			this.lastIssue = lastIssue;
 			return this;
 		}
-		
+
 		public Order build() {
 			return new Order(this);
 		}
@@ -1009,7 +1009,7 @@ public class Order {
 	public String getLineItem5() {
 		return lineItem5;
 	}
-	
+
 	public boolean isOrderConfirmed() {
 		return orderConfirmed;
 	}
@@ -1471,6 +1471,5 @@ public class Order {
 				&& Double.doubleToLongBits(taxTotal) == Double.doubleToLongBits(other.taxTotal)
 				&& Objects.equals(transactionId, other.transactionId) && Objects.equals(wtImportKey, other.wtImportKey);
 	}
-	
-	
+
 }

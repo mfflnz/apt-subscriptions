@@ -1,9 +1,9 @@
 package org.blefuscu.apt.subscriptions.controller;
 
+import static java.util.Arrays.asList;
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.ORDER_COLLECTION_NAME;
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.SUBSCRIPTIONS_DB_NAME;
 import static org.mockito.Mockito.verify;
-import static java.util.Arrays.asList;
 
 import java.time.LocalDate;
 
@@ -28,10 +28,10 @@ public class SubscriptionsControllerIT {
 
 	@Mock
 	private ListView listView;
-	
+
 	@Mock
 	private OrderView orderView;
-	
+
 	@Mock
 	private MessageView messageView;
 	private OrderRepository orderRepository;
@@ -93,8 +93,8 @@ public class SubscriptionsControllerIT {
 				.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 				.setLineItem1(
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
-				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build();
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderNetTotal(15.30)
+				.setFirstIssue(112).setLastIssue(117).build();
 
 		orderRepository.save(order);
 		subscriptionsController.requestOrders();
@@ -104,7 +104,7 @@ public class SubscriptionsControllerIT {
 
 	@Test
 	public void testReadFromDatabaseWhenDatesAreProvided() {
-		
+
 		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 11, 1), "customer@email.com").setOrderNumber(12345)
 				.setPaidDate(LocalDate.of(2025, 9, 10)).setStatus("processing").setShippingTotal(3.0)
 				.setShippingTotal(3.0).setShippingTaxTotal(0.0).setFeeTotal(0.0).setFeeTaxTotal(0.0).setTaxTotal(0.0)
@@ -140,9 +140,9 @@ public class SubscriptionsControllerIT {
 				.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 				.setLineItem1(
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
-				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build();
-	
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderNetTotal(15.30)
+				.setFirstIssue(112).setLastIssue(117).build();
+
 		Order order2 = new Order.OrderBuilder(2, LocalDate.of(2025, 11, 2), "customer@email.com").setOrderNumber(12345)
 				.setPaidDate(LocalDate.of(2025, 9, 10)).setStatus("processing").setShippingTotal(3.0)
 				.setShippingTotal(3.0).setShippingTaxTotal(0.0).setFeeTotal(0.0).setFeeTaxTotal(0.0).setTaxTotal(0.0)
@@ -178,9 +178,9 @@ public class SubscriptionsControllerIT {
 				.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 				.setLineItem1(
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
-				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build();
-		
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderNetTotal(15.30)
+				.setFirstIssue(112).setLastIssue(117).build();
+
 		orderRepository.save(order1);
 		orderRepository.save(order2);
 		subscriptionsController.requestOrders(LocalDate.of(2025, 9, 1), LocalDate.of(2025, 11, 1));
@@ -188,7 +188,7 @@ public class SubscriptionsControllerIT {
 		verify(listView).showOrders(asList(order1));
 		verify(messageView).showInfoMessage("1 order found");
 	}
-	
+
 	@Test
 	public void testRequestOrderDetails() {
 		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 11, 1), "customer@email.com").setOrderNumber(12345)
@@ -226,17 +226,16 @@ public class SubscriptionsControllerIT {
 				.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 				.setLineItem1(
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
-				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build();
-		
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderNetTotal(15.30)
+				.setFirstIssue(112).setLastIssue(117).build();
+
 		orderRepository.save(order1);
 		subscriptionsController.orderDetails(1);
 
 		verify(orderView).showOrderDetails(order1);
 
-
 	}
-	
+
 	@Test
 	public void testUpdateOrder() {
 		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 11, 1), "customer@email.com").setOrderNumber(12345)
@@ -274,19 +273,19 @@ public class SubscriptionsControllerIT {
 				.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 				.setLineItem1(
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
-				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build();
-		
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderNetTotal(15.30)
+				.setFirstIssue(112).setLastIssue(117).build();
+
 		orderRepository.save(order1);
 		subscriptionsController.orderDetails(1);
 
 		verify(orderView).showOrderDetails(order1);
-		
-		Order updatedOrder = new Order.OrderBuilder(1, LocalDate.of(2025, 11, 1), "customer@email.com").setOrderNumber(12345)
-				.setPaidDate(LocalDate.of(2025, 9, 10)).setStatus("processing").setShippingTotal(3.0)
-				.setShippingTotal(3.0).setShippingTaxTotal(0.0).setFeeTotal(0.0).setFeeTaxTotal(0.0).setTaxTotal(0.0)
-				.setCartDiscount(0.0).setOrderDiscount(0.0).setDiscountTotal(0.0).setOrderTotal(16.0)
-				.setOrderSubtotal(13.0).setOrderKey("wc_order_yo6dmEfz4tlg").setOrderCurrency("EUR")
+
+		Order updatedOrder = new Order.OrderBuilder(1, LocalDate.of(2025, 11, 1), "customer@email.com")
+				.setOrderNumber(12345).setPaidDate(LocalDate.of(2025, 9, 10)).setStatus("processing")
+				.setShippingTotal(3.0).setShippingTotal(3.0).setShippingTaxTotal(0.0).setFeeTotal(0.0)
+				.setFeeTaxTotal(0.0).setTaxTotal(0.0).setCartDiscount(0.0).setOrderDiscount(0.0).setDiscountTotal(0.0)
+				.setOrderTotal(16.0).setOrderSubtotal(13.0).setOrderKey("wc_order_yo6dmEfz4tlg").setOrderCurrency("EUR")
 				.setPaymentMethod("stripe").setPaymentMethodTitle("Carta di credito")
 				.setTransactionId("fGz2WAt4dcsOemDvYUP1IH8WTnN").setCustomerIpAddress("0.0.0.0")
 				.setCustomerUserAgent(
@@ -317,11 +316,11 @@ public class SubscriptionsControllerIT {
 				.setMetaStripeCurrency("\"EUR\"").setMetaStripeFee(0.49).setMetaStripeNet(15.51)
 				.setLineItem1(
 						"name:Gli asini – nuova serie · 121 · luglio-agosto 2025|product_id:31529|sku:|quantity:1|total:13.00|sub_total:13.00")
-				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("")
-				.setOrderNetTotal(15.30).setFirstIssue(112).setLastIssue(117).build();
-		
+				.setLineItem2("").setLineItem3("").setLineItem4("").setLineItem5("").setOrderNetTotal(15.30)
+				.setFirstIssue(112).setLastIssue(117).build();
+
 		subscriptionsController.updateOrder(1, updatedOrder);
-		
+
 		verify(orderView).showOrderDetails(updatedOrder);
 
 	}

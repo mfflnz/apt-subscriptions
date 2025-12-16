@@ -5,11 +5,8 @@ import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.ORD
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.SUBSCRIPTIONS_DB_NAME;
 import static org.mockito.Mockito.verify;
 
-
-import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
-import com.mongodb.client.MongoDatabase;
 import java.time.LocalDate;
+
 import org.blefuscu.apt.subscriptions.model.Order;
 import org.blefuscu.apt.subscriptions.repository.OrderMongoRepository;
 import org.blefuscu.apt.subscriptions.repository.OrderRepository;
@@ -25,6 +22,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testcontainers.mongodb.MongoDBContainer;
 
+import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoDatabase;
 
 public class SubscriptionsControllerTestcontainersIT {
 
@@ -71,7 +71,7 @@ public class SubscriptionsControllerTestcontainersIT {
 		client.close();
 		closeable.close();
 	}
-	
+
 	@AfterClass
 	public static void tearDownAfterClass() {
 		mongoDBContainer.stop();

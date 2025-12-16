@@ -1,20 +1,19 @@
 package org.blefuscu.apt.subscriptions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.swing.launcher.ApplicationLauncher.application;
+import static org.awaitility.Awaitility.await;
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.ORDER_COLLECTION_NAME;
 import static org.blefuscu.apt.subscriptions.repository.OrderMongoRepository.SUBSCRIPTIONS_DB_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.awaitility.Awaitility.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.swing.launcher.ApplicationLauncher.*;
 
 import javax.swing.JFrame;
 
@@ -52,15 +51,15 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		mongoDatabase = mongoClient.getDatabase(SUBSCRIPTIONS_DB_NAME);
 		mongoCollection = mongoDatabase.getCollection(ORDER_COLLECTION_NAME);
 		mongoDatabase.drop();
-		
+
 		Files.deleteIfExists(Paths.get(EXPORTED_ORDERS_FILENAME));
 
-		String json1 = new String(
-				Files.readAllBytes(Paths.get(System.getProperty("user.dir") + "/src/main/resources/sample-document-1.json")));
+		String json1 = new String(Files.readAllBytes(
+				Paths.get(System.getProperty("user.dir") + "/src/main/resources/sample-document-1.json")));
 		Document doc1 = Document.parse(json1);
 
-		String json2 = new String(
-				Files.readAllBytes(Paths.get(System.getProperty("user.dir") + "/src/main/resources/sample-document-2.json")));
+		String json2 = new String(Files.readAllBytes(
+				Paths.get(System.getProperty("user.dir") + "/src/main/resources/sample-document-2.json")));
 		Document doc2 = Document.parse(json2);
 
 		mongoCollection.insertOne(doc1);
@@ -76,12 +75,11 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		}).using(robot());
 
 	}
-	
+
 	@Override
 	protected void onTearDown() throws Exception {
 		Files.deleteIfExists(Paths.get(EXPORTED_ORDERS_FILENAME));
 	}
-	
 
 	@Test
 	@GUITest
@@ -108,15 +106,15 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		assertThat(window.textBox("lastIssueTextBox").requireVisible().text()).isEmpty();
 		assertThat(window.textBox("notesTextBox").requireVisible().text()).isEmpty();
 		assertThat(window.textBox("messageTextBox").requireVisible().text()).isEmpty();
-		
+
 	}
 
 	@Test
 	@GUITest
 	public void testButtonsAndListSelector() throws IOException {
-		
+
 		window.button(JButtonMatcher.withText("Search")).click();
-	
+
 		assertThat(window.list().contents()).anySatisfy(e -> assertThat(e).contains("12345", "client1@address.com"));
 		assertThat(window.textBox("messageTextBox").text()).contains("2 orders found");
 		window.list().requireNoSelection();
@@ -132,11 +130,11 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		assertThat(window.textBox("emailTextBox").text()).isEqualTo("client1@address.com");
 		assertTrue(window.button(JButtonMatcher.withText("Update")).isEnabled());
 		assertTrue(window.button(JButtonMatcher.withText("Delete")).isEnabled());
-		
+
 		window.textBox("emailTextBox").deleteText().enterText("new1@address.com");
 		window.button(JButtonMatcher.withText("Update")).click();
 		window.list().selectItem(1);
-	
+
 		assertThat(window.textBox("emailTextBox").text()).isEqualTo("client2@address.com");
 
 		window.list().selectItem(0);
@@ -148,7 +146,7 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		assertEquals(2, mongoCollection.countDocuments());
 
 		window.button(JButtonMatcher.withText("Delete")).click();
-		
+
 		window.list().requireItemCount(1);
 		assertEquals(1, mongoCollection.countDocuments());
 
@@ -162,16 +160,15 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		window.fileChooser("Export orders").approveButton().click();
 
 		await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(exportFile.exists()));
-		
+
 		Files.deleteIfExists(Paths.get(EXPORTED_ORDERS_FILENAME));
 
 		window.button(JButtonMatcher.withText("Export")).click();
-		
+
 		window.fileChooser("Export orders").requireVisible();
 		window.fileChooser("Export orders").cancelButton().click();
-		
-		assertFalse(exportFile.exists());
 
+		assertFalse(exportFile.exists());
 
 	}
 
@@ -204,6 +201,5 @@ public class SubscriptionsSwingAppE2E extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Update")).requireDisabled();
 
 	}
-
 
 }

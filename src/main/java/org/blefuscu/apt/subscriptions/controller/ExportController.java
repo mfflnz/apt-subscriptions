@@ -57,7 +57,6 @@ public class ExportController {
 	public void deleteData(String location) throws IOException {
 		Files.deleteIfExists(Paths.get(location));
 		messageView.showInfoMessage("File " + location + " was deleted");
-
 	}
 
 }

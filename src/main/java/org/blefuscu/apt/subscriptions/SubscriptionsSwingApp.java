@@ -1,6 +1,7 @@
 package org.blefuscu.apt.subscriptions;
 
 import java.awt.EventQueue;
+import java.util.concurrent.Callable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +17,6 @@ import org.blefuscu.apt.subscriptions.view.SearchSwingView;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 
-import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -35,7 +35,7 @@ public class SubscriptionsSwingApp implements Callable<Void> {
 
 	@Option(names = { "--db-collection" }, description = "Collection name")
 	private String collectionName = "orders";
-	
+
 	private static final Logger LOGGER = LogManager.getLogger(SubscriptionsSwingApp.class);
 
 	public static void main(String[] args) {

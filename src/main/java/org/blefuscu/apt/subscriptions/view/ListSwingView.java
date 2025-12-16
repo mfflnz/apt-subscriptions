@@ -30,7 +30,6 @@ public class ListSwingView extends JPanel implements ListView {
 
 	private JList<Order> list;
 
-
 	public void setSubscriptionsController(SubscriptionsController subscriptionsController) {
 		this.subscriptionsController = subscriptionsController;
 	}
@@ -42,9 +41,7 @@ public class ListSwingView extends JPanel implements ListView {
 	public JFileChooser getFc() {
 		return fc;
 	}
-	
 
-	
 	/**
 	 * Create the panel.
 	 */
@@ -79,7 +76,7 @@ public class ListSwingView extends JPanel implements ListView {
 
 		btnExport = new JButton("Export");
 		btnExport.setEnabled(false);
-		
+
 		GridBagConstraints gbcBtnExport = new GridBagConstraints();
 		gbcBtnExport.anchor = GridBagConstraints.NORTHWEST;
 		gbcBtnExport.gridx = 0;
@@ -101,8 +98,6 @@ public class ListSwingView extends JPanel implements ListView {
 				fc.setVisible(false);
 			}
 		});
-				
-
 
 		class MyListDataListener implements ListDataListener {
 

@@ -1,15 +1,14 @@
 package org.blefuscu.apt.subscriptions.view;
 
-import javax.swing.JPanel;
-
-import java.awt.GridBagLayout;
-import java.awt.event.ActionListener;
-import java.awt.GridBagConstraints;
-import javax.swing.JTextField;
-import javax.swing.Timer;
-
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionListener;
+
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.Timer;
 
 public class MessageSwingView extends JPanel implements MessageView {
 

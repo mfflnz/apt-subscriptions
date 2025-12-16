@@ -1,5 +1,6 @@
 package org.blefuscu.apt.subscriptions.controller;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 
@@ -17,13 +18,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static java.util.Arrays.asList;
-
 public class ExportControllerTest {
 
 	@InjectMocks
 	private ExportController exportController;
-	
+
 	@Mock
 	private MessageSwingView messageSwingView;
 
@@ -33,12 +32,12 @@ public class ExportControllerTest {
 	@Before
 	public void setUp() throws IOException {
 		closeable = MockitoAnnotations.openMocks(this);
-		Files.deleteIfExists(Paths.get(FILENAME));
 
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		Files.deleteIfExists(Paths.get(FILENAME));
 		closeable.close();
 	}
 
@@ -48,39 +47,36 @@ public class ExportControllerTest {
 		FormattedOrder formattedOrder2 = new FormattedOrder.FormattedOrderBuilder("2").build();
 		FormattedOrder formattedOrder3 = new FormattedOrder.FormattedOrderBuilder("3").build();
 		List<FormattedOrder> formattedOrders = asList(formattedOrder1, formattedOrder2, formattedOrder3);
-		
+
 		int result = exportController.saveData(formattedOrders, FILENAME);
-		
+
 		assertEquals(0, result);
 		verify(messageSwingView).showInfoMessage("Orders exported as " + FILENAME);
-		
+
 	}
-	
+
 	@Test
 	public void testDeleteDataShouldDelegateMessageViewToShowAnInfoMessageIfDeletionWasSuccessful() throws IOException {
-		
+
 		exportController.deleteData(FILENAME);
-		
+
 		verify(messageSwingView).showInfoMessage("File " + FILENAME + " was deleted");
 	}
-	
+
 	@Test
 	public void testSaveDataShouldDelegateMessageViewToShowAnErrorMessageIfExportWasNotSuccessful() throws IOException {
 		FormattedOrder formattedOrder1 = new FormattedOrder.FormattedOrderBuilder("1").build();
 		FormattedOrder formattedOrder2 = new FormattedOrder.FormattedOrderBuilder("2").build();
 		FormattedOrder formattedOrder3 = new FormattedOrder.FormattedOrderBuilder("3").build();
 		List<FormattedOrder> formattedOrders = asList(formattedOrder1, formattedOrder2, formattedOrder3);
-		
+
 		int result1 = exportController.saveData(formattedOrders, FILENAME);
 		int result2 = exportController.saveData(formattedOrders, FILENAME);
-		
+
 		assertEquals(0, result1);
 		assertEquals(-1, result2);
 		verify(messageSwingView).showErrorMessage("File " + FILENAME + " already exists");
 
-		
 	}
-	
-
 
 }

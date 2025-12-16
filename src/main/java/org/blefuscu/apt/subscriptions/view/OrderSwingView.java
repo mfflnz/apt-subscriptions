@@ -1,22 +1,21 @@
 package org.blefuscu.apt.subscriptions.view;
 
-import javax.swing.JPanel;
-
-import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
-import org.blefuscu.apt.subscriptions.model.Order;
-import org.blefuscu.apt.subscriptions.model.FormattedOrder;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
-
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import javax.swing.JTextField;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-import javax.swing.JButton;
-
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.time.LocalDate;
-import java.awt.Dimension;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import org.blefuscu.apt.subscriptions.controller.SubscriptionsController;
+import org.blefuscu.apt.subscriptions.model.FormattedOrder;
+import org.blefuscu.apt.subscriptions.model.Order;
 
 public class OrderSwingView extends JPanel implements OrderView {
 

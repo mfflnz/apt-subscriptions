@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - java: 21
+          - java: 25
 
     name: Build with Java ${{ matrix.java }}
     steps:

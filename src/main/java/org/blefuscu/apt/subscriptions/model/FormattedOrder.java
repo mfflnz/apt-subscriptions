@@ -43,7 +43,7 @@ public class FormattedOrder {
 	}
 
 	public static class FormattedOrderBuilder {
-		
+
 		private String orderId;
 		private String orderDate;
 		private String paidDate;
@@ -62,7 +62,7 @@ public class FormattedOrder {
 		private String firstIssue;
 		private String lastIssue;
 		private String customerNote;
-		
+
 		public FormattedOrderBuilder(String orderId) {
 			this.orderId = orderId;
 		}
@@ -151,14 +151,14 @@ public class FormattedOrder {
 			this.customerNote = customerNote;
 			return this;
 		}
-		
+
 		public FormattedOrder build() {
 			return new FormattedOrder(this);
 		}
 	}
 
 	// Getters
-	
+
 	public String getOrderId() {
 		return orderId;
 	}
@@ -241,5 +241,5 @@ public class FormattedOrder {
 				+ customerEmail + ", billingPhone=" + billingPhone + ", shippingItems=" + shippingItems
 				+ ", firstIssue=" + firstIssue + ", lastIssue=" + lastIssue + ", customerNote=" + customerNote + "]";
 	}
-	
+
 }
