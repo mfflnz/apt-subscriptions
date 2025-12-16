@@ -3,6 +3,7 @@ export.csv
 assets/orders.csv
 assets/tmp
 docker-compose.yml
+failed-gui-tests/
 
 # Backup files
 *~
