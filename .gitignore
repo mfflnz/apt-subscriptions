@@ -2,6 +2,7 @@ target/
 export.csv
 assets/orders.csv
 assets/tmp
+docker-compose.yml
 
 # Backup files
 *~

@@ -16,12 +16,11 @@ La funzione che mi interessa particolarmente è specificare un intervallo di dat
 
 Con il gestore di pacchetti del S.O. (Arch Linux) installo:
 
-- OpenJDK 8.462.u08-1
-- Eclipse 2025-06
+- OpenJDK 8.472.u08-1
+- Eclipse 2025-12
 - Maven 3.9.11
-- Git 2.51.0
-- Docker Engine 28.3.3
-- Docker Compose 2.39.2
+- Git 2.52.0
+- Docker Engine 29.1.3
 
 Sul sistema sono già presenti le versioni 17 e 24 di OpenJDK; imposto la 8 come default:
 
@@ -34,59 +33,35 @@ Tramite il Marketplace di Eclipse installo alcuni plugin:
 - SonarQube for IDE 11.13
 - WindowBuilder 1.20.0
 
+Imposto il progetto Maven:
 
+    mvn archetype:generate \
+    -DarchetypeGroupId=org.apache.maven.archetypes \
+    -DarchetypeArtifactId=maven-archetype-quickstart \
+    -DarchetypeVersion=1.1 \
+    -DgroupId=org.blefuscu \
+    -DartifactId=apt-subscriptions \
+    -DinteractiveMode=false
+
+Dopodiché lo importo in Eclipse secondo la procedura descritta nella sezione 7.3.2 del libro.
+
+Inizializzo il repository nella cartella `apt-subscriptions` appena creata:
+
+    git init
+    git config user.name "Lorenzo Maffucci"
+    git config user.email "lorenzo.maffucci@edu.unifi.it"
+    
+Quindi lo importo in Eclipse (Window > Show View > Other... > Git > Git Repositories) e lo connetto al repository remoto su GitHub:
+
+    git remote add origin git@github.com:mfflnz/apt-subscriptions.git
+
+---
 
 ### Tecniche e framework utilizzati
 
-### Scelte di design e di implementazione
+#### TDD
 
-Per l'accesso al database seguo il pattern Repository (descritto in [Eva03] nel riferimento bibliografico del testo). Per la creazione degli oggetti mi rifaccio al pattern Builder ([GHJV95]).
-
-(Il termine "Order" = "ordine" è da intendersi nel senso di ordine di acquisto di un prodotto.)
-
-Schema del Model–view–presenter:
-
-    model
-        Order
-        FormattedOrder
-            - ordini opportunamente formattati con i soli dati rilevanti
-
-    repository
-        OrderRepository
-            - operazioni di ricerca, aggiornamento ed eliminazione
-
-    view
-        DashboardView
-            SearchView
-                - ricerca degli ordini per intervallo di date
-            ListView
-                - elenco sintetico degli ordini
-                - esportazione degli ordini
-            OrderView
-                - vista dettagliata dell'ordine selezionato
-                - aggiornamento dell'ordine selezionato
-                - eliminazione dell'ordine selezionato
-            MessageView
-                - un campo che mostra messaggi informativi o di errore
-
-    controller
-        SubscriptionsController
-            operazioni sugli ordini (-> database)
-        ExportController
-            operazioni sugli export (-> filesystem)
-
-
-### Problemi e soluzioni
-
-### Requisiti
-
-
-
-
-
-### TDD
-
-Inizialmente faccio uno sketch del Model e scrivo le interfacce del Repository e delle View (File > New > Interface). Quindi comincio ad applicare il TDD per costruire il Controller.
+Inizialmente faccio uno sketch del Model e scrivo le interfacce del Repository e delle View (File > New > Interface). Quindi comincio ad applicare il TDD per costruire il Controller. Riporto di seguito un riepilogo dei primi passi dello sviluppo (per poi diradare i dettagli).
 
 Faccio un mock del Repository e della View; quindi nel primo test verifico che il metodo `requestOrders()`, invocato senza parametri, riporti sulla View la lista di tutti gli ordini presenti. Per passare dalla fase *red* alla fase *green*, con il content assist di Eclipse comincio a definire i primi tratti del Controller: i campi `listView` e `orderRepository` e il metodo `requestOrders()`.
 
@@ -145,104 +120,13 @@ Controllo che il mutation test da Eclipse vada a buon fine e vedo che sopravvivo
 
 Osservo i report di SonarQube e faccio un po' di pulizia. Nel Repository estraggo costanti laddove ho indicato con una stringa i riferimenti ai campi dei documenti (`ORDER_ID`, `ORDER_DATE`). Nel test del Repository SonarLint suggerisce, ad esempio, di limitare a uno i possibili metodi che possono sollevare un'eccezione nella lambda di `testFindByDateRangeWhenDateRangeIsIncorrect()`.
 
-Ripulisco e faccio un push, approfittandone anche per eseguire un workflow di Windows. Osservo intanto che il technical debt stimato da SonarQube si è ridotto da 1h a 35m. Il workflow per Windows, come mi aspettavo, non funziona per un problema sul percorso del volume:
-
-    Error:  Failed to execute goal io.fabric8:docker-maven-plugin:0.45.1:start (docker-start) on project apt-subscriptions: I/O Error: Unable to create container for [mongo:5] : {"message":"invalid volume specification: 'D:\\a\\apt-subscriptions\\apt-subscriptions\\assets:/assets'"} (Internal Server Error: 500) -> [Help 1]
-    
-**TODO**: capire le [linee guida per lo storage](https://learn.microsoft.com/en-us/virtualization/windowscontainers/manage-containers/persistent-storage) su Microsoft Learn. Nel frattempo modifico il workflow in modo che il trigger avvenga solo [manualmente](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch) (`on: workflow_dispatch`).
+Nel frattempo modifico il workflow in modo che il trigger avvenga solo [manualmente](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch) (`on: workflow_dispatch`).
 
 Comincio a implementare la View preparando i primi unit test. Aggiorno nel POM la dipendenza di AssertJ Core sostituendola con AssertJ Swing.
 
-Tengo sotto controllo la code coverage. A buon punto della scrittura degli unit test raggiungo il 100% del codice del Controller e del Repository, il 99.4% della View (non è raggiunto il metodo main() della DashboardSwingView)
+Tengo sotto controllo la code coverage. A buon punto della scrittura degli unit test raggiungo il 100% del codice del Controller e del Repository, il 99.4% della View (non è raggiunto il metodo main() della DashboardSwingView).
 
----
-
-### Docker
-
-Creo una rete per mettere in comunicazione i container che useremo:
-
-    docker network create apt-network
-
-Lancio il container di MongoDB:
-
-    docker run -d --name my-mongo --network apt-network -p 27017:27017 --rm mongo
-
-Nella cartella assets ho copiato un file .csv con i dati da caricare su MongoDB (intestazione e informazioni sugli ordini) e lo importo con il tool mongoimport:
-
-    docker run -it --network apt-network -v "$PWD"/assets:/assets --rm mongo:latest mongoimport --host my-mongo --collection='orders' --headerline --file=assets/sample-orders.csv --type=csv
-
-Col comando sopra ottengo:
-
-    2025-08-21T11:05:38.680+0000    connected to: mongodb://my-mongo/
-    2025-08-21T11:05:38.730+0000    4 document(s) imported successfully. 0 document(s) failed to import.
-
-Nella shell di MongoDB (mongosh) faccio una verifica sui contenuti appena importati:
-
-    docker run -it --network apt-network --rm mongo:latest mongosh --host my-mongo
-
-Nella shell di MongoDB:
-
-    test> db.orders.countDocuments()
-    4
-
-Includo i comandi relativi a Docker in uno script (`setup.sh`).
-
-(Presumibilmente in seguito a un aggiornamento del kernel in locale, in occasione di un lancio di `mvn clean verify` ricevo questo errore:
-
-    [ERROR] Failed to execute goal io.fabric8:docker-maven-plugin:0.45.1:start (docker-start) on project apt-subscriptions: Execution docker-start of goal io.fabric8:docker-maven-plugin:0.45.1:start failed: No <dockerHost> given, no DOCKER_HOST environment variable, no read/writable '/var/run/docker.sock' or '//./pipe/docker_engine' and no external provider like Docker machine configured
-    
-Il problema è ancora più a monte: da `journalctl -xeu docker.service` trovo che:
-
-    [...]
-    level=error msg="failed to mount overlay: no such device" storage-driver=overlay2
-    level=error msg="[graphdriver] prior storage driver overlay2 failed: driver not supported"
-    [...]
-    
-Aggiorno il sistema e lo riavvio. Stavolta funziona.)
-
----
-
-### Maven
-
-Imposto il progetto:
-
-    mvn archetype:generate \
-    -DarchetypeGroupId=org.apache.maven.archetypes \
-    -DarchetypeArtifactId=maven-archetype-quickstart \
-    -DarchetypeVersion=1.1 \
-    -DgroupId=org.blefuscu \
-    -DartifactId=apt-subscriptions \
-    -DinteractiveMode=false
-
-Dopodiché lo importo in Eclipse secondo la procedura descritta nella sezione 7.3.2 del libro.
-
----
-
-### Git
-
-Inizializzo il repository nella cartella `apt-subscriptions` appena creata:
-
-    git init
-    git config user.name "Lorenzo Maffucci"
-    git config user.email "lorenzo.maffucci@edu.unifi.it"
-    
-Quindi lo importo in Eclipse (Window > Show View > Other... > Git > Git Repositories) e lo connetto al repository remoto su GitHub:
-
-    git remote add origin git@github.com:mfflnz/apt-subscriptions.git
-
----  
-
-### Code Coverage
-
-Escludo le classi del Model dal computo della code coverage.
-
-Faccio un test:
-
-    mvn clean jacoco:prepare-agent test jacoco:report
-
----
-
-### Mutation Testing
+#### Mutation Testing
 
 Faccio un test:
 
@@ -265,9 +149,41 @@ Escludo dal Mutation Testing il codice relativo alle View, in quanto generato in
     1. removed call to org/blefuscu/apt/subscriptions/view/DashboardSwingView::setBounds → SURVIVED
     ...
 
----
+#### Integration Tests
 
-### Continuous Integration
+Aggiungo al POM le dipendenze di Mongo Java API e di Logback, e aggiungo i plugin Build Helper (per gestire la cartella degli IT) e Failsafe (per eseguire gli IT). Faccio una bozza dell'implementazione di OrderRepository.
+
+Sposto fuori dal profilo `docker` l'attivazione del plugin Docker.
+
+Dopo aver scritto il SubscriptionsController e le View, mi concentro su uno dei pezzi mancanti: l'ExportController, che si occupa di scrivere su disco e di cancellare dal disco i file esportati a partire dalla ListView. Considero i relativi test come degli Integration Test.
+
+Restano da fare gli Integration test per il SubscriptionsController.
+
+Gli Integration Test sono svolti a partire dai due controller (export e subscriptions). Lanciati da Eclipse, dopo aver lanciato i container Docker di MongoDB (`./setup.sh`), danno buon esito. Provo con Maven da linea di comando ma ottengo errore: 
+
+    [ERROR] Failed to execute goal io.fabric8:docker-maven-plugin:0.45.1:start (docker-start) on project apt-subscriptions: Execution docker-start of goal io.fabric8:docker-maven-plugin:0.45.1:start failed.: NullPointerException -> [Help 1]
+    org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal io.fabric8:docker-maven-plugin:0.45.1:start (docker-start) on project apt-subscriptions: Execution docker-start of goal io.fabric8:docker-maven-plugin:0.45.1:start failed.
+    
+Aggiorno la versione di `docker-maven-plugin` (da 0.45.1 a 0.48.0) e riprovo: funziona.
+
+Scrivo una versione alternativa degli IT che fa uso della libreria Testcontainers, in modo da automatizzare la gestione dei container al lancio dei test da Eclipse. Aggiungo al POM un profilo che esclude l'esecuzione di queste versioni dei test.
+
+#### E2E Test
+
+Una volta scritti i primi test E2E provo con: `mvn clean verify -Pjacoco,mutation-testing`, ma ottengo due warning da JaCoCo:
+
+    [WARNING] Rule violated for package org.blefuscu.apt.subscriptions.view: lines covered ratio is 0.99, but expected minimum is 1.00
+    [WARNING] Rule violated for package org.blefuscu.apt.subscriptions: lines covered ratio is 0.92, but expected minimum is 1.00
+    
+Porto al 100% la code coverage della View e aggiungo tra gli `<excludes>` di JaCoCo la classe `SubscriptionsSwingApp` (l'unica porzione di codice non raggiunta dai test è il ramo `catch` che lancia l'eccezione nella lambda della classe `call()`).
+
+Con le impostazioni di default di `xvfb-run`, al momento di fare il test di `SubscriptionsSwingApp`, ottengo una failure dovuta al fatto che gli elementi dell'interfaccia si trovano al di fuori dell'area del framebuffer virtuale (`-screen 0 640x480x8`). Riprovo con:
+
+    xvfb-run -a --server-args="-screen 0 1366x768x24" mvn clean verify
+    
+
+
+#### Continuous Integration con GitHub Actions
 
 Faccio un primo workflow su GitHub Actions coi plugin di JaCoCo e Pitest. Il repository è connesso a Coveralls; faccio un test in locale:
 
@@ -320,66 +236,83 @@ Passo l'opzione `-a` a `xvfb-run` e verifico:
     xvfb-run -a mvn clean verify
    
 
-#### Aggiustamenti con macOS
 
-Provo a impostare i workflow anche per macOS e Windows per verificare se per il momento tutto va a buon fine. Scopro che il JDK 8 non è disponibile per il runner macos-13 e lo sostituisco con il JDK 11. Nella build per Java 17, allo step "Install Docker", vedo intanto che:
+#### Code Quality e SonarQube
 
-    Installing QEMU
-    /opt/homebrew/bin/brew install qemu
-    Error: The operation was canceled.
+È noto che le assertion di AssertJ Swing non vengono trattate da SonarQube (v. sez. 15.2.1 del libro) e vengono segnalate come issue bloccanti. Ad esempio:
 
-Ripeto il job con messaggi di debug e vedo che:
+    window.button(JButtonMatcher.withText("Update")).requireEnabled();
 
-    Starting lima instance
-    Error: The process '/opt/homebrew/bin/limactl' failed with exit code 1
-    
-Provo a usare il runner `macos-latest` (che al momento equivale a `macos-15`) con la versione 4 della `setup-docker-action` (senza specifiche sulle versioni minori, come da esempio sul [README](https://github.com/docker/setup-docker-action) della action) e la variabile d'ambiente per Lima (di nuovo come da esempio, con specifiche sul numero di CPU e sulla quantità di memoria da emulare). Di nuovo ottengo lo stesso errore, e altrettanto succede con il workflow minimale riportato nella documentazione della action. Almeno due i punti problematici di questa configurazione: il fatto che `macos-latest` gira su architettura ARM (non supportata), e la versione 9.1.0 dell'emulatore QEMU (pare che vada tutto a buon fine con la versione 9.0.2). Faccio riferimento a [questa issue](https://github.com/docker/actions-toolkit/issues/455) e a [questa](https://github.com/docker/setup-docker-action/issues/108). Faccio un tentativo e sembra funzionare con questa configurazione:
+A questa assertion aggiungo per completezza (a costo di ridondanza nel codice dei test) le analoghe assertion di AssertJ supportate da SonarLint, ad esempio:
 
-- runner `macos-13`
-- QEMU 9.0.2
-- `setup-docker-action@v3`
+    assertTrue(window.button(JButtonMatcher.withText("Update")).isEnabled());
 
-Provo a integrare questo espediente nel precedente workflow e ottengo questo errore:
+Riduco laddove possibile la Cognitive Complexity indicata altrove da SonarQube.
 
-    Error:  Failed to execute goal io.fabric8:docker-maven-plugin:0.45.1:start (docker-start) on project apt-subscriptions: Execution docker-start of goal io.fabric8:docker-maven-plugin:0.45.1:start failed: No <dockerHost> given, no DOCKER_HOST environment variable, no read/writable '/var/run/docker.sock' or '//./pipe/docker_engine' and no external provider like Docker machine configured -> [Help 1]
-    
-Aggiungo la chiave `set-host` alla configurazione di `setup-docker-action`, che avevo dimenticato di specificare, e la imposto a `true`.
+Resta da rifattorizzare l'algoritmo che decide i parametri di ricerca della Search View (implementato nel listener del pulsante "Search"), che allo stato attuale concorre a incrementare fino a 20 la Cognitive Complexity del costruttore. Il technical debt indicato è stimato in 10 minuti. Osservo che la complessità totale è data anche da:
 
-Con il commit https://github.com/mfflnz/apt-subscriptions/commit/68cbfdb6d7e47e241ebb85acd180fae6f0933934 la build su macOS si interrompe con l'errore di prima relativo a QEMU. Provo a modificare il workflow. Il runner macos-latest gira su architettura ARM, quindi [non è supportato](https://github.com/docker/setup-docker-action?tab=readme-ov-file#about) da setup-docker-actions. Come non detto: mantengo macos-13 nel workflow e riprovo con la [soluzione](https://github.com/docker/setup-docker-action/issues/108#issuecomment-2393657360) applicata finora. La build con Java 11 ha un buon esito.
+- (+1) nel listener legato al campo `fromDateTextBox`;
+- (+1) nel listener legato al campo `toDateTextBox`;
+- (+2) nel metodo privato `removeWhitespacesOnly`, di supporto al listener legato al pulsante "Search";
+- (+3) nel metodo privato `checkIfDatesAreInTheRightOrderAndPerformSearch`, di supporto al listener legato al pulsante "Search";
 
-Il Quality Gate di SonarQube segnala un Security Hotspot nel workflow, e prescrive di specificare il SHA del commit della `setup-docker-action` anziché il tag. Procedo di conseguenza.
+Restano dunque 13 punti di cui è direttamente responsabile il codice del listener del pulsante "Search", che implementa un algoritmo di questo tipo:
 
-Dal 4 dicembre 2025 GitHub Actions [non mette più a disposizione](https://github.com/actions/runner-images/issues/13046) il runner macos-13, l'ultima versione con cui era possibile installare Docker con il procedimento sopra descritto. In alternativa uso la action [Setup Docker on macOS](https://github.com/marketplace/actions/setup-docker-on-macos) con macos-15-intel specificando nel workflow la variabile d'ambiente `DOCKER_HOST` (che punta al socket aperto da Colima, di cui fa uso la action).
+- se entrambi i campi `fromDate` e `toDate` sono vuoti, restituisci tutti gli ordini presenti nella collection;
+- se il solo campo `fromDate` è vuoto, restituisci tutti gli ordini dal più vecchio fino a `toDate`;
+- se il solo campo `toDate` è vuoto, restituisci tutti gli ordini da `fromDate` alla data attuale.
 
-#### Workflow per Windows
+Considerando anche che ulteriore complessità cognitiva è introdotta dai due gestori delle eccezioni che possono verificarsi al momento del parse delle due date, ritengo che l'implementazione non sia troppo complessa e decido di mantenerla così.
 
-Provo a impostare un workflow per Windows 2025 con Java 11, 17 e 21.
+SonarQube prescrive anche di rifattorizzare 3 unit test della Seach View in modo da ottenere un solo test con parametri, ma preferisco lasciare i 3 codici separati, ancorché ridondanti.
 
-Docker mi dà errore:
-
-    Error:  DOCKER> I/O Error [Unable to create container for [mongo:5] : {"message":"invalid volume specification: 'D:\\a\\apt-subscriptions\\apt-subscriptions\\assets:/assets'"} (Internal Server Error: 500)]
-    
-Provo a risolvere inserendo il percorso della cartella `assets` nelle proprietà del POM e a sovrascriverlo con l'opzione `--define` di Maven da linea di comando nel workflow di Windows:
-
-    -Dassetspath="%cd%\assets"
-    
-La build di Java 21 si interrompe:
-
-    Warning: Failed to download action 'https://api.github.com/repos/actions/setup-java/zipball/c5195efecf7bdfc987ee8bae7a71cb8b11521c00'. Error: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond. (api.github.com:443) 
-    Warning: Back off 18.306 seconds before retry.
-    Error: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond. (api.github.com:443)
-
-Il problema del path non si è ancora risolto. Per il momento sospendo la configurazione del workflow di Windows e provo a impostare un IT per vedere se riesco a comunicare correttamente con il database.
-
-**TODO**: Configurare il workflow di Windows
+Altrettanto rispetto all'indicazione di rinominare le classi dei test E2E in modo da seguire la convenzione di Java rispetto alla nomenclatura: nell'interfaccia web di SonarQube indico come falso positivo la richiesta di rinominare le classi, appuntando questa motivazione.
 
 ---
 
-### UI
+### Scelte di design e di implementazione
 
-La view è scomposta in tre interfacce, come indicato nello schema MVC: `SearchView`, `ListView` e `OrderView`, racchiuse in una `DashboardView`:
+Per l'accesso al database seguo il pattern Repository (descritto in [Eva03] nel riferimento bibliografico del testo). Per la creazione degli oggetti mi rifaccio al pattern Builder ([GHJV95]).
 
-#### SearchView
+(Il termine "Order" = "ordine" è da intendersi nel senso di ordine di acquisto di un prodotto.)
+
+Schema del Model–view–presenter:
+
+    model
+        Order
+        FormattedOrder
+            - ordini opportunamente formattati con i soli dati rilevanti
+
+    repository
+        OrderRepository
+            - operazioni di ricerca, aggiornamento ed eliminazione
+
+    view
+        DashboardView
+            SearchView
+                - ricerca degli ordini per intervallo di date
+            ListView
+                - elenco sintetico degli ordini
+                - esportazione degli ordini
+            OrderView
+                - vista dettagliata dell'ordine selezionato
+                - aggiornamento dell'ordine selezionato
+                - eliminazione dell'ordine selezionato
+            MessageView
+                - un campo che mostra messaggi informativi o di errore
+
+    controller
+        SubscriptionsController
+            operazioni sugli ordini (-> database)
+        ExportController
+            operazioni sugli export (-> filesystem)
+
+
+#### UI
+
+La view è strutturata in quattro interfacce, come indicato nello schema MVC: `SearchView`, `ListView`,  `OrderView` e `MessageView`, racchiuse in una `DashboardView`:
+
+##### SearchView
 - Due campi, "From" e "To", in cui è possibile specificare un intervallo di date entro cui effettuare la ricerca;
 - un pulsante "Search"; se i due campi sono entrambi vuoti, la ricerca restituisce tutti gli ordini presenti nel database; se i campi sono specificati, la ricerca restituisce gli ordini dell'intervallo richiesto. I riferimenti agli ordini vengono visualizzati nella `ListView`;
 - il pulsante "Search" è inizialmente attivo; finché uno o entrambi i campi non sono correttamente formattati (`YYYY-MM-DD`), si disattiva; 
@@ -387,22 +320,21 @@ La view è scomposta in tre interfacce, come indicato nello schema MVC: `SearchV
 - se il solo campo "To" è compilato, il campo "From" viene impostato automaticamente alla data del 1970-01-01;
 - se le date specificate non sono ordinate in modo coerente, verrà visualizzato un opportuno messaggio di errore nel campo dedicato (-> Controller).
 
-
-#### ListView
+##### ListView
 - Una lista, con eventuale barra di scorrimento, in cui vengono riportati sinteticamente gli ordini individuati con la "Search" (id, data, nome e cognome);
 - selezionando uno degli ordini, nella `OrderView` vengono visualizzati i corrispondenti dettagli;
 - un pulsante "Export" che mostra un selettore di file tramite cui scegliere il percorso del file .csv che conterrà i campi rilevanti degli ordini al momento presenti nella lista; se la lista è vuota, il pulsante è disattivato.
 
-#### OrderView
+##### OrderView
 - Una maschera con form editabili corrispondenti ai campi di interesse specificati nel model `FormattedOrder` (id, data dell'ordine, data del pagamento, etc.);
 - un pulsante "Update" che richiama l'opportuno metodo del Controller (eventualmente aggiornando la corrispondente vista sintetica della `ListView`) per aggiornare nel database il documento corrispondente all'ordine presente con i campi al momento specificati;
 - un pulsante "Delete" che richiama l'opportuno metodo del Controller (cancellando contestualmente l'ordine presente dalla `ListView`) per rimuovere dal database il documento corrispondente all'ordine presente;
 - le operazioni di "Update" e "Delete" mostrano eventuali messaggi rilevanti (di informazione o di errore) nel campo a essi dedicato.
 
-#### MessageView
-TODO
+##### MessageView
+**TODO**
 
-#### DashboardView
+##### DashboardView
 - Include le tre view precedenti, oltre a un campo di testo in cui vengono visualizzati eventuali messaggi informativi o di errore.
 
 N.B.: Per testare le quattro view interne (Search, List, Order e Message), che implementano dei JPanel e non dei JFrame, uso la classe `Containers` di AssertJ-Swing (v. [https://assertj-swing.readthedocs.io/en/latest/assertj-swing-advanced/#support-for-platform-specific-features](https://assertj-swing.readthedocs.io/en/latest/assertj-swing-advanced/#support-for-platform-specific-features)).
@@ -447,60 +379,82 @@ che si riferisce a:
 
 ---
 
-### Integration Tests
 
-Aggiungo al POM le dipendenze di Mongo Java API e di Logback, e aggiungo i plugin Build Helper (per gestire la cartella degli IT) e Failsafe (per eseguire gli IT). Faccio una bozza dell'implementazione di OrderRepository.
 
-Sposto fuori dal profilo `docker` l'attivazione del plugin Docker.
 
-**TODO**: Ho cominciato a tracciare uno schema di implementazione del repository e delle view, per le quali ancora però non ho scritto unit test: fino a quel momento le tengo escluse dal conteggio della code coverage. (Osservo che SonarCloud indica un'ora di technical debt relative al codice non raggiunto.)
-
-Dopo aver scritto il SubscriptionsController e le View, mi concentro su uno dei pezzi mancanti: l'ExportController, che si occupa di scrivere su disco e di cancellare dal disco i file esportati a partire dalla ListView. Considero i relativi test come degli Integration Test.
-
-Restano da fare gli Integration test per il SubscriptionsController.
-
-Gli Integration Test sono svolti a partire dai due controller (export e subscriptions). Lanciati da Eclipse, dopo aver lanciato i container Docker di MongoDB (`./setup.sh`), danno buon esito. Provo con Maven da linea di comando ma ottengo errore: 
-
-    [ERROR] Failed to execute goal io.fabric8:docker-maven-plugin:0.45.1:start (docker-start) on project apt-subscriptions: Execution docker-start of goal io.fabric8:docker-maven-plugin:0.45.1:start failed.: NullPointerException -> [Help 1]
-    org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal io.fabric8:docker-maven-plugin:0.45.1:start (docker-start) on project apt-subscriptions: Execution docker-start of goal io.fabric8:docker-maven-plugin:0.45.1:start failed.
-    
-Aggiorno la versione di `docker-maven-plugin` (da 0.45.1 a 0.48.0) e riprovo: funziona.
 
 ---
 
-### E2E Test
+### Problemi e soluzioni
 
-**TODO**: timeout dei messaggi deve partire dal momento in cui viene mostrato il messaggio, non sempre
+#### Aggiustamenti con macOS
 
-Provo a questo punto a fare `mvn clean verify -Pjacoco,mutation-testing` ma ottengo due warning da JaCoCo:
+Provo a impostare i workflow anche per macOS e Windows per verificare se per il momento tutto va a buon fine. Scopro che il JDK 8 non è disponibile per il runner macos-13 e lo sostituisco con il JDK 11. Nella build per Java 17, allo step "Install Docker", vedo intanto che:
 
-    [WARNING] Rule violated for package org.blefuscu.apt.subscriptions.view: lines covered ratio is 0.99, but expected minimum is 1.00
-    [WARNING] Rule violated for package org.blefuscu.apt.subscriptions: lines covered ratio is 0.92, but expected minimum is 1.00
+    Installing QEMU
+    /opt/homebrew/bin/brew install qemu
+    Error: The operation was canceled.
+
+Ripeto il job con messaggi di debug e vedo che:
+
+    Starting lima instance
+    Error: The process '/opt/homebrew/bin/limactl' failed with exit code 1
     
-Porto al 100% la code coverage della View e aggiungo tra gli `<excludes>` di JaCoCo la classe `SubscriptionsSwingApp` (l'unica porzione di codice non raggiunta dai test è il ramo `catch` che lancia l'eccezione nella lambda della classe `call()`).
+Provo a usare il runner `macos-latest` (che al momento equivale a `macos-15`) con la versione 4 della `setup-docker-action` (senza specifiche sulle versioni minori, come da esempio sul [README](https://github.com/docker/setup-docker-action) della action) e la variabile d'ambiente per Lima (di nuovo come da esempio, con specifiche sul numero di CPU e sulla quantità di memoria da emulare). Di nuovo ottengo lo stesso errore, e altrettanto succede con il workflow minimale riportato nella documentazione della action. Almeno due i punti problematici di questa configurazione: il fatto che `macos-latest` gira su architettura ARM (non supportata), e la versione 9.1.0 dell'emulatore QEMU (pare che vada tutto a buon fine con la versione 9.0.2). Faccio riferimento a [questa issue](https://github.com/docker/actions-toolkit/issues/455) e a [questa](https://github.com/docker/setup-docker-action/issues/108). Faccio un tentativo e sembra funzionare con questa configurazione:
 
-Con le impostazioni di default di `xvfb-run`, al momento di fare il test di `SubscriptionsSwingApp`, ottengo una failure dovuta al fatto che gli elementi dell'interfaccia si trovano al di fuori dell'area del framebuffer virtuale (`-screen 0 640x480x8`). Riprovo con:
+- runner `macos-13`
+- QEMU 9.0.2
+- `setup-docker-action@v3`
 
-    xvfb-run -a --server-args="-screen 0 1366x768x24" mvn clean verify
+Provo a integrare questo espediente nel precedente workflow e ottengo questo errore:
+
+    Error:  Failed to execute goal io.fabric8:docker-maven-plugin:0.45.1:start (docker-start) on project apt-subscriptions: Execution docker-start of goal io.fabric8:docker-maven-plugin:0.45.1:start failed: No <dockerHost> given, no DOCKER_HOST environment variable, no read/writable '/var/run/docker.sock' or '//./pipe/docker_engine' and no external provider like Docker machine configured -> [Help 1]
     
----
+Aggiungo la chiave `set-host` alla configurazione di `setup-docker-action`, che avevo dimenticato di specificare, e la imposto a `true`.
 
-### Code Quality
+Con il commit https://github.com/mfflnz/apt-subscriptions/commit/68cbfdb6d7e47e241ebb85acd180fae6f0933934 la build su macOS si interrompe con l'errore di prima relativo a QEMU. Provo a modificare il workflow. Il runner macos-latest gira su architettura ARM, quindi [non è supportato](https://github.com/docker/setup-docker-action?tab=readme-ov-file#about) da setup-docker-actions. Come non detto: mantengo macos-13 nel workflow e riprovo con la [soluzione](https://github.com/docker/setup-docker-action/issues/108#issuecomment-2393657360) applicata finora. La build con Java 11 ha un buon esito.
 
-Le assertion di AssertJ Swing non vengono trattate da SonarLint: ad esempio:
+Il Quality Gate di SonarQube segnala un Security Hotspot nel workflow, e prescrive di specificare il SHA del commit della `setup-docker-action` anziché il tag. Procedo di conseguenza.
 
-    window.button(JButtonMatcher.withText("Update")).requireEnabled();
+Dal 4 dicembre 2025 GitHub Actions [non mette più a disposizione](https://github.com/actions/runner-images/issues/13046) il runner macos-13, l'ultima versione con cui era possibile installare Docker con il procedimento sopra descritto. In alternativa uso la action [Setup Docker on macOS](https://github.com/marketplace/actions/setup-docker-on-macos) con macos-15-intel specificando nel workflow la variabile d'ambiente `DOCKER_HOST` (che punta al socket aperto da Colima, di cui fa uso la action).
 
-A questa assertion aggiungo per completezza (a costo di ridondanza nel codice dei test) le analoghe assertion di AssertJ supportate da SonarLint, ad esempio:
+#### Test manuale dell'applicazione
 
-    window.button(JButtonMatcher.withText("Update")).requireDisabled();
+Nella presente cartella si trovano due script, `setup.sh` e `teardown.sh`, utili per lanciare e interrompere i container di MongDB che servono all'applicazione.
 
-Riduco laddove possibile la Cognitive Complexity indicata da SonarQube. Resta da rifattorizzare l'algoritmo per decidere i parametri di ricerca della Search View (implementato nel listener del pulsante "Search"), che allo stato attuale concorre a incrementare fino a 20 la Cognitive Complexity del costruttore. 
-SonarQube prescrive anche di rifattorizzare 3 unit test della Seach View in modo da ottenere un solo test con parametri, ma preferisco lasciare i 3 codici separati, ancorché ridondanti.
+In particolare, nel `setup.sh` sono sintetizzati i seguenti passaggi:
 
----
+Creo una rete per mettere in comunicazione i container che useremo:
 
-### Altre osservazioni
+    docker network create apt-network
 
-A buon punto dello sviluppo, clono il repository su un'altra macchina e provo la build del codice da zero. Apro un nuovo branch del repository per gli opportuni aggiustamenti. Una questione notevole riguarda l'incompatibilità della versione 5 di MongoDB con la vecchia CPU del laptop su cui tento la build, pertanto abbasso la versione alla 4.4.3. Eseguendo `mvn clean verify` osservo che molti dei test svolti da AssertJ-Swing falliscono per qualche problema che sembra legato alla disposizione della tastiera (ad esempio, al posto del carattere `@` viene inserito il carattere `"`). (Noto che questo non si verifica né eseguendo i test tramite `xvfb-run` né testando a mano l'applicazione.) Provo a impostare l'opzione `-Dassertj.swing.keyboard.locale=it` (inserendola nel file `.mvn/jvm.config`) ma ancora non ottengo il risultato sperato. Provo anche a inserire il testo utilizzando il metodo di AssertJ-Swing `pressAndReleaseKeys(int KeyEvent)` anziché `enterText(String text)`, e a inserire il carattere `@` utilizzando direttamente il codice esadecimale `\u0040`, ma di nuovo senza sucesso (ottengo in un caso il carattere `"` e nell'altro il carattere `q`).
+Lancio il container di MongoDB:
 
+    docker run -d --name apt-mongo --network apt-network --publish 27017:27017 --rm mongo
+
+Nella cartella `src/main/resources` ho copiato un file `.csv` con alcuni dati di esempio da caricare su MongoDB (intestazione e informazioni sugli ordini) e lo importo con il tool `mongoimport`:
+
+    docker run --network apt-network --volume "$PWD"/src/main/resources:/resources --rm mongo:latest mongoimport --host apt-mongo --db='subscriptions' --collection='orders' --headerline --file=resources/sample-orders.csv --type=csv
+
+Col comando sopra ottengo:
+
+    2025-12-16T10:04:52.826+0000    connected to: mongodb://apt-mongo/
+    2025-12-16T10:04:52.872+0000    5 document(s) imported successfully. 0 document(s) failed to import.
+
+Nella shell di MongoDB faccio una verifica sui contenuti appena importati:
+
+    docker run -it --network apt-network --rm mongo:latest mongosh --host apt-mongo
+
+    test> use subscriptions
+    subscriptions> db.orders.countDocuments()
+    5
+    
+#### Altre osservazioni
+
+A buon punto dello sviluppo, clono il repository su un'altra macchina e provo la build del codice da zero. Apro un nuovo branch del repository per gli opportuni aggiustamenti.
+
+Una questione notevole riguarda l'incompatibilità della versione 5 di MongoDB con la vecchia CPU del laptop su cui tento la build, pertanto abbasso la versione alla 4.4.3.
+
+Eseguendo `mvn clean verify` osservo che molti dei test svolti da AssertJ-Swing falliscono per qualche problema che sembra legato alla disposizione della tastiera (ad esempio, al posto del carattere `@` viene inserito il carattere `"`). (Noto che questo non si verifica né eseguendo i test tramite `xvfb-run` né testando a mano l'applicazione.)
+
+In rete non trovo molte indicazioni autorevoli al riguardo. Provo a impostare l'opzione `-Dassertj.swing.keyboard.locale=it` (inserendola nel file `.mvn/jvm.config`) ma ancora non ottengo il risultato sperato. Provo anche a inserire il testo utilizzando il metodo di AssertJ-Swing `pressAndReleaseKeys(int KeyEvent)` anziché `enterText(String text)`, e a inserire il carattere `@` utilizzando direttamente il codice esadecimale `\u0040`, ma di nuovo senza sucesso (ottengo in un caso il carattere `"` e nell'altro il carattere `q`).
