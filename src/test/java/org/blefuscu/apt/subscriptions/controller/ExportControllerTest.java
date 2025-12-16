@@ -30,7 +30,7 @@ public class ExportControllerTest {
 	private AutoCloseable closeable;
 
 	@Before
-	public void setUp() throws IOException {
+	public void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
 
 	}
