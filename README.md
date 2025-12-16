@@ -4,15 +4,15 @@
 
 ---
 
-### Specifiche
+### 1. Specifiche
 
 Voglio leggere da un database le informazioni relative agli ordini di acquisto di copie o abbonamenti a una rivista, filtrare e formattare i risultati, e quindi esportarli in un file in cui mantengo solo alcuni campi a cui sono interessato.
 
 Voglio visualizzare un elenco sintetico degli ordini presenti e i dettagli di un particolare ordine selezionato. Voglio fare operazioni di lettura, aggiornamento e cancellazione sul database degli ordini.
 
-Una funzione che mi interessa particolarmente è specificare un intervallo di date ed estrarre gli ordini conclusi in quel periodo.
+Una funzione che mi interessa particolarmente è poter specificare un intervallo di date ed estrarre gli ordini conclusi in quel periodo.
 
-#### Ambiente
+#### 1.1 Ambiente
 
 Con il gestore di pacchetti del S.O. (Arch Linux) installo:
 
@@ -57,11 +57,11 @@ Quindi lo importo in Eclipse (Window > Show View > Other... > Git > Git Reposito
 
 ---
 
-### Tecniche e framework utilizzati
+### 2. Tecniche e framework utilizzati
 
-#### TDD
+#### 2.1 TDD
 
-Inizialmente faccio uno sketch del [Model](#scelte-di-design-e-di-implementazione) e scrivo le interfacce del Repository e delle View (File > New > Interface). Quindi comincio ad applicare i principi del TDD per costruire il Controller. Riporto di seguito un riepilogo dei primi passi dello sviluppo (per poi diradare i dettagli).
+Inizialmente faccio uno sketch del [Model](#3-scelte-di-design-e-di-implementazione) e scrivo le interfacce del Repository e delle View (File > New > Interface). Quindi comincio ad applicare i principi del TDD per costruire il Controller. Riporto di seguito un riepilogo dei primi passi dello sviluppo (per poi diradare i dettagli).
 
 Faccio un mock del Repository e della View; quindi nel primo test verifico che il metodo `requestOrders()`, invocato senza parametri, riporti sulla View la lista di tutti gli ordini presenti. Per passare dalla fase *red* alla fase *green*, con il content assist di Eclipse comincio a definire i primi tratti del Controller: i campi `listView` e `orderRepository` e il metodo `requestOrders()`.
 
@@ -73,7 +73,7 @@ Proseguo con alcuni test su `requestOrders(LocalDate fromDate, LocalDate toDate)
 - `toDate` non è specificato;
 - `fromDate` è successivo a `toDate`.
 
-Verifico che il codice del Controller sia raggiungibile e che i [mutanti](#mutation-testing) siano eliminati.
+Verifico che il codice del Controller sia raggiungibile e che i [mutanti](#2-2-mutation-testing) siano eliminati.
 
 Proseguo con l'implementazione di altre funzioni del Controller:
 
@@ -87,8 +87,10 @@ Proseguo con l'implementazione di altre funzioni del Controller:
     - `orderTotal`
     - `orderNetTotal`
     - `paymentMethodTitle`
-    - `shippingFirstName` se presente, altrimenti `shippingFirstName` <- `billingFirstName`
-    - `shippingLastName` se presente, altrimenti `shippingLastName` <- `billingLastName`
+    - `shippingFirstName` se presente, altrimenti `shippingFirstName` \
+      <- `billingFirstName`
+    - `shippingLastName` se presente, altrimenti `shippingLastName` \
+      <- `billingLastName`
     - `shippingAddress1`: come sopra (medesimo criterio)
     - `shippingPostcode`: come sopra
     - `shippingCity`: come sopra
@@ -126,16 +128,17 @@ Nel frattempo modifico il workflow per Windows di GitHub Actions in modo che il 
 
 Comincio a implementare la View preparando i primi unit test. Aggiorno nel POM la dipendenza di AssertJ Core sostituendola con AssertJ Swing.
 
-Tengo sotto controllo la code coverage. A buon punto della scrittura degli unit test raggiungo il 100% del codice del Controller e del Repository, il 99.4% della View (non è raggiunto il metodo main() della DashboardSwingView).
+Tengo sotto controllo la code coverage. A buon punto della scrittura degli unit test raggiungo il 100% del codice del Controller e del Repository, il 99.4% della View (non è raggiunto il metodo `main()` della `DashboardSwingView`).
 
-#### Mutation Testing
+#### 2.2 Mutation Testing
 
 Nelle fasi iniziali della scrittura dei test provo a vedere come si comporta il codice:
 
     mvn clean test org.pitest:pitest-maven:mutationCoverage
     
-(Aggiusto Pitclipse in modo da escludere il Model: al momento di eseguire i mutation test su `SubscriptionsController` innanzitutto prendo nota del *fully qualified name* di `Order.java`, quindi faccio clic col tasto destro su `SubscriptionsControllerTest.java` nel Package Explorer, quindi Run As > Run Configurations... e modifico la Run Configuration sotto PIT Mutation Test > SubscriptionsControllerTest (1) inserendo nel campo Excluded classes delle Preferences: `*Test, org.blefuscu.apt.subscriptions.model.Order`.
-Anzi meglio: nella finestra `Preferences` (Ctrl+3 > Preferences) nelle impostazion idi Pitest inserisco direttamente `*Test, org.blefuscu.apt.subscriptions.model.*` nel campo Excluded classes.)
+(Aggiusto Pitclipse in modo da escludere il Model: al momento di eseguire i mutation test su `SubscriptionsController` innanzitutto prendo nota del *fully qualified name* di `Order.java`, quindi faccio clic col tasto destro su `SubscriptionsControllerTest.java` nel Package Explorer, quindi Run As > Run Configurations... e modifico la Run Configuration sotto PIT Mutation Test > SubscriptionsControllerTest (1) inserendo nel campo "Excluded classes" delle Preferences: `*Test, org.blefuscu.apt.subscriptions.model.Order`.
+
+Soluzione più pratica: nella finestra `Preferences` (Ctrl+3 > Preferences) nelle impostazioni di Pitest inserisco direttamente `*Test, org.blefuscu.apt.subscriptions.model.*` nel campo Excluded classes.)
 
 Configuro il plugin di Pitest in modo da includere i mutator del gruppo STRONGER.
 
@@ -143,7 +146,7 @@ Sorge un problema al momento di dover far girare Pitclipse sui test delle View, 
 
 Per mantenere il plugin `pitest-maven` compatibile con Java 8, mantengo la versione cui si fa riferimento nel libro (1.5.2), poiché le successive richiedono almeno Java 11. Per ora mantengo nel POM l'opzione esplicita `-Djava.awt.headless=false` ed evito di attivare il mutation testing nel workflow per macOS.
 
-Escludo dal Mutation Testing il codice relativo ai test sulle View, che sono quanto generate in massima parte dal WindowBuilder e soggette alla risultanza di decine di mutanti superstiti, ad esempio:
+Escludo dal Mutation Testing il codice relativo ai test sulle View, che sono generate in massima parte dal WindowBuilder e soggette alla risultanza di decine di mutanti superstiti, ad esempio:
 
     ...
     1. removed call to org/blefuscu/apt/subscriptions/\
@@ -152,46 +155,50 @@ Escludo dal Mutation Testing il codice relativo ai test sulle View, che sono qua
     view/DashboardSwingView::setBounds -> SURVIVED
     ...
 
-#### Integration Tests
+#### 2.3 Integration Tests
 
-Aggiungo al POM le dipendenze di Mongo Java API e di Logback, e aggiungo i plugin Build Helper (per gestire la cartella degli IT) e Failsafe (per eseguire gli IT). Faccio una bozza dell'implementazione di OrderRepository.
+Aggiungo al POM le dipendenze di Mongo Java API e di Logback, e aggiungo i plugin Build Helper (per gestire la cartella degli IT) e Failsafe (per eseguire gli IT). Faccio una bozza dell'implementazione di `OrderRepository`.
 
 Sposto fuori dal profilo `docker` l'attivazione del plugin Docker.
 
-Dopo aver scritto il SubscriptionsController e le View, mi concentro su uno dei pezzi mancanti: l'ExportController, che si occupa di scrivere su disco e di cancellare dal disco i file esportati a partire dalla ListView. Considero i relativi test come degli Integration Test.
+Dopo aver scritto il `SubscriptionsController` e le View, mi concentro su uno dei pezzi mancanti: l'`ExportController`, che si occupa di scrivere su disco e di cancellare dal disco i file esportati a partire dalla `ListView`. Considero i relativi test come degli Integration Test.
 
 Gli Integration Test sono quindi svolti a partire dai due controller (Export e Subscriptions). Eseguiti da Eclipse, dopo aver lanciato i container Docker di MongoDB (`./setup.sh`), danno buon esito. Provo con Maven da linea di comando ma ottengo errore: 
 
-    [ERROR] Failed to execute goal io.fabric8:docker-maven-plugin:0.45.1:start \
-    (docker-start) on project apt-subscriptions: Execution docker-start \
-    of goal io.fabric8:docker-maven-plugin:0.45.1:start failed.: \
-    NullPointerException -> [Help 1]
+    [ERROR] Failed to execute goal io.fabric8:docker-maven-plugin:\
+    0.45.1:start (docker-start) on project apt-subscriptions: \
+    Execution docker-start of goal io.fabric8:docker-maven-plugin:\
+    0.45.1:start failed.: NullPointerException -> [Help 1]
     org.apache.maven.lifecycle.LifecycleExecutionException: Failed to \
     execute goal io.fabric8:docker-maven-plugin:0.45.1:start \
-    (docker-start) on project apt-subscriptions: Execution docker-start\
-     of goal io.fabric8:docker-maven-plugin:0.45.1:start failed.
+    (docker-start) on project apt-subscriptions: Execution \
+    docker-start of goal io.fabric8:docker-maven-plugin:0.45.1:start \
+    failed.
     
 Aggiorno la versione di `docker-maven-plugin` (da 0.45.1 a 0.48.0) e riprovo: funziona.
 
 Scrivo una versione alternativa degli IT che fa uso della libreria Testcontainers, in modo da automatizzare la gestione dei container al lancio dei test da Eclipse. Aggiungo al POM un profilo che esclude l'esecuzione di queste versioni dei test.
 
-#### E2E Test
+#### 2.4 E2E Test
 
 Una volta scritti i primi test E2E provo con: `mvn clean verify -Pjacoco,mutation-testing`, ma ottengo due warning da JaCoCo:
 
-    [WARNING] Rule violated for package org.blefuscu.apt.subscriptions.view: \
-    lines covered ratio is 0.99, but expected minimum is 1.00
-    [WARNING] Rule violated for package org.blefuscu.apt.subscriptions: \
-    lines covered ratio is 0.92, but expected minimum is 1.00
+    [WARNING] Rule violated for package org.blefuscu.apt.\
+    subscriptions.view: lines covered ratio is 0.99, but expected \
+    minimum is 1.00
+    [WARNING] Rule violated for package org.blefuscu.apt.\
+    subscriptions: lines covered ratio is 0.92, but expected minimum \
+    is 1.00
     
 Porto al 100% la code coverage della View e aggiungo tra gli `<excludes>` di JaCoCo la classe `SubscriptionsSwingApp` (l'unica porzione di codice non raggiunta dai test è il ramo `catch` che lancia l'eccezione nella lambda della classe `call()`).
 
 Con le impostazioni di default di `xvfb-run`, al momento di fare il test di `SubscriptionsSwingApp`, ottengo una failure dovuta al fatto che gli elementi dell'interfaccia si trovano al di fuori dell'area del framebuffer virtuale (`-screen 0 640x480x8`). Riprovo con:
 
-    xvfb-run -a --server-args="-screen 0 1366x768x24" mvn clean verify
+    xvfb-run -a --server-args="-screen 0 1366x768x24" \
+    mvn clean verify
     
 
-#### Continuous Integration con GitHub Actions
+#### 2.5 Continuous Integration con GitHub Actions
 
 Ancora nelle fasi iniziali della scrittura, Faccio un primo workflow su GitHub Actions coi plugin di JaCoCo e Pitest. Il repository è connesso a Coveralls; faccio un test in locale:
 
@@ -208,9 +215,10 @@ Modifico il POM spostando in due profili ad hoc l'attivazione dei plugin di JaCo
 Verifico in locale la configurazione di SonarQube con GitHub Actions (finora era impostata la Automatic Analysis).
 La build va a buon fine ma, probabilmente per via della formattazione degli `additional-maven-args`, non esegue i profili e i goal richiesti per la versione 17 di Java:
 
-    Warning:  The requested profile "mutation-testing coveralls:report \
-    org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-    -Dsonar.projectKey=mfflnz_apt-subscriptions" could not be activated \
+    Warning:  The requested profile "mutation-testing \ 
+    coveralls:report org.sonarsource.scanner.maven:\
+    sonar-maven-plugin:sonar -Dsonar.projectKey=\
+    mfflnz_apt-subscriptions" could not be activated \
     because it does not exist.
 
 (Infatti anche l'ultimo computo di Coveralls non ha ricevuto i dati dell'ultimo commit.)
@@ -225,7 +233,7 @@ e provo a lanciare Maven in locale:
 
     xvfb-run mvn clean test
 
-Uno dei test per la OrderView ha una failure che in apparenza sembra legata al timeout per lanciare il Controller:
+Uno dei test per la `OrderView` ha una failure che in apparenza sembra legata al timeout per lanciare il Controller:
 
     [ERROR] org.blefuscu.apt.subscriptions.view.OrderSwingViewTest.\
     testDeleteButtonShouldDelegateToSubscriptionsController -- \
@@ -250,7 +258,7 @@ Passo l'opzione `--auto-display` a `xvfb-run` e verifico:
     xvfb-run --auto-display mvn clean verify
    
 
-#### Code Quality e SonarQube
+#### 2.6 Code Quality e SonarQube
 
 È noto che le assertion di AssertJ Swing non vengono trattate da SonarQube (v. sez. 15.2.1 del libro) e vengono segnalate come *issue* bloccanti. Ad esempio:
 
@@ -258,16 +266,17 @@ Passo l'opzione `--auto-display` a `xvfb-run` e verifico:
 
 A questa assertion aggiungo per completezza (a costo di ridondanza nel codice dei test) le analoghe assertion di AssertJ supportate da SonarLint, ad esempio:
 
-    assertTrue(window.button(JButtonMatcher.withText("Update")).isEnabled());
+    assertTrue(window.button(JButtonMatcher.withText("Update"))\
+    .isEnabled());
 
 Riduco laddove possibile la Cognitive Complexity indicata altrove da SonarQube.
 
-Resta da rifattorizzare l'algoritmo che decide i parametri di ricerca della Search View (implementato nel listener del pulsante "Search"), che allo stato attuale concorre a incrementare fino a 20 la Cognitive Complexity del costruttore. Il technical debt indicato è stimato in 10 minuti. Osservo che la complessità totale è data anche da:
+Resta da rifattorizzare l'algoritmo che decide i parametri di ricerca della `SearchView` (implementato nel listener del pulsante "Search"), che allo stato attuale concorre a incrementare fino a 20 la Cognitive Complexity del costruttore. Il *technical debt* indicato è stimato in 10 minuti. Osservo che la complessità totale è data anche da:
 
 - (+1) nel listener legato al campo `fromDateTextBox`;
 - (+1) nel listener legato al campo `toDateTextBox`;
 - (+2) nel metodo privato `removeWhitespacesOnly`, di supporto al listener legato al pulsante "Search";
-- (+3) nel metodo privato `checkIfDatesAreInTheRightOrderAndPerformSearch`, di supporto al listener legato al pulsante "Search";
+- (+3) nel metodo privato `checkIfDatesAre...AndPerformSearch`, di supporto al listener legato al pulsante "Search";
 
 Restano dunque 13 punti di cui è direttamente responsabile il codice del listener del pulsante "Search", che implementa un algoritmo di questo tipo:
 
@@ -275,15 +284,15 @@ Restano dunque 13 punti di cui è direttamente responsabile il codice del listen
 - se il solo campo `fromDate` è vuoto, restituisci tutti gli ordini dal più vecchio fino a `toDate`;
 - se il solo campo `toDate` è vuoto, restituisci tutti gli ordini da `fromDate` alla data attuale.
 
-Considerando anche che ulteriore complessità cognitiva è introdotta dai due gestori delle eccezioni che possono verificarsi al momento del parse delle due date, ritengo che l'implementazione sia sufficientemente comprensibile e decido di mantenerla così.
+Considerando anche che ulteriore complessità cognitiva è introdotta dai due gestori delle eccezioni che possono verificarsi al momento del *parse* delle due date, ritengo che l'implementazione sia sufficientemente comprensibile e decido di mantenerla così com'è.
 
-SonarQube prescrive anche di rifattorizzare tre unit test della Seach View in modo da ottenere un solo test con parametri, ma preferisco lasciare i tre codici separati, ancorché ridondanti.
+SonarQube prescrive anche di rifattorizzare tre unit test della `SearchView` in modo da ottenere un solo test con parametri, ma preferisco lasciare i tre codici separati, ancorché ridondanti.
 
 Altrettanto per quanto riguarda l'indicazione di rinominare le classi dei test E2E in modo da seguire la convenzione di Java rispetto alla nomenclatura: nell'interfaccia web di SonarQube indico come falso positivo la richiesta di rinominare le classi, appuntando la motivazione di un uso convenzionale del suffisso "E2E" per individuare facilmente i test.
 
 ---
 
-### Scelte di design e di implementazione
+### 3. Scelte di design e di implementazione
 
 Per l'accesso al database seguo il pattern Repository (descritto in [Eva03] nel riferimento bibliografico del testo). Per la creazione degli oggetti mi rifaccio al pattern Builder ([GHJV95]).
 
@@ -291,63 +300,63 @@ Per l'accesso al database seguo il pattern Repository (descritto in [Eva03] nel 
 
 Schema del Model–view–presenter:
 
-    model
-        Order
-        FormattedOrder
-            - ordini opportunamente formattati con i soli dati rilevanti
+- **model**
+	- Order
+	- FormattedOrder
+		- ordini opportunamente formattati con i soli dati rilevanti
 
-    repository
-        OrderRepository
-            - operazioni di ricerca, aggiornamento ed eliminazione
+- **repository**
+	- OrderRepository
+		- operazioni di ricerca, aggiornamento ed eliminazione
 
-    view
-        DashboardView
-            SearchView
-                - ricerca degli ordini per intervallo di date
-            ListView
-                - elenco sintetico degli ordini
-                - esportazione degli ordini
-            OrderView
-                - vista dettagliata dell'ordine selezionato
-                - aggiornamento dell'ordine selezionato
-                - eliminazione dell'ordine selezionato
-            MessageView
-                - un campo che mostra messaggi informativi o di errore
+- **view**
+	- DashboardView
+		- SearchView
+			- ricerca degli ordini per intervallo di date
+		- ListView
+			- elenco sintetico degli ordini
+			- esportazione degli ordini
+		- OrderView
+			- vista dettagliata dell'ordine selezionato
+			- aggiornamento dell'ordine selezionato
+			- eliminazione dell'ordine selezionato
+		- MessageView
+			- un campo che mostra messaggi informativi o di errore
 
-    controller
-        SubscriptionsController
-            operazioni sugli ordini (-> database)
-        ExportController
-            operazioni sugli export (-> filesystem)
+- **controller**
+	- SubscriptionsController
+		- operazioni sugli ordini (-> database)
+	- ExportController
+		- operazioni sugli export (-> filesystem)
 
 
-#### UI
+#### 3.1 UI
 
 La View è strutturata in quattro interfacce, come indicato nello schema MVC: `SearchView`, `ListView`,  `OrderView` e `MessageView`, racchiuse in una `DashboardView`:
 
-##### SearchView
+##### 3.1.1 SearchView
 - Due campi, "From" e "To", in cui è possibile specificare un intervallo di date entro cui effettuare la ricerca;
 - un pulsante "Search"; se i due campi sono entrambi vuoti, la ricerca restituisce tutti gli ordini presenti nel database; se i campi sono specificati, la ricerca restituisce gli ordini dell'intervallo richiesto. I riferimenti agli ordini vengono visualizzati nella `ListView`;
 - il pulsante "Search" è inizialmente attivo; finché uno o entrambi i campi non sono correttamente formattati (`YYYY-MM-DD`), si disattiva; 
 - se il solo campo "From" è compilato, il campo "To" viene impostato automaticamente alla data corrente;
 - se il solo campo "To" è compilato, il campo "From" viene impostato automaticamente alla data del 1970-01-01;
-- se le date specificate non sono ordinate in modo coerente, verrà visualizzato un opportuno messaggio di errore nel campo dedicato (-> Controller).
+- se le date specificate non sono ordinate in modo coerente, verrà visualizzato un opportuno messaggio di errore nel campo dedicato.
 
-##### ListView
+##### 3.1.2 ListView
 - Una lista in cui vengono riportati sinteticamente gli ordini individuati con la "Search";
 - selezionando uno degli ordini, nella `OrderView` vengono visualizzati i corrispondenti dettagli;
-- un pulsante "Export" che mostra un selettore di file tramite cui scegliere il percorso del file .csv che conterrà i campi rilevanti degli ordini al momento presenti nella lista; se la lista è vuota, il pulsante è disattivato.
+- un pulsante "Export" che mostra un selettore di file tramite cui scegliere il percorso del file `.csv` che conterrà i campi rilevanti degli ordini al momento presenti nella lista; se la lista è vuota, il pulsante è disattivato.
 
-##### OrderView
+##### 3.1.3 OrderView
 - Una maschera con form editabili corrispondenti ai campi di interesse specificati nel model `FormattedOrder` (id, data dell'ordine, data del pagamento, etc.);
 - un pulsante "Update" che richiama l'opportuno metodo del Controller (eventualmente aggiornando la corrispondente vista sintetica della `ListView`) per aggiornare nel database il documento corrispondente all'ordine presente con i campi al momento specificati;
 - un pulsante "Delete" che richiama l'opportuno metodo del Controller (cancellando contestualmente l'ordine presente dalla `ListView`) per rimuovere dal database il documento corrispondente all'ordine presente;
 - le operazioni di "Update" e "Delete" mostrano eventuali messaggi rilevanti (di informazione o di errore) nel campo a essi dedicato.
 
-##### MessageView
+##### 3.1.4 MessageView
 - Una maschera non editabile in cui compaiono, laddove rilevanti, messaggi informativi o di errore.
 
-##### DashboardView
+##### 3.1.5 DashboardView
 - Include le quattro view precedenti.
 
 N.B.: Per testare le quattro view interne (Search, List, Order e Message), che implementano dei JPanel e non dei JFrame, uso la classe `Containers` di AssertJ-Swing (v. [https://assertj-swing.readthedocs.io/en/latest/assertj-swing-advanced/#support-for-platform-specific-features](https://assertj-swing.readthedocs.io/en/latest/assertj-swing-advanced/#support-for-platform-specific-features)).
@@ -356,11 +365,11 @@ N.B.: Per testare le quattro view interne (Search, List, Order e Message), che i
 
 ---
 
-### Problemi e soluzioni
+### 4. Problemi e soluzioni
 
-#### Aggiustamenti con macOS
+#### 4.1 Aggiustamenti con macOS
 
-Provo a impostare i workflow anche per macOS e Windows per verificare se per il momento tutto va a buon fine. Scopro che il JDK 8 non è disponibile per il runner `macos-13` e lo sostituisco con il JDK 11. Nella build per Java 17, allo step "Install Docker", vedo intanto che:
+Nelle fasi iniziali provo a impostare i workflow anche per macOS e Windows per verificare se per il momento tutto va a buon fine. Scopro che il JDK 8 non è disponibile per il runner `macos-13` e lo sostituisco con il JDK 11. Nella build per Java 17, allo step "Install Docker", vedo intanto che:
 
     Installing QEMU
     /opt/homebrew/bin/brew install qemu
@@ -390,28 +399,28 @@ Provo a integrare questo espediente nel precedente workflow e ottengo questo err
     
 Aggiungo la chiave `set-host` alla configurazione di `setup-docker-action`, che avevo dimenticato di specificare, e la imposto a `true`.
 
-Con il commit [68cbfdb](https://github.com/mfflnz/apt-subscriptions/commit/68cbfdb6d7e47e241ebb85acd180fae6f0933934) la build su macOS si interrompe con l'errore di prima relativo a QEMU. Provo a modificare il workflow. Il runner `macos-latest` gira su architettura ARM, quindi [non è supportato](https://github.com/docker/setup-docker-action?tab=readme-ov-file#about) da setup-docker-actions. Come non detto: mantengo `macos-13` nel workflow e riprovo con la [soluzione](https://github.com/docker/setup-docker-action/issues/108#issuecomment-2393657360) applicata finora. La build con Java 11 ha un buon esito.
+Con il commit [68cbfdb](https://github.com/mfflnz/apt-subscriptions/commit/68cbfdb6d7e47e241ebb85acd180fae6f0933934) la build su macOS si interrompe con l'errore di prima relativo a QEMU. Provo a modificare il workflow. Il runner `macos-latest` gira su architettura ARM, quindi [non è supportato](https://github.com/docker/setup-docker-action?tab=readme-ov-file#about) da `setup-docker-actions`. Come non detto: mantengo `macos-13` nel workflow e riprovo con la [soluzione](https://github.com/docker/setup-docker-action/issues/108#issuecomment-2393657360) applicata finora. La build con Java 11 ha un buon esito.
 
 Il Quality Gate di SonarQube segnala un Security Hotspot nel workflow, e prescrive di specificare il SHA del commit della `setup-docker-action` anziché il tag. Procedo di conseguenza.
 
 Dal 4 dicembre 2025 GitHub Actions [non mette più a disposizione](https://github.com/actions/runner-images/issues/13046) il runner `macos-13`, l'ultima versione con cui era possibile installare Docker con il procedimento sopra descritto. In alternativa uso la action [Setup Docker on macOS](https://github.com/marketplace/actions/setup-docker-on-macos) con `macos-15-intel` specificando nel workflow la variabile d'ambiente `DOCKER_HOST` (che punta al socket aperto da Colima, di cui fa uso la action).
 
-#### Test manuale dell'applicazione
+#### 4.2 Test manuale dell'applicazione
 
 Nella presente cartella si trovano due script, `setup.sh` e `teardown.sh`, utili per lanciare e interrompere i container di MongDB che servono all'applicazione.
 
 In particolare, nel `setup.sh` sono sintetizzati i seguenti passaggi:
 
-Creo una rete per mettere in comunicazione i container che useremo:
+- Creo una rete per mettere in comunicazione i container che useremo:
 
     docker network create apt-network
 
-Lancio il container di MongoDB:
+- Lancio il container di MongoDB:
 
     docker run -d --name apt-mongo --network apt-network \
     --publish 27017:27017 --rm mongo
 
-Nella cartella `src/main/resources` ho copiato un file `.csv` con alcuni dati di esempio da caricare su MongoDB (intestazione e informazioni sugli ordini) e lo importo con il tool `mongoimport`:
+- Nella cartella `src/main/resources` ho copiato un file `.csv` con alcuni dati di esempio da caricare su MongoDB (intestazione e informazioni sugli ordini) e lo importo con il tool `mongoimport`:
 
     docker run --network apt-network \
     --volume "$PWD"/src/main/resources:/resources \
@@ -421,11 +430,11 @@ Nella cartella `src/main/resources` ho copiato un file `.csv` con alcuni dati di
 
 Col comando sopra ottengo:
 
-    2025-12-16T10:04:52.826+0000    connected to: mongodb://apt-mongo/
-    2025-12-16T10:04:52.872+0000    5 document(s) imported \
-    successfully. 0 document(s) failed to import.
+    2025-12-16...    connected to: mongodb://apt-mongo/
+    2025-12-16...    5 document(s) imported successfully. \
+    0 document(s) failed to import.
 
-Nella shell di MongoDB faccio una verifica sui contenuti appena importati:
+- Nella shell di MongoDB faccio una verifica sui contenuti appena importati:
 
     docker run -it --network apt-network \
     --rm mongo:latest mongosh --host apt-mongo
@@ -434,7 +443,7 @@ Nella shell di MongoDB faccio una verifica sui contenuti appena importati:
     subscriptions> db.orders.countDocuments()
     5
     
-#### Altre osservazioni
+#### 4.3 Altre osservazioni
 
 A buon punto dello sviluppo, clono il repository su un'altra macchina e provo la build del codice da zero. Apro un nuovo branch del repository per gli opportuni aggiustamenti.
 
