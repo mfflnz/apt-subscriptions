@@ -362,6 +362,11 @@
 			</build>
 		</profile>
 		<profile>
+			<activation>
+				<os>
+					<family>windows</family>
+				</os>
+			</activation>
 			<id>skip-testcontainers</id>
 			<build>
 				<plugins>

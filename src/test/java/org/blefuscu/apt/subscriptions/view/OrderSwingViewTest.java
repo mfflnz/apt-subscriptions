@@ -132,7 +132,8 @@ public class OrderSwingViewTest {
 		window.textBox("orderDateTextBox").deleteText();
 		window.textBox("orderDateTextBox").enterText("2025-11-05");
 		window.textBox("emailTextBox").deleteText();
-		window.textBox("emailTextBox").enterText("customer@email.com");
+		window.textBox("emailTextBox").setText("customer@");
+		window.textBox("emailTextBox").enterText("email.com");
 
 		window.button(JButtonMatcher.withText("Update")).requireEnabled();
 		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
@@ -159,7 +160,8 @@ public class OrderSwingViewTest {
 		window.textBox("orderDateTextBox").deleteText();
 		window.textBox("orderDateTextBox").enterText("2025-11-05");
 		window.textBox("emailTextBox").deleteText();
-		window.textBox("emailTextBox").enterText("customer@email.com");
+		window.textBox("emailTextBox").setText("customer@");
+		window.textBox("emailTextBox").enterText("email.com");
 
 		window.button(JButtonMatcher.withText("Update")).requireDisabled();
 		window.button(JButtonMatcher.withText("Delete")).requireDisabled();
@@ -177,7 +179,8 @@ public class OrderSwingViewTest {
 		window.textBox("orderDateTextBox").deleteText();
 		window.textBox("orderDateTextBox").enterText("2025-11-05");
 		window.textBox("emailTextBox").deleteText();
-		window.textBox("emailTextBox").enterText("customer@email.com");
+		window.textBox("emailTextBox").setText("customer@");
+		window.textBox("emailTextBox").enterText("email.com");
 
 		window.button(JButtonMatcher.withText("Update")).requireEnabled();
 		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
@@ -227,7 +230,8 @@ public class OrderSwingViewTest {
 		window.textBox("orderDateTextBox").deleteText();
 		window.textBox("orderDateTextBox").enterText("2025-11-05");
 		window.textBox("emailTextBox").deleteText();
-		window.textBox("emailTextBox").enterText("customer@email.com");
+		window.textBox("emailTextBox").setText("customer@");
+		window.textBox("emailTextBox").enterText("email.com");
 
 		window.button(JButtonMatcher.withText("Update")).requireEnabled();
 		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
@@ -254,7 +258,8 @@ public class OrderSwingViewTest {
 		window.textBox("orderDateTextBox").deleteText();
 		window.textBox("orderDateTextBox").enterText("2025-11-05");
 		window.textBox("emailTextBox").deleteText();
-		window.textBox("emailTextBox").enterText("customer@email.com");
+		window.textBox("emailTextBox").setText("customer@");
+		window.textBox("emailTextBox").enterText("email.com");
 		window.textBox("orderTotalTextBox").deleteText();
 		window.textBox("orderTotalTextBox").enterText("€ 16.5");
 
@@ -281,7 +286,8 @@ public class OrderSwingViewTest {
 		window.textBox("orderDateTextBox").deleteText();
 		window.textBox("orderDateTextBox").enterText("2025-11-05");
 		window.textBox("emailTextBox").deleteText();
-		window.textBox("emailTextBox").enterText("customer@email.com");
+		window.textBox("emailTextBox").setText("customer@");
+		window.textBox("emailTextBox").enterText("email.com");
 		window.textBox("orderTotalTextBox").deleteText();
 		window.textBox("netTotalTextBox").deleteText();
 		window.textBox("netTotalTextBox").enterText("€ 14.5");
@@ -314,7 +320,8 @@ public class OrderSwingViewTest {
 		window.textBox("orderDateTextBox").deleteText();
 		window.textBox("orderDateTextBox").enterText("2025-11-06");
 		window.textBox("emailTextBox").deleteText();
-		window.textBox("emailTextBox").enterText("customer@email.com");
+		window.textBox("emailTextBox").setText("customer@");
+		window.textBox("emailTextBox").enterText("email.com");
 
 		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Delete")).isEnabled());
 
@@ -333,7 +340,8 @@ public class OrderSwingViewTest {
 		window.textBox("orderDateTextBox").deleteText();
 		window.textBox("orderDateTextBox").enterText("2025-11-06");
 		window.textBox("emailTextBox").deleteText();
-		window.textBox("emailTextBox").enterText("customer@email.com");
+		window.textBox("emailTextBox").setText("customer@");
+		window.textBox("emailTextBox").enterText("email.com");
 
 		await().atMost(5, TimeUnit.SECONDS).until(() -> window.button(JButtonMatcher.withText("Delete")).isEnabled());
 
@@ -455,7 +463,8 @@ public class OrderSwingViewTest {
 		window.textBox("cityTextBox").deleteText();
 		window.textBox("cityTextBox").enterText("Roma");
 		window.textBox("emailTextBox").deleteText();
-		window.textBox("emailTextBox").enterText("indirizzo@email.com");
+		window.textBox("emailTextBox").setText("indirizzo@");
+		window.textBox("emailTextBox").enterText("email.com");
 		window.textBox("phoneTextBox").deleteText();
 		window.textBox("phoneTextBox").enterText("+39 333 1122 333");
 		window.textBox("productTextBox").deleteText();
@@ -502,7 +511,8 @@ public class OrderSwingViewTest {
 		window.textBox("orderDateTextBox").deleteText();
 		window.textBox("orderDateTextBox").enterText("2025-11-05");
 		window.textBox("emailTextBox").deleteText();
-		window.textBox("emailTextBox").enterText("customer@email.com");
+		window.textBox("emailTextBox").setText("customer@");
+		window.textBox("emailTextBox").enterText("email.com");
 		window.textBox("firstIssueTextBox").deleteText();
 		window.textBox("firstIssueTextBox").enterText("123");
 		window.textBox("lastIssueTextBox").deleteText();
@@ -526,7 +536,8 @@ public class OrderSwingViewTest {
 		window.textBox("orderDateTextBox").deleteText();
 		window.textBox("orderDateTextBox").enterText("2025-11-05");
 		window.textBox("emailTextBox").deleteText();
-		window.textBox("emailTextBox").enterText("customer@email.com");
+		window.textBox("emailTextBox").setText("customer@");
+		window.textBox("emailTextBox").enterText("email.com");
 
 		window.button(JButtonMatcher.withText("Update")).requireEnabled();
 		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
@@ -565,7 +576,8 @@ public class OrderSwingViewTest {
 		window.textBox("orderDateTextBox").deleteText();
 		window.textBox("orderDateTextBox").enterText("2025-11-05");
 		window.textBox("emailTextBox").deleteText();
-		window.textBox("emailTextBox").enterText("customer@email.com");
+		window.textBox("emailTextBox").setText("customer@");
+		window.textBox("emailTextBox").enterText("email.com");
 
 		window.button(JButtonMatcher.withText("Update")).requireEnabled();
 		window.button(JButtonMatcher.withText("Delete")).requireEnabled();

@@ -151,7 +151,7 @@ public class SubscriptionsSwingAppTestcontainersE2E extends AssertJSwingJUnitTes
 		assertTrue(window.button(JButtonMatcher.withText("Update")).isEnabled());
 		assertTrue(window.button(JButtonMatcher.withText("Delete")).isEnabled());
 
-		window.textBox("emailTextBox").deleteText().enterText("new1@address.com");
+		window.textBox("emailTextBox").deleteText().setText("new1@").enterText("address.com");
 		window.button(JButtonMatcher.withText("Update")).click();
 		window.list().selectItem(1);
 

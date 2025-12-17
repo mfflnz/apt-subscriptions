@@ -4,6 +4,26 @@
 
 ---
 
+### TLDR
+
+Build del programma (X11, macOS e Windows):
+
+    mvn clean verify -Pjacoco,mutation-testing
+    
+Build del programma (virtual framebuffer):
+
+    xvfb-run --auto-display --server-args="-screen 0 1366x768x24" \
+      mvn clean verify -Pjacoco,mutation-testing
+      
+Esecuzione manuale del programma:
+
+    ./setup.sh
+    java -cp target/apt-subscriptions-1.0-SNAPSHOT-jar-with-\
+      dependencies.jar org.blefuscu.apt.subscriptions.\
+      SubscriptionsSwingApp
+    ./teardown.sh
+
+
 ### 1. Specifiche
 
 Voglio leggere da un database le informazioni relative agli ordini di acquisto di copie o abbonamenti a una rivista, filtrare e formattare i risultati, e quindi esportarli in un file in cui mantengo solo alcuni campi a cui sono interessato.
@@ -31,7 +51,7 @@ Tramite il Marketplace di Eclipse installo alcuni plugin:
 - Pitclipse 2.2.0
 - Docker Tooling 5.18.1
 - SonarQube for IDE 11.22
-- WindowBuilder 1.20.0
+- WindowBuilder 1.22.0
 
 Imposto il progetto Maven:
 
@@ -451,4 +471,4 @@ Una questione notevole riguarda l'incompatibilità della versione 5 di MongoDB c
 
 Eseguendo `mvn clean verify` osservo che molti dei test svolti da AssertJ-Swing falliscono per qualche problema che sembra legato alla disposizione della tastiera (ad esempio, al posto del carattere `@` viene inserito il carattere `"`). (Noto che questo non si verifica né eseguendo i test tramite `xvfb-run` né testando a mano l'applicazione.)
 
-In rete non trovo molte indicazioni autorevoli al riguardo. Provo a impostare l'opzione `-Dassertj.swing.keyboard.locale=it` (inserendola nel file `.mvn/jvm.config`) ma ancora non ottengo il risultato sperato. Provo anche a inserire il testo utilizzando il metodo di AssertJ-Swing `pressAndReleaseKeys(int KeyEvent)` anziché `enterText(String text)`, e a inserire il carattere `@` utilizzando direttamente il codice esadecimale `\u0040`, ma di nuovo senza sucesso (ottengo in un caso il carattere `"` e nell'altro il carattere `q`).
+In rete le uniche indicazioni sufficientemente autorevoli al riguardo si concentrano in alcune issue nel repository di AssertJ-Swing. Provo a impostare l'opzione `-Dassertj.swing.keyboard.locale=it` (come argomento della JVM da linea di comando o inserendola nel file `.mvn/jvm.config`) ma ancora non ottengo il risultato sperato. [TODO: riferimenti dal repository di AssertJ-Swing] Provo anche a inserire il testo utilizzando il metodo di AssertJ-Swing `pressAndReleaseKeys(int KeyEvent)` anziché `enterText(String text)`, e a inserire il carattere `@` utilizzando direttamente il codice esadecimale `\u0040`, ma di nuovo senza sucesso (ottengo in un caso il carattere `"` e nell'altro il carattere `q`). Osservo che l'errore nell'inserimento dei caratteri riguarda il metodo `enterText()` (che simula la digitazione da tastiera) ma non il metodo `setText()` della `TextInputFixture`, che imposta direttamente una stringa nel campo di testo e che inserisce i caratteri corretti. Valuto altre possibili soluzioni che prevedono l'uso di risorse dalla classe `InputContext` (LINK) e che ritengo troppo costose, e decido quindi di emendare il codice dei test sensibili aggiungendo un controllo ulteriore sui campi da validare: al loro interno inserisco (con `setText()`) il prefisso che contiene i caratteri non correttamente rilevati (ad esempio: "customer@"), e il suffisso con il metodo `enterText()`, che è necessario per attivare il listener collegato al campo da validare. Ritengo questa soluzione senz'altro non ottimale ma accettabile in questo contesto.
