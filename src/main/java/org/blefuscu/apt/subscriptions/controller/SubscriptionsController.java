@@ -259,8 +259,4 @@ public class SubscriptionsController {
 		return numberOfOrdersMessage;
 	}
 
-	public void clearMessageView() {
-		messageView.clearMessage();
-	}
-
 }
