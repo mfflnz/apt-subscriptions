@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -12,7 +11,7 @@ import javax.swing.Timer;
 
 public class MessageSwingView extends JPanel implements MessageView {
 
-	private static final int MESSAGE_TIMEOUT = 5000;
+	private static final int MESSAGE_TIMEOUT = 6000;
 	private static final long serialVersionUID = 1L;
 	private JTextField messageTextBox;
 
@@ -30,6 +29,7 @@ public class MessageSwingView extends JPanel implements MessageView {
 		setLayout(gridBagLayout);
 
 		messageTextBox = new JTextField();
+
 		messageTextBox.setName("messageTextBox");
 		GridBagConstraints gbcMessageTextBox = new GridBagConstraints();
 		gbcMessageTextBox.fill = GridBagConstraints.HORIZONTAL;
@@ -39,16 +39,13 @@ public class MessageSwingView extends JPanel implements MessageView {
 		messageTextBox.setColumns(10);
 		messageTextBox.setMinimumSize(new Dimension(300, 100));
 
-		int delay = MESSAGE_TIMEOUT;
-		ActionListener taskPerformer = arg0 -> messageTextBox.setText("");
-		new Timer(delay, taskPerformer).start();
-
 	}
 
 	@Override
 	public void showInfoMessage(String string) {
 		messageTextBox.setForeground(Color.BLACK);
 		messageTextBox.setText(string);
+		new Timer(MESSAGE_TIMEOUT, arg0 -> clearMessage()).start();
 
 	}
 
@@ -56,10 +53,17 @@ public class MessageSwingView extends JPanel implements MessageView {
 	public void showErrorMessage(String string) {
 		messageTextBox.setForeground(Color.RED);
 		messageTextBox.setText(string);
+		new Timer(MESSAGE_TIMEOUT, arg0 -> clearMessage()).start();
+
 	}
 
 	public JTextField getMessageTextBox() {
 		return messageTextBox;
+	}
+
+	@Override
+	public void clearMessage() {
+		messageTextBox.setText("");
 	}
 
 }

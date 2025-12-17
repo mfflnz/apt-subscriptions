@@ -6,4 +6,6 @@ public interface MessageView {
 
 	void showErrorMessage(String string);
 
+	void clearMessage();
+
 }

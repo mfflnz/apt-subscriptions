@@ -97,6 +97,7 @@ public class ListSwingView extends JPanel implements ListView {
 			} else {
 				fc.setVisible(false);
 			}
+
 		});
 
 		class MyListDataListener implements ListDataListener {

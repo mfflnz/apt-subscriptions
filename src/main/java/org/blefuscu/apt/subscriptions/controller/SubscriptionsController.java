@@ -239,6 +239,7 @@ public class SubscriptionsController {
 
 	public void sendErrorMessage(String errorMessage) {
 		messageView.showErrorMessage(errorMessage);
+
 	}
 
 	public void sendInfoMessage(String infoMessage) {
@@ -256,6 +257,10 @@ public class SubscriptionsController {
 			numberOfOrdersMessage = numberOfOrders + " orders found";
 		}
 		return numberOfOrdersMessage;
+	}
+
+	public void clearMessageView() {
+		messageView.clearMessage();
 	}
 
 }
