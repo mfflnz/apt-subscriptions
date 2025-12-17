@@ -364,7 +364,7 @@
 		<profile>
 			<activation>
 				<os>
-					<family>!unix</family>
+					<name>!linux</name>
 				</os>
 			</activation>
 			<id>skip-testcontainers</id>
