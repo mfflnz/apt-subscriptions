@@ -260,12 +260,12 @@ public class SubscriptionsController {
 	}
 
 	public void disableOrderFields() {
-		orderView.clearAll();		
-orderView.disableAll();		
+		orderView.clearAll();
+		orderView.disableAll();
 	}
 
 	public void enableOrderFields() {
-orderView.enableAll();		
+		orderView.enableAll();
 	}
 
 }

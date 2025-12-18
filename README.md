@@ -6,16 +6,16 @@
 
 ### TL;DR
 
-Build del programma:
+Build:
 
-    mvn clean verify -P jacoco,mutation-testing
+    mvn clean verify -Pjacoco,mutation-testing
     
-Build del programma nel virtual framebuffer:
+Build nel virtual framebuffer:
 
-    xvfb-run --auto-display --server-args="-screen 0 1366x768x24" \
-      mvn clean verify -P jacoco,mutation-testing
+    xvfb-run -a --server-args="-screen 0 1366x768x24" \
+      mvn clean verify -Pjacoco,mutation-testing
       
-Esecuzione manuale del programma:
+Esecuzione manuale del programma con alcuni dati campione:
 
     ./setup.sh
     java -cp target/apt-subscriptions-1.0-SNAPSHOT-jar-with-\
@@ -33,7 +33,7 @@ Voglio visualizzare un elenco sintetico degli ordini presenti e i dettagli di un
 
 Una funzione che mi interessa particolarmente è poter specificare un intervallo di date ed estrarre gli ordini conclusi in quel periodo.
 
-#### 1.1 Ambiente
+#### 1.1 Ambiente locale
 
 Con il gestore di pacchetti del S.O. (Arch Linux) installo:
 
@@ -84,9 +84,9 @@ Quindi lo importo in Eclipse (Window > Show View > Other... > Git > Git Reposito
 
 Inizialmente faccio uno sketch del [Model](#3-scelte-di-design-e-di-implementazione) e scrivo le interfacce del Repository e delle View (File > New > Interface). Quindi comincio ad applicare i principi del TDD per costruire il Controller. Riporto di seguito un riepilogo dei primi passi dello sviluppo (per poi diradare i dettagli).
 
-Faccio un mock del Repository e della View; quindi nel primo test verifico che il metodo `requestOrders()`, invocato senza parametri, riporti sulla View la lista di tutti gli ordini presenti. Per passare dalla fase *red* alla fase *green*, con il content assist di Eclipse comincio a definire i primi tratti del Controller: i campi `listView` e `orderRepository` e il metodo `requestOrders()`.
+Faccio un *mock* del Repository e della View; quindi nel primo test verifico che il metodo `requestOrders()`, invocato senza parametri, riporti sulla View la lista di tutti gli ordini presenti. Per passare dalla fase *red* alla fase *green*, con il content assist di Eclipse comincio a definire i primi tratti del Controller: i campi `listView` e `orderRepository` e il metodo `requestOrders()`.
 
-Col test successivo scrivo una versione del metodo `requestOrders` che accetta due parametri di tipo `LocalDate` e verifico che ci siano interazioni coi mock del Repository e della View.
+Col test successivo scrivo una versione del metodo `requestOrders` che accetta due parametri di tipo `LocalDate` e verifico che ci siano interazioni coi *mock* del Repository e della View.
 
 Proseguo con alcuni test su `requestOrders(LocalDate fromDate, LocalDate toDate)` che permetteranno di gestire i casi di errore sulle date verificando con AssertJ che si sollevino eccezioni accompagnate da messaggi pertinenti:
 
@@ -123,7 +123,7 @@ Proseguo con l'implementazione di altre funzioni del Controller:
     - `lastIssue`
     - `customerNote`
 - esportazione della lista formattata nel file .csv:
-    - qui si pone il problema di organizzare degli unit test su un metodo che scrive sul filesystem. Per farlo, dichiaro un'interfaccia *wrapper*, `ExportController`, con i metodi necessari (controllo presenza del file, scrittura del file, cancellazione del file) che invocherò come mock in questa fase e successivamente implementerò richiamando metodi delle API `java.nio`.
+    - qui si pone il problema di organizzare degli unit test su un metodo che scrive sul filesystem. Per farlo, dichiaro un'interfaccia *wrapper*, `ExportController`, con i metodi necessari (controllo presenza del file, scrittura del file, cancellazione del file) che invocherò come *mock* in questa fase e successivamente implementerò richiamando metodi delle API `java.nio`.
 - comunicazione con le View
 
 Proseguo con l'implementazione del Repository. Ho già aggiunto al POM le dipendenze per il Mongo Java Driver e per l'accesso ai log. Aggiungo la dipendenza per MongoDB Java Server (database in-memory). Al lancio del primo unit test ottengo un errore di inizializzazione:
@@ -317,7 +317,7 @@ Altrettanto per quanto riguarda l'indicazione di rinominare le classi dei test E
 
 Per l'accesso al database seguo il pattern Repository (descritto in [Eva03] nel riferimento bibliografico del testo). Per la creazione degli oggetti mi rifaccio al pattern Builder ([GHJV95]).
 
-(Il termine "Order" = "ordine" è da intendersi nel senso di ordine di acquisto di un prodotto.)
+(Il termine "Order" = "ordine" in questo contesto è da intendersi nel senso di ordine di acquisto di un prodotto.)
 
 Schema del Model–view–presenter:
 
@@ -386,9 +386,33 @@ N.B.: Per testare le quattro view interne (Search, List, Order e Message), che i
 
 ---
 
-### 4. Problemi e soluzioni
+### 4. Sviluppo e test di alcune porzioni interessanti del codice
 
-#### 4.1 Aggiustamenti con macOS
+#### 4.1 `SubscriptionsController`
+
+Il metodo `formatOrder` contiene il codice più rilevante rispetto all'uso principale che è previsto per l'applicazione, ovvero la semplificazione del formato dei documenti del database e la conseguente traduzione di oggetti di classe `Order` in oggetti di classe `FormattedOrder`. Man mano che le porzioni di codice relative alla formattazione dei vari campi venivano testate e scritte, la rifattorizzazione ha portato all'estrazione di 8 metodi privati dedicati alla formattazione di altrettanti campi.
+
+Il campo "Shipping Items" degli ordini contiene, per design, un certo numero di caratteri speciali ("{", "}", "|") intorno a una parte della stringa a cui non sono interessato. Per escludere questa porzione nella formattazione dei dati, ricorro al raffronto con un'espressione regolare (`".[|{}]"`, cioè tutte le stringhe in cui occorre almeno una volta uno dei tre caratteri) che grazie all'analisi di SonarQube apprendo essere un *security hotspot* (come riferito [qui](https://rules.sonarsource.com/java/type/Security%20Hotspot/RSPEC-5852/)). Come soluzione semplice aggiungo alla regex un limite massimo alla lunghezza della stringa.
+
+#### 4.2 `ExportController`
+
+In una prima stesura, la logica che si occupava dell'esportazione su file della lista di ordini era prevista all'interno del `SubscriptionsController`. È stata la stessa tecnica del TDD a suggerire di separare le funzioni di raccordo con il database da quelle di gestione della scrittura su disco, conducendo a tempo debito - ossia al momento un cui si rendeva necessaria la scrittura di un file su disco - alla dichiarazione del *mock* della nuova classe `ExportController` e, solo successivamente, alla sua implementazione.
+
+Fatta eccezione per alcune sporadiche licenze accordate nell'ottica di semplificare la comprensione dei test, ho cercato di mantenere l'ordine cronologico degli unit test man mano che venivano scritti, in modo da poter ricostruire agevolmente la logica della scrittura delle varie parti.
+
+#### 4.3 `OrderMongoRepository`
+
+Analogamente a quanto riportato nel [#4-2-subscriptionscontroller], anche nel caso di questa implementazione del Repository una sezione del codice particolarmente delicata (ancorché accompagnata da poca logica) riguarda la conversione da documenti Bson a oggetti di classe `Order` e viceversa. Vista la relativamente grande quantità di coppie *field-value* nei documenti del nostro caso d'uso, per individuare i (facili) refusi è stato cruciale l'apporto del controllo della code coverage e del mutation testing.
+
+#### 4.4 View e UI
+
+La maggior parte degli unit test sulle UI riguarda l'attivazione o la disattivazione dei pulsanti in base ai contenuti di alcuni campi agganciati ai *listener*. Nelle View il tentativo è stato quello di ridurre il più possibile l'insorgenza di casi d'eccezione dovuti a valori critici negli input: ad esempio, la validazione dei contenuti in forma di data da inserire nei campi "From" e "To" nella `SearchSwingView`, prima ancora di essere delegata al Controller per le opportune verifiche e l'eventuale interrogazione del database, è sottoposta a un primo controllo sintattico, in modo da escludere stringhe diverse dal pattern "4 cifre, trattino, 2 cifre, trattino, 2 cifre" individuato dall'espressione `"^\\d{4}-\\d{2}-\\d{2}$"`. (Ovviamente si potrebbe implementare una versione della Search View che utilizzi altri campi di input, come un selettore di date, e che conduca a una diversa manipolazione del formato dei dati, che per questo esempio manteniamo tra i due standard di `LocalDate` e di stringhe di pattern "yyyy-MM-dd".)
+
+---
+
+### 5. Problemi e soluzioni
+
+#### 5.1 Aggiustamenti con macOS
 
 Nelle fasi iniziali provo a impostare i workflow anche per macOS e Windows per verificare se per il momento tutto va a buon fine. Scopro che il JDK 8 non è disponibile per il runner `macos-13` e lo sostituisco con il JDK 11. Nella build per Java 17, allo step "Install Docker", vedo intanto che:
 
@@ -426,7 +450,7 @@ Il Quality Gate di SonarQube segnala un Security Hotspot nel workflow, e prescri
 
 Dal 4 dicembre 2025 GitHub Actions [non mette più a disposizione](https://github.com/actions/runner-images/issues/13046) il runner `macos-13`, l'ultima versione con cui era possibile installare Docker con il procedimento sopra descritto. In alternativa uso la action [Setup Docker on macOS](https://github.com/marketplace/actions/setup-docker-on-macos) con `macos-15-intel` specificando nel workflow la variabile d'ambiente `DOCKER_HOST` (che punta al socket aperto da Colima, di cui fa uso la action).
 
-#### 4.2 Test manuale dell'applicazione
+#### 5.2 Test manuale dell'applicazione
 
 Nella presente cartella si trovano due script, `setup.sh` e `teardown.sh`, utili per lanciare e interrompere i container di MongDB che servono all'applicazione.
 
@@ -464,7 +488,7 @@ Col comando sopra ottengo:
     subscriptions> db.orders.countDocuments()
     5
     
-#### 4.3 Altre osservazioni
+#### 5.3 Altre osservazioni
 
 A buon punto dello sviluppo, clono il repository su un'altra macchina e provo la build del codice da zero. Apro un nuovo branch del repository per gli opportuni aggiustamenti.
 
@@ -472,16 +496,6 @@ Una questione notevole riguarda l'incompatibilità della versione 5 di MongoDB c
 
 Eseguendo `mvn clean verify` osservo che molti dei test svolti da AssertJ-Swing falliscono per qualche problema che sembra legato alla disposizione della tastiera (ad esempio, al posto del carattere `@` viene inserito il carattere `"`). (Noto che questo non si verifica né eseguendo i test tramite `xvfb-run` né testando a mano l'applicazione.)
 
-In rete le uniche indicazioni sufficientemente autorevoli al riguardo si concentrano in alcune issue nel repository di AssertJ-Swing. Provo a impostare l'opzione `-Dassertj.swing.keyboard.locale=it` (come argomento della JVM da linea di comando o inserendola nel file `.mvn/jvm.config`) ma ancora non ottengo il risultato sperato. [TODO: riferimenti dal repository di AssertJ-Swing] Provo anche a inserire il testo utilizzando il metodo di AssertJ-Swing `pressAndReleaseKeys(int KeyEvent)` anziché `enterText(String text)`, e a inserire il carattere `@` utilizzando direttamente il codice esadecimale `\u0040`, ma di nuovo senza sucesso (ottengo in un caso il carattere `"` e nell'altro il carattere `q`). Osservo che l'errore nell'inserimento dei caratteri riguarda il metodo `enterText()` (che simula la digitazione da tastiera) ma non il metodo `setText()` della `TextInputFixture`, che imposta direttamente una stringa nel campo di testo e che inserisce i caratteri corretti. Valuto altre possibili soluzioni che prevedono l'uso di risorse dalla classe `InputContext` (LINK) e che ritengo troppo costose, e decido quindi di emendare il codice dei test sensibili aggiungendo un controllo ulteriore sui campi da validare: al loro interno inserisco (con `setText()`) il prefisso che contiene i caratteri non correttamente rilevati (ad esempio: "customer@"), e il suffisso con il metodo `enterText()`, che è necessario per attivare il listener collegato al campo da validare. Ritengo questa soluzione senz'altro non ottimale ma accettabile in questo contesto.
+In rete le uniche indicazioni sufficientemente autorevoli al riguardo si concentrano in alcune issue nel repository di FEST/AssertJ-Swing (ad esempio [questa](https://github.com/assertj/assertj-swing/issues/199)). Provo a impostare l'opzione `-Dassertj.swing.keyboard.locale=it` (come argomento della JVM da linea di comando o inserendola nel file `.mvn/jvm.config`) ma ancora non ottengo il risultato sperato. Provo anche a inserire il testo utilizzando il metodo di AssertJ-Swing `pressAndReleaseKeys(int KeyEvent)` anziché `enterText(String text)`, e a inserire il carattere `@` utilizzando direttamente il codice esadecimale `\u0040`, ma di nuovo senza sucesso (ottengo in un caso il carattere `"` e nell'altro il carattere `q`). Osservo che l'errore nell'inserimento dei caratteri riguarda il metodo `enterText()` (che simula la digitazione da tastiera) ma non il metodo `setText()` della `TextInputFixture`, che imposta direttamente una stringa nel campo di testo e che inserisce i caratteri corretti. Valuto altre possibili soluzioni che prevedono l'uso di risorse dalla classe `InputContext` (LINK) e che ritengo troppo costose, e decido quindi di emendare il codice dei test sensibili aggiungendo un controllo ulteriore sui campi da validare: al loro interno inserisco (con `setText()`) il prefisso che contiene i caratteri non correttamente rilevati (ad esempio: "customer@"), e il suffisso con il metodo `enterText()`, che è necessario per attivare il listener collegato al campo da validare. Ritengo questa soluzione senz'altro non ottimale ma accettabile in questo contesto.
 
-### 5. Sviluppo e test di alcune porzioni interessanti del codice
-
-#### 5.1 `SubscriptionsController`
-
-Il campo "Shipping Items" degli ordini contiene, per design, un certo numero di caratteri speciali ("{", "}", "|") intorno a una parte della stringa a cui non sono interessato. Per escludere questa porzione nella formattazione dei dati, ricorro al raffronto con un'espressione regolare (`".[|{}]"`, cioè tutte le stringhe in cui occorre almeno una volta uno dei tre caratteri) che grazie all'analisi di SonarQube apprendo essere un *security hotspot* (come riferito [qui](https://rules.sonarsource.com/java/type/Security%20Hotspot/RSPEC-5852/)). Come soluzione semplice aggiungo alla regex un limite massimo alla lunghezza della stringa.
-
-#### 5.2 `ExportController`
-
-In una prima stesura, la logica che si occupava dell'esportazione su file della lista di ordini era prevista all'interno del `SubscriptionsController`. È stata la stessa tecnica del TDD a suggerire di separare le funzioni di raccordo con il database da quelle di gestione della scrittura su disco. (Argomentare)
-
-**TODO** rimuovere immagini
+---

@@ -504,7 +504,6 @@ public class SubscriptionsControllerTest {
 		when(exportController.saveData(formattedOrders, filename)).thenThrow(IOException.class);
 		subscriptionsController.exportOrders(formattedOrders, filename);
 		verify(messageView).showErrorMessage("Error exporting file");
-
 	}
 
 	@Test
@@ -559,7 +558,6 @@ public class SubscriptionsControllerTest {
 		verify(orderRepository).findById(1);
 		verifyNoMoreInteractions(orderRepository);
 		verifyNoInteractions(listView, orderView);
-
 	}
 
 	@Test
@@ -570,7 +568,6 @@ public class SubscriptionsControllerTest {
 				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Start date should be earlier or equal to end date");
 		verify(messageView).showErrorMessage("Start date should be earlier or equal to end date");
-
 	}
 
 	@Test
@@ -580,7 +577,6 @@ public class SubscriptionsControllerTest {
 		assertThatThrownBy(() -> subscriptionsController.requestOrders(fromDate, toDate))
 				.isInstanceOf(IllegalArgumentException.class).hasMessage("Please provide start date");
 		verify(messageView).showErrorMessage("Please provide start date");
-
 	}
 
 	@Test
@@ -590,7 +586,6 @@ public class SubscriptionsControllerTest {
 		assertThatThrownBy(() -> subscriptionsController.requestOrders(fromDate, toDate))
 				.isInstanceOf(IllegalArgumentException.class).hasMessage("Please provide end date");
 		verify(messageView).showErrorMessage("Please provide end date");
-
 	}
 
 	@Test
@@ -660,7 +655,6 @@ public class SubscriptionsControllerTest {
 		subscriptionsController.requestOrders(fromDate, toDate);
 		verify(orderView).clearAll();
 		verify(listView).clearList();
-
 	}
 
 	@Test
