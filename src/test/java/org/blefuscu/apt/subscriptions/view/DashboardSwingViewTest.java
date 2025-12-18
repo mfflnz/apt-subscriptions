@@ -21,6 +21,7 @@ public class DashboardSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Override
 	protected void onSetUp() {
+
 		GuiActionRunner.execute(() -> {
 			searchSwingView = new SearchSwingView();
 			listSwingView = new ListSwingView();
@@ -35,12 +36,30 @@ public class DashboardSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	public void testAllPanelsAreShown() {
+	public void testOnStartupAllPanelsAreShownAndOrderFieldsAreNotEditable() {
 
 		window.panel("searchPanel").requireVisible();
 		window.panel("listPanel").requireVisible();
 		window.panel("orderPanel").requireVisible();
 		window.panel("messagePanel").requireVisible();
+
+		window.textBox("orderIdTextBox").requireNotEditable();
+		window.textBox("orderDateTextBox").requireNotEditable();
+		window.textBox("orderTotalTextBox").requireNotEditable();
+		window.textBox("netTotalTextBox").requireNotEditable();
+		window.textBox("paymentMethodTextBox").requireNotEditable();
+		window.textBox("firstNameTextBox").requireNotEditable();
+		window.textBox("lastNameTextBox").requireNotEditable();
+		window.textBox("addressTextBox").requireNotEditable();
+		window.textBox("postcodeTextBox").requireNotEditable();
+		window.textBox("stateTextBox").requireNotEditable();
+		window.textBox("cityTextBox").requireNotEditable();
+		window.textBox("emailTextBox").requireNotEditable();
+		window.textBox("phoneTextBox").requireNotEditable();
+		window.textBox("productTextBox").requireNotEditable();
+		window.textBox("firstIssueTextBox").requireNotEditable();
+		window.textBox("lastIssueTextBox").requireNotEditable();
+		window.textBox("notesTextBox").requireNotEditable();
 
 		// SonarQube
 		assertTrue(window.panel("searchPanel").isEnabled());

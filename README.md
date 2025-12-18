@@ -4,13 +4,13 @@
 
 ---
 
-### TLDR
+### TL;DR
 
-Build del programma (X11, macOS e Windows):
+Build del programma:
 
     mvn clean verify -P jacoco,mutation-testing
     
-Build del programma (virtual framebuffer):
+Build del programma nel virtual framebuffer:
 
     xvfb-run --auto-display --server-args="-screen 0 1366x768x24" \
       mvn clean verify -P jacoco,mutation-testing
@@ -23,6 +23,7 @@ Esecuzione manuale del programma:
       SubscriptionsSwingApp
     ./teardown.sh
 
+---
 
 ### 1. Specifiche
 
@@ -100,7 +101,7 @@ Proseguo con l'implementazione di altre funzioni del Controller:
 - recupero dei dettagli di un ordine;
 - eliminazione di un ordine;
 - modifica di un ordine;
-- formattazione di una lista di ordini secondo i seguenti criteri:
+- formattazione di una lista di ordini in cui i campi vengono trattati secondo i seguenti criteri (laddove non vi sono indicazioni, il contenuto del campo non viene manipolato):
     - `orderId`
     - `orderDate`: "2025-08-05 11:11:01" -> "05/08/2025"
     - `paidDate`: come sopra, se presente, altrimenti campo vuoto
@@ -122,8 +123,8 @@ Proseguo con l'implementazione di altre funzioni del Controller:
     - `lastIssue`
     - `customerNote`
 - esportazione della lista formattata nel file .csv:
-    - qui si pone il problema di organizzare degli unit test su un metodo che scrive sul filesystem. Per farlo, dichiaro un'interfaccia *wrapper*, `ExportManager`, con i metodi necessari (controllo presenza del file, scrittura del file, cancellazione del file) che invocherò come mock in questa fase e successivamente implementerò richiamando metodi delle API `java.nio`.
-- comunicazione con le view
+    - qui si pone il problema di organizzare degli unit test su un metodo che scrive sul filesystem. Per farlo, dichiaro un'interfaccia *wrapper*, `ExportController`, con i metodi necessari (controllo presenza del file, scrittura del file, cancellazione del file) che invocherò come mock in questa fase e successivamente implementerò richiamando metodi delle API `java.nio`.
+- comunicazione con le View
 
 Proseguo con l'implementazione del Repository. Ho già aggiunto al POM le dipendenze per il Mongo Java Driver e per l'accesso ai log. Aggiungo la dipendenza per MongoDB Java Server (database in-memory). Al lancio del primo unit test ottengo un errore di inizializzazione:
 
@@ -226,7 +227,7 @@ Ancora nelle fasi iniziali della scrittura, Faccio un primo workflow su GitHub A
     
 Inserisco il token di Coveralls tra i *secrets* del repository e aggiorno di conseguenza il workflow finora sperimentato (`linux.yaml`).
 
-A una prima build, il Quality Gate di SonarQube non è va a buon fine per eccesso di codice duplicato nel Model: lo escludo dall'analisi (nell'interfaccia web di SonarCloud: Administration > General Settings > Analysis Scope > Coverage Exclusions e Duplication Exclusions).
+A una prima build, il Quality Gate di SonarQube lamenta un eccesso di codice duplicato nel Model: lo escludo dall'analisi (nell'interfaccia web di SonarQube: Administration > General Settings > Analysis Scope > Coverage Exclusions e Duplication Exclusions).
 
 Modifico il POM spostando in due profili ad hoc l'attivazione dei plugin di JaCoCo e Pitest. I *goal* che generano i report sono legati alla fase *verify*, per cui il comando diventa:
 
@@ -284,7 +285,7 @@ Passo l'opzione `--auto-display` a `xvfb-run` e verifico:
 
     window.button(JButtonMatcher.withText("Update")).requireEnabled();
 
-A questa assertion aggiungo per completezza (a costo di ridondanza nel codice dei test) le analoghe assertion di AssertJ supportate da SonarLint, ad esempio:
+A questa assertion aggiungo per completezza (a costo di ridondanza nel codice dei test) le analoghe assertion di AssertJ supportate da SonarQube, ad esempio:
 
     assertTrue(window.button(JButtonMatcher.withText("Update"))\
     .isEnabled());
@@ -477,5 +478,10 @@ In rete le uniche indicazioni sufficientemente autorevoli al riguardo si concent
 
 #### 5.1 `SubscriptionsController`
 
-Il campo "Shipping Items" degli ordini contiene, per design, un certo numero di caratteri speciali (xxxxxx). Per escluderli da xxxxxx, ricorro al raffronto un un'espressione regolare (xxxxxxx) che grazie all'analisi di SonarQube apprendo essere fonte di un potenziale xxxx di sicurezza https://rules.sonarsource.com/java/type/Security%20Hotspot/RSPEC-5852/
+Il campo "Shipping Items" degli ordini contiene, per design, un certo numero di caratteri speciali ("{", "}", "|") intorno a una parte della stringa a cui non sono interessato. Per escludere questa porzione nella formattazione dei dati, ricorro al raffronto con un'espressione regolare (`".[|{}]"`, cioè tutte le stringhe in cui occorre almeno una volta uno dei tre caratteri) che grazie all'analisi di SonarQube apprendo essere un *security hotspot* (come riferito [qui](https://rules.sonarsource.com/java/type/Security%20Hotspot/RSPEC-5852/)). Come soluzione semplice aggiungo alla regex un limite massimo alla lunghezza della stringa.
 
+#### 5.2 `ExportController`
+
+In una prima stesura, la logica che si occupava dell'esportazione su file della lista di ordini era prevista all'interno del `SubscriptionsController`. È stata la stessa tecnica del TDD a suggerire di separare le funzioni di raccordo con il database da quelle di gestione della scrittura su disco. (Argomentare)
+
+**TODO** rimuovere immagini

@@ -67,7 +67,10 @@ public class ListSwingView extends JPanel implements ListView {
 		list = new JList<>(listOrdersModel);
 		list.addListSelectionListener(arg0 -> {
 			if (!list.isSelectionEmpty()) {
+				subscriptionsController.enableOrderFields();
 				subscriptionsController.orderDetails(list.getSelectedValue().getOrderId());
+			} else {
+				subscriptionsController.disableOrderFields();
 			}
 		});
 

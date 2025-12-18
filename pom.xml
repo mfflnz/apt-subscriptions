@@ -160,7 +160,6 @@
 				<configuration>
 					<autoCreateCustomNetworks>true</autoCreateCustomNetworks>
 					<images>
-						<!-- MongoDB: server -->
 						<image>
 							<name>mongo:5</name>
 							<alias>mongod</alias>

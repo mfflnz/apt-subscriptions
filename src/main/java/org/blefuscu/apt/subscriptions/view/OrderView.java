@@ -11,4 +11,9 @@ public interface OrderView {
 	void orderDeleted(int orderId);
 
 	void clearAll();
+
+	void disableAll();
+
+	void enableAll();
+
 }

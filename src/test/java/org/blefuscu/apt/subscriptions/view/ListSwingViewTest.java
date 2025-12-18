@@ -329,15 +329,16 @@ public class ListSwingViewTest {
 	}
 
 	@Test
-	public void testIfNoElementInTheListIsSelectedThenTherShouldBeNoInteractionWithTheController() {
+	public void testIfNoElementInTheListIsSelectedThenTheControllerShouldDisableOrderFields() {
 		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com").build();
 
 		GuiActionRunner.execute(() -> {
 			listSwingView.getListOrdersModel().addElement(order1);
 		});
+		window.list("ordersList").selectItem(0);
 		window.list("ordersList").clearSelection();
 
-		verifyNoInteractions(subscriptionsController);
+		verify(subscriptionsController, timeout(TIMEOUT)).disableOrderFields();
 
 	}
 
@@ -354,5 +355,17 @@ public class ListSwingViewTest {
 
 		String[] listContents = window.list("ordersList").contents();
 		assertThat(listContents).isEmpty();
+	}
+
+	@Test
+	public void testWhenAnItemIsSelectedAllOrderFieldsShouldBeEditableExceptOrderId() {
+		Order order1 = new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com").build();
+
+		GuiActionRunner.execute(() -> {
+			listSwingView.getListOrdersModel().addElement(order1);
+		});
+		window.list("ordersList").selectItem(0);
+
+		verify(subscriptionsController, timeout(TIMEOUT).atLeastOnce()).enableOrderFields();
 	}
 }

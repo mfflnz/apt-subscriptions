@@ -66,6 +66,7 @@ public class DashboardSwingView extends JFrame implements DashboardView {
 		gbcMessagePanel.gridy = 3;
 		contentPanel.add(messagePanel, gbcMessagePanel);
 
+		orderPanel.disableAll();
 	}
 
 }

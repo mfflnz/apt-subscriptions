@@ -63,6 +63,7 @@ public class SubscriptionsSwingApp implements Callable<Void> {
 				listSwingView.setSubscriptionsController(subscriptionsController);
 				orderSwingView.setSubscriptionsController(subscriptionsController);
 				dashboardSwingView.setVisible(true);
+				
 			} catch (Exception e) {
 				LOGGER.error(String.format("Error starting the application: %s", e.getMessage()), e);
 			}

@@ -608,6 +608,69 @@ public class OrderSwingViewTest {
 
 	}
 
+	@Test
+	public void testDisableAllShouldClearEveryTestFieldAndDisableEditing() {
+		window.textBox("orderIdTextBox").deleteText();
+		window.textBox("orderIdTextBox").enterText("123");
+		window.textBox("orderDateTextBox").deleteText();
+		window.textBox("orderDateTextBox").enterText("2025-11-05");
+		window.textBox("emailTextBox").deleteText();
+		window.textBox("emailTextBox").setText("customer@");
+		window.textBox("emailTextBox").enterText("email.com");
+
+		window.button(JButtonMatcher.withText("Update")).requireEnabled();
+		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
+
+		// SonarQube
+		assertTrue(window.button(JButtonMatcher.withText("Update")).isEnabled());
+		assertTrue(window.button(JButtonMatcher.withText("Delete")).isEnabled());
+
+		GuiActionRunner.execute(() -> {
+			orderSwingView.disableAll();
+		});
+
+		window.textBox("orderIdTextBox").requireNotEditable();
+		window.textBox("orderDateTextBox").requireNotEditable();
+		window.textBox("emailTextBox").requireNotEditable();
+
+		window.button(JButtonMatcher.withText("Update")).requireDisabled();
+		window.button(JButtonMatcher.withText("Delete")).requireDisabled();
+
+		// SonarQube
+		assertFalse(window.button(JButtonMatcher.withText("Update")).isEnabled());
+		assertFalse(window.button(JButtonMatcher.withText("Delete")).isEnabled());
+	}
+
+	@Test
+	public void testEnableAllShouldEnableEditingOnAllTextFieldsExceptOrderId() {
+		window.textBox("orderIdTextBox").deleteText();
+		window.textBox("orderIdTextBox").enterText("123");
+		window.textBox("orderDateTextBox").deleteText();
+		window.textBox("orderDateTextBox").enterText("2025-11-05");
+		window.textBox("emailTextBox").deleteText();
+		window.textBox("emailTextBox").setText("customer@");
+		window.textBox("emailTextBox").enterText("email.com");
+
+		GuiActionRunner.execute(() -> {
+			orderSwingView.getOrderIdTextBox().setEditable(false);
+			orderSwingView.getOrderDateTextBox().setEditable(false);
+			orderSwingView.getEmailTextBox().setEditable(false);
+
+			orderSwingView.enableAll();
+		});
+
+		window.textBox("orderIdTextBox").requireNotEditable();
+		window.textBox("orderDateTextBox").requireEditable();
+		window.textBox("emailTextBox").requireEditable();
+
+		window.button(JButtonMatcher.withText("Update")).requireEnabled();
+		window.button(JButtonMatcher.withText("Delete")).requireEnabled();
+
+		// SonarQube
+		assertTrue(window.button(JButtonMatcher.withText("Update")).isEnabled());
+		assertTrue(window.button(JButtonMatcher.withText("Delete")).isEnabled());
+	}
+
 	private Order createSampleOrder() {
 		return new Order.OrderBuilder(1, LocalDate.of(2025, 10, 9), "email@address.com")
 				.setPaidDate(LocalDate.of(2025, 11, 3)).setOrderTotal(65.00).setOrderNetTotal(58.00)

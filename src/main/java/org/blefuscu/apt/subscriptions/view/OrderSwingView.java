@@ -702,4 +702,52 @@ public class OrderSwingView extends JPanel implements OrderView {
 		return btnDelete;
 	}
 
+	@Override
+	public void disableAll() {
+
+		this.getOrderIdTextBox().setEditable(false);
+		this.getOrderDateTextBox().setEditable(false);
+		this.getPaidDateTextBox().setEditable(false);
+		this.getOrderTotalTextBox().setEditable(false);
+		this.getNetTotalTextBox().setEditable(false);
+		this.getPaymentMethodTextBox().setEditable(false);
+		this.getFirstNameTextBox().setEditable(false);
+		this.getLastNameTextBox().setEditable(false);
+		this.getAddressTextBox().setEditable(false);
+		this.getPostcodeTextBox().setEditable(false);
+		this.getStateTextBox().setEditable(false);
+		this.getCityTextBox().setEditable(false);
+		this.getEmailTextBox().setEditable(false);
+		this.getPhoneTextBox().setEditable(false);
+		this.getProductTextBox().setEditable(false);
+		this.getFirstIssueTextBox().setEditable(false);
+		this.getLastIssueTextBox().setEditable(false);
+		this.getNotesTextBox().setEditable(false);
+		btnUpdate.setEnabled(false);
+		btnDelete.setEnabled(false);
+	}
+
+	@Override
+	public void enableAll() {
+		this.getOrderIdTextBox().setEditable(false);
+		this.getOrderDateTextBox().setEditable(true);
+		this.getPaidDateTextBox().setEditable(true);
+		this.getOrderTotalTextBox().setEditable(true);
+		this.getNetTotalTextBox().setEditable(true);
+		this.getPaymentMethodTextBox().setEditable(true);
+		this.getFirstNameTextBox().setEditable(true);
+		this.getLastNameTextBox().setEditable(true);
+		this.getAddressTextBox().setEditable(true);
+		this.getPostcodeTextBox().setEditable(true);
+		this.getStateTextBox().setEditable(true);
+		this.getCityTextBox().setEditable(true);
+		this.getEmailTextBox().setEditable(true);
+		this.getPhoneTextBox().setEditable(true);
+		this.getProductTextBox().setEditable(true);
+		this.getFirstIssueTextBox().setEditable(true);
+		this.getLastIssueTextBox().setEditable(true);
+		this.getNotesTextBox().setEditable(true);
+
+	}
+
 }

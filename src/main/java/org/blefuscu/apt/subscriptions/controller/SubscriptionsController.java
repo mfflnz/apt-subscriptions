@@ -259,4 +259,13 @@ public class SubscriptionsController {
 		return numberOfOrdersMessage;
 	}
 
+	public void disableOrderFields() {
+		orderView.clearAll();		
+orderView.disableAll();		
+	}
+
+	public void enableOrderFields() {
+orderView.enableAll();		
+	}
+
 }

@@ -663,4 +663,17 @@ public class SubscriptionsControllerTest {
 
 	}
 
+	@Test
+	public void testDisableOrderFieldsShouldDelegateOrderViewToClearTextFromAllOrderFieldsAndDisableThem() {
+		subscriptionsController.disableOrderFields();
+		verify(orderView).clearAll();
+		verify(orderView).disableAll();
+	}
+
+	@Test
+	public void testEnableOrderFieldsShouldDelegateOrderViewToEnableRelevantOrderFields() {
+		subscriptionsController.enableOrderFields();
+		verify(orderView).enableAll();
+	}
+
 }
