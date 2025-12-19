@@ -129,14 +129,14 @@ public class SubscriptionsControllerTest {
 	public void testOrderDetailsWhenOrderExistsShouldReturnGivenOrder() {
 		Order orderInDB = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 1), "customer@address.com").build();
 		when(orderRepository.findById(1)).thenReturn(orderInDB);
-		Order orderForDetails = subscriptionsController.orderDetails(1);
+		Order orderForDetails = subscriptionsController.fetchOrderDetails(1);
 		assertEquals(orderInDB, orderForDetails);
 	}
 
 	@Test
 	public void testOrderDetailsWhenOrderDoesNotExistShouldThrow() {
 		when(orderRepository.findById(1)).thenReturn(null);
-		assertThatThrownBy(() -> subscriptionsController.orderDetails(1)).isInstanceOf(IllegalArgumentException.class)
+		assertThatThrownBy(() -> subscriptionsController.fetchOrderDetails(1)).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The requested order is not available");
 	}
 
@@ -510,7 +510,7 @@ public class SubscriptionsControllerTest {
 	public void testOrderDetailsShouldShowOrderDetailsInOrderView() {
 		Order orderInDB = new Order.OrderBuilder(1, LocalDate.of(2025, 9, 1), "customer@address.com").build();
 		when(orderRepository.findById(1)).thenReturn(orderInDB);
-		Order orderForDetails = subscriptionsController.orderDetails(1);
+		Order orderForDetails = subscriptionsController.fetchOrderDetails(1);
 		assertEquals(orderInDB, orderForDetails);
 		verify(orderView).showOrderDetails(orderInDB);
 	}

@@ -200,6 +200,8 @@ Aggiorno la versione di `docker-maven-plugin` (da 0.45.1 a 0.48.0) e riprovo: fu
 
 Scrivo una versione alternativa degli IT che fa uso della libreria Testcontainers, in modo da automatizzare la gestione dei container al lancio dei test da Eclipse. Aggiungo al POM un profilo che esclude l'esecuzione di queste versioni dei test.
 
+Aggiungo un nuovo test case per `SubscriptionsController` che ripropone i medesimi test svolti finora ma che non fa uso di *mock* (`SubscriptionsControllerTestcontainersNoMocksIT`).
+
 #### 2.4 E2E Test
 
 Una volta scritti i primi test E2E provo con: `mvn clean verify -Pjacoco,mutation-testing`, ma ottengo due warning da JaCoCo:

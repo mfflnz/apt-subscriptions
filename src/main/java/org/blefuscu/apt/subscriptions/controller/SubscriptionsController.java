@@ -76,7 +76,7 @@ public class SubscriptionsController {
 		listView.showOrders(orderRepository.findByDateRange(fromDate, toDate));
 	}
 
-	public Order orderDetails(int orderId) {
+	public Order fetchOrderDetails(int orderId) {
 		Order order = orderRepository.findById(orderId);
 
 		if (order == null) {

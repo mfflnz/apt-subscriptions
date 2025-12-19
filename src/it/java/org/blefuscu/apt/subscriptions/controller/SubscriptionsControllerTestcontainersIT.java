@@ -251,7 +251,7 @@ public class SubscriptionsControllerTestcontainersIT {
 				.setFirstIssue(112).setLastIssue(117).build();
 
 		orderRepository.save(order1);
-		subscriptionsController.orderDetails(1);
+		subscriptionsController.fetchOrderDetails(1);
 
 		verify(orderView).showOrderDetails(order1);
 
@@ -298,7 +298,7 @@ public class SubscriptionsControllerTestcontainersIT {
 				.setFirstIssue(112).setLastIssue(117).build();
 
 		orderRepository.save(order1);
-		subscriptionsController.orderDetails(1);
+		subscriptionsController.fetchOrderDetails(1);
 
 		verify(orderView).showOrderDetails(order1);
 

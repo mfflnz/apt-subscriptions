@@ -68,7 +68,7 @@ public class ListSwingView extends JPanel implements ListView {
 		list.addListSelectionListener(arg0 -> {
 			if (!list.isSelectionEmpty()) {
 				subscriptionsController.enableOrderFields();
-				subscriptionsController.orderDetails(list.getSelectedValue().getOrderId());
+				subscriptionsController.fetchOrderDetails(list.getSelectedValue().getOrderId());
 			} else {
 				subscriptionsController.disableOrderFields();
 			}
@@ -164,5 +164,6 @@ public class ListSwingView extends JPanel implements ListView {
 	public void setFc(JFileChooser fc) {
 		this.fc = fc;
 	}
+
 
 }

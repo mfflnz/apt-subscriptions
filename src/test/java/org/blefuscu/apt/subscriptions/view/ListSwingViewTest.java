@@ -324,7 +324,7 @@ public class ListSwingViewTest {
 		});
 		window.list("ordersList").selectItem(0);
 
-		verify(subscriptionsController, timeout(TIMEOUT).atLeastOnce()).orderDetails(1);
+		verify(subscriptionsController, timeout(TIMEOUT).atLeastOnce()).fetchOrderDetails(1);
 
 	}
 
