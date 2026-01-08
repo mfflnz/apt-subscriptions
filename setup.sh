@@ -10,7 +10,7 @@ docker run -d --name apt-mongo --network apt-network --publish 27017:27017 --rm 
 # Importo i dati nella collection 'subscriptions':
 docker run --network apt-network --volume "$PWD"/src/main/resources:/resources \
 --rm mongo:latest mongoimport --host apt-mongo --db='subscriptions' \
---collection='orders' --headerline --file=resources/sample-orders.csv --type=csv
+--collection='orders' --headerline --file=resources/sample-orders-tmp.csv --type=csv
 
 # Lancio la shell di MongoDB:
 # docker run -it --network apt-network --rm mongo:latest mongosh --host apt-mongo

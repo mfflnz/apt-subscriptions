@@ -207,6 +207,7 @@ public class OrderMongoRepository implements OrderRepository {
 		String shippingPostcode = convertShippingPostcode(d);
 		String billingPostcode = convertBillingPostcode(d);
 		String billingPhone = convertBillingPhone(d);
+		String shippingPhone = convertShippingPhone(d);
 		String customerUser = convertCustomerUser(d);
 		int orderNumber = convertOrderNumber(d);
 		int customerId = convertCustomerId(d);
@@ -257,7 +258,7 @@ public class OrderMongoRepository implements OrderRepository {
 				.setBillingCity(d.getString(BILLING_CITY)).setBillingState(d.getString(BILLING_STATE))
 				.setBillingCountry(d.getString(BILLING_COUNTRY)).setShippingFirstName(d.getString(SHIPPING_FIRST_NAME))
 				.setShippingLastName(d.getString(SHIPPING_LAST_NAME)).setShippingCompany(d.getString(SHIPPING_COMPANY))
-				.setShippingPhone(d.getString(SHIPPING_PHONE)).setShippingAddress1(d.getString(SHIPPING_ADDRESS_1))
+				.setShippingPhone(shippingPhone).setShippingAddress1(d.getString(SHIPPING_ADDRESS_1))
 				.setShippingAddress2(d.getString(SHIPPING_ADDRESS_2)).setShippingPostcode(shippingPostcode)
 				.setShippingCity(d.getString(SHIPPING_CITY)).setShippingState(d.getString(SHIPPING_STATE))
 				.setShippingCountry(d.getString(SHIPPING_COUNTRY)).setCustomerNote(d.getString(CUSTOMER_NOTE))
@@ -546,6 +547,29 @@ public class OrderMongoRepository implements OrderRepository {
 			}
 		}
 		return billingPhone;
+	}
+
+	private String convertShippingPhone(Document d) {
+		String shippingPhone = "";
+		if (d.get(SHIPPING_PHONE) == null)
+			shippingPhone = "";
+		else {
+			switch (d.get(SHIPPING_PHONE).getClass().getSimpleName()) {
+			
+			case STRING:
+				shippingPhone = d.getString(SHIPPING_PHONE);
+				break;
+			case INTEGER:
+				shippingPhone = String.valueOf(d.get(SHIPPING_PHONE));
+				break;
+			case LONG:
+				shippingPhone = String.valueOf(d.get(SHIPPING_PHONE));
+				break;
+			default:
+				throw new IllegalArgumentException("Error: Shipping Phone should be a number or a string");
+			}
+		}
+		return shippingPhone;
 	}
 
 	private String convertBillingPostcode(Document d) {

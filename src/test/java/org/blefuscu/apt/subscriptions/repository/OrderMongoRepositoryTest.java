@@ -1240,6 +1240,12 @@ public class OrderMongoRepositoryTest {
 		addTestOrderWithGivenIntValueToDatabase("shipping_tax_total");
 		assertThat(orderRepository.findAll().get(0).getShippingTaxTotal()).isEqualTo(5);
 	}
+	
+	@Test
+	public void testFindAllIfShippingPhoneIsALong() {
+		addTestOrderWithGivenLongValueToDatabase("shipping_phone");
+		assertThat(orderRepository.findAll().get(0).getShippingPhone()).isEqualTo("15000000000");
+	}
 
 	private void addTestOrderWithWrongTypeToDatabase(String keyOfValueThatShouldThrow, boolean wrongType) {
 		orderCollection.insertOne(new Document().append("order_id", 6).append("order_date", "2025-09-10")
