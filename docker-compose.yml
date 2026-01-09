@@ -1,0 +1,19 @@
+services:
+  apt-mongo:
+    image: mongo
+    networks:
+      - apt-network
+    ports:
+      - "27017:27017"
+
+  apt-import:
+    image: mongo
+    networks:
+      - apt-network
+    volumes:
+      - ./src/main/resources:/resources
+    command: mongoimport --host apt-mongo --db='subscriptions' --collection='orders' --headerline --file=resources/sample-orders.csv --type=csv
+
+networks:
+  apt-network:
+    driver: bridge
