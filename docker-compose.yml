@@ -12,7 +12,7 @@ services:
       - apt-network
     volumes:
       - ./src/main/resources:/resources
-    command: mongoimport --host apt-mongo --db='subscriptions' --collection='orders' --headerline --file=resources/sample-orders.csv --type=csv
+    command: mongoimport --host apt-mongo --db='subscriptions' --collection='orders' --headerline --file=resources/sample-orders-tmp.csv --type=csv
 
 networks:
   apt-network:

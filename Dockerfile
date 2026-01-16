@@ -1,4 +1,8 @@
-FROM openjdk:27-ea-jdk
+FROM debian:stable
+
+RUN apt-get update && \
+	apt-get install -y default-jdk && \
+	apt-get clean
 
 COPY /target/apt-subscriptions-1.0-SNAPSHOT-jar-with-dependencies.jar /app/app.jar
 

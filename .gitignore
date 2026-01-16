@@ -3,6 +3,7 @@ export.csv
 assets/orders.csv
 assets/tmp
 failed-gui-tests/
+src/main/resources/sample-orders-tmp.csv
 
 # Backup files
 *~

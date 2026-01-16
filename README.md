@@ -22,6 +22,14 @@ Esecuzione manuale del programma con alcuni dati campione:
       dependencies.jar org.blefuscu.apt.subscriptions.\
       SubscriptionsSwingApp
     ./teardown.sh
+    
+In alternativa:
+
+    docker compose up
+    java -cp target/apt-subscriptions-1.0-SNAPSHOT-jar-with-\
+      dependencies.jar org.blefuscu.apt.subscriptions.\
+      SubscriptionsSwingApp
+    docker compose down    
 
 ---
 
@@ -499,3 +507,27 @@ Una questione notevole riguarda l'incompatibilità della versione 5 di MongoDB c
 Eseguendo `mvn clean verify` osservo che molti dei test svolti da AssertJ-Swing falliscono per qualche problema che sembra legato alla disposizione della tastiera (ad esempio, al posto del carattere `@` viene inserito il carattere `"`). (Noto che questo non si verifica né eseguendo i test tramite `xvfb-run` né testando a mano l'applicazione.)
 
 In rete le uniche indicazioni sufficientemente autorevoli al riguardo si concentrano in alcune issue nel repository di FEST/AssertJ-Swing (ad esempio [questa](https://github.com/assertj/assertj-swing/issues/199)). Provo a impostare l'opzione `-Dassertj.swing.keyboard.locale=it` (come argomento della JVM da linea di comando o inserendola nel file `.mvn/jvm.config`) ma ancora non ottengo il risultato sperato. Provo anche a inserire il testo utilizzando il metodo di AssertJ-Swing `pressAndReleaseKeys(int KeyEvent)` anziché `enterText(String text)`, e a inserire il carattere `@` utilizzando direttamente il codice esadecimale `\u0040`, ma di nuovo senza sucesso (ottengo in un caso il carattere `"` e nell'altro il carattere `q`). Osservo che l'errore nell'inserimento dei caratteri riguarda il metodo `enterText()` (che simula la digitazione da tastiera) ma non il metodo `setText()` della `TextInputFixture`, che imposta direttamente una stringa nel campo di testo e che inserisce i caratteri corretti. Valuto altre possibili soluzioni che prevedono l'uso di risorse dalla classe [`InputContext`](https://docs.oracle.com/javase/8/docs/api/java/awt/im/InputContext.html) e che ritengo troppo costose, e decido quindi di emendare il codice dei test sensibili aggiungendo un controllo ulteriore sui campi da validare: al loro interno inserisco (con `setText()`) il prefisso che contiene i caratteri non correttamente rilevati (ad esempio: "customer@"), e il suffisso con il metodo `enterText()`, che è necessario per attivare il listener collegato al campo da validare. Ritengo questa soluzione senz'altro non ottimale ma accettabile in questo contesto.
+
+---
+
+### 6. Lacune
+
+- Ho usato un solo branch: gli unici merge sono dovuti a modifiche che ho fatto a mano sul workflow di GitHub Actions per Windows.
+    - Praticare un workflow coi branch, per esempio uno basato sulle pull request di GitHub. Oppure tenere sul main solo codice stabile e portare avanti lo sviluppo su un altro branch (es. "dev"), facendo i merge quando ritengo che il codice sia stabile.
+
+- Non ho fatto pull requests su GitHub, né aperto issues.
+
+- Nell'interfaccia della Order View manca la conferma di "Delete" dal database
+
+- Ho marcato come accettabile la issue indicata da SonarQube relativamente al codice del listener del tasto sulla Search View (abbassare la complessità cognitiva da 20 a 15).
+    - Studiare un refactor del codice del listener, almeno in alcune sue parti.
+
+- Ho lasciato `clean` nel comando Maven sul C.I. server, laddove non era necessario (poiché la Action "Checkout", che clona il repository, non copia mai la cartella `target`).
+
+- I due Model (particolarmente `Order`) sono oltremodo fuori proporzione rispetto al resto del programma (forse avrei potuto semplificare anche il Builder).
+
+- Non ho utilizzato Docker Compose per definire l'ambiente per il test manuale del programma, e ho invece inserito i comandi necessari nei due script per il setup e il teardown.
+    - C'è una versione alternativa che usa `docker-compose.yml` e che si può provare con `docker compose up` e `docker compose down`.
+    
+- Non ho fatto un *dockerize* della app.
+    - Tentativo da rivedere, con alcune difficoltà che riguardano il lancio della GUI (v. `Dockerfile`).

@@ -1247,6 +1247,25 @@ public class OrderMongoRepositoryTest {
 		assertThat(orderRepository.findAll().get(0).getShippingPhone()).isEqualTo("15000000000");
 	}
 
+	@Test
+	public void testFindAllIfShippingPhoneHasWrongTypeShouldThrow() {
+		addTestOrderWithWrongTypeToDatabase("shipping_phone", false);
+		assertThatThrownBy(() -> orderRepository.findAll()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Error: Shipping Phone should be a number or a string");
+	}
+	
+	@Test
+	public void testFindAllIfShippingPhoneIsAString() {
+		addTestOrderWithGivenStringValueToDatabase("shipping_phone");
+		assertThat(orderRepository.findAll().get(0).getShippingPhone()).isEqualTo("123456");
+	}
+
+	@Test
+	public void testFindAllIfShippingPhoneIsAnInteger() {
+		addTestOrderWithGivenIntValueToDatabase("shipping_phone");
+		assertThat(orderRepository.findAll().get(0).getShippingPhone()).isEqualTo("5");
+	}
+
 	private void addTestOrderWithWrongTypeToDatabase(String keyOfValueThatShouldThrow, boolean wrongType) {
 		orderCollection.insertOne(new Document().append("order_id", 6).append("order_date", "2025-09-10")
 				.append("customer_email", "onemore@address.com").append(keyOfValueThatShouldThrow, wrongType));
@@ -1281,4 +1300,6 @@ public class OrderMongoRepositoryTest {
 				.append("customer_email", "onemore@address.com").append("paid_date", "2025-09-11")
 				.append(keyWithIntValue, 5));
 	}
+	
+	
 }
