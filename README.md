@@ -538,3 +538,5 @@ In rete le uniche indicazioni sufficientemente autorevoli al riguardo si concent
     - Aggiungere messaggio informativo durante l'apertura della connessione, con eventuale messaggio di errore qualora non sia possibile connettersi al DB.
     
 - Gli E2E Test potrebbero essere decomposti in più test mirati.
+
+(*à suivre...*)
