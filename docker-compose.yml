@@ -1,13 +1,13 @@
 services:
   apt-mongo:
-    image: mongo
+    image: mongo:5
     networks:
       - apt-network
     ports:
       - "27017:27017"
 
   apt-import:
-    image: mongo
+    image: mongo:5
     networks:
       - apt-network
     volumes:

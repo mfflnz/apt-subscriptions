@@ -42,19 +42,24 @@ public class MessageSwingView extends JPanel implements MessageView {
 	}
 
 	@Override
-	public void showInfoMessage(String string) {
+	public void showInfoMessage(String message) {
 		messageTextBox.setForeground(Color.BLACK);
-		messageTextBox.setText(string);
-		new Timer(MESSAGE_TIMEOUT, arg0 -> clearMessage()).start();
+		messageTextBox.setText(message);
+		startClearMessageTimer();
 
 	}
 
 	@Override
-	public void showErrorMessage(String string) {
+	public void showErrorMessage(String message) {
 		messageTextBox.setForeground(Color.RED);
-		messageTextBox.setText(string);
-		new Timer(MESSAGE_TIMEOUT, arg0 -> clearMessage()).start();
+		messageTextBox.setText(message);
+		startClearMessageTimer();
+	}
 
+	private void startClearMessageTimer() {
+		Timer timer = new Timer(MESSAGE_TIMEOUT, arg0 -> clearMessage());
+		timer.setRepeats(false);
+		timer.start();
 	}
 
 	public JTextField getMessageTextBox() {

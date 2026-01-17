@@ -510,7 +510,7 @@ In rete le uniche indicazioni sufficientemente autorevoli al riguardo si concent
 
 ---
 
-### 6. Lacune
+### 6. Errori, lacune e TODO
 
 - Ho usato un solo branch: gli unici merge sono dovuti a modifiche che ho fatto a mano sul workflow di GitHub Actions per Windows.
     - Praticare un workflow coi branch, per esempio uno basato sulle pull request di GitHub. Oppure tenere sul main solo codice stabile e portare avanti lo sviluppo su un altro branch (es. "dev"), facendo i merge quando ritengo che il codice sia stabile.
@@ -531,3 +531,10 @@ In rete le uniche indicazioni sufficientemente autorevoli al riguardo si concent
     
 - Non ho fatto un *dockerize* della app.
     - Tentativo da rivedere, con alcune difficoltà che riguardano il lancio della GUI (v. `Dockerfile`).
+    
+- Ho utilizzato versione `latest` dell'immagine di MongoDB (e anche di Ubuntu nel runner del CI Server): possibili problemi di compatibilità.
+
+- All'avvio dell'applicazione, non ho gestito il caso in cui il database non sia in esecuzione. Allo stato attuale, se avvio una ricerca e il database non è in esecuzione, non ricevo alcun feedback in merito. Dal log dell'applicazione, dopo 30 secondi vedo che si raggiunge il timeout della connessione e il pulsante torna a funzionare, ma nient'altro.
+    - Aggiungere messaggio informativo durante l'apertura della connessione, con eventuale messaggio di errore qualora non sia possibile connettersi al DB.
+    
+- Gli E2E Test potrebbero essere decomposti in più test mirati.
