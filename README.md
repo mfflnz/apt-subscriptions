@@ -539,4 +539,6 @@ In rete le uniche indicazioni sufficientemente autorevoli al riguardo si concent
     
 - Gli E2E Test potrebbero essere decomposti in più test mirati.
 
+- Maniera alternativa di gestire le due dipendenze di Log4J mantenendo sincronizzate le versioni: aggiungo una sezione `<dependencyManagement>` e importo [il BOM di Log4J](https://central.sonatype.com/artifact/org.apache.logging.log4j/log4j-bom/2.24.3).
+
 (*à suivre...*)
