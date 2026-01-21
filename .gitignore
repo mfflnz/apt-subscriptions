@@ -5,6 +5,7 @@ assets/tmp
 failed-gui-tests/
 src/main/resources/sample-orders-tmp.csv
 src/main/resources/sample-orders-2-tmp.csv
+.github/dependabot.yml
 
 # Backup files
 *~
